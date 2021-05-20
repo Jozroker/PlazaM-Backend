@@ -3,10 +3,8 @@ package com.site.plazam.domain;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import javax.validation.constraints.NotNull;
 
@@ -18,9 +16,10 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class Hall {
 
-    @MongoId
+    @Id
     @Indexed(unique = true)
     private String id;
+    //todo set UUID (create custom repositories for generation)
 
     @NotNull
     private Integer rows;
@@ -33,8 +32,7 @@ public class Hall {
 
     @Field(name = "cinema_id")
     @NotNull
-    @DBRef
-    private Cinema cinema;
+    private String cinemaId;
 
     public Hall(@NotNull Integer rows,
                 @NotNull Integer columns,
@@ -47,10 +45,10 @@ public class Hall {
     public Hall(@NotNull Integer rows,
                 @NotNull Integer columns,
                 @NotNull Technology technology,
-                @NotNull Cinema cinema) {
+                @NotNull String cinemaId) {
         this.rows = rows;
         this.columns = columns;
         this.technology = technology;
-        this.cinema = cinema;
+        this.cinemaId = cinemaId;
     }
 }
