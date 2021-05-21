@@ -9,13 +9,16 @@ import java.io.File;
 
 public enum Lang {
 
-    ENGLISH(generateFlagPicture("src/main/webapp/resources/img/png/en.png")),
-    UKRAINIAN(generateFlagPicture("src/main/webapp/resources/img/png/ua.png")),
-    POLISH(generateFlagPicture("src/main/webapp/resources/img/png/pl.png"));
+    ENGLISH("EN", generateFlagPicture("src/main/webapp/resources/img/png/en.png")),
+    UKRAINIAN("UA", generateFlagPicture("src/main/webapp/resources/img/png/ua.png")),
+    POLISH("PL", generateFlagPicture("src/main/webapp/resources/img/png/pl.png"));
+
+    private final String abbreviation;
 
     private final Binary flagPicture;
 
-    Lang(Binary flagPicture) {
+    Lang(String abbreviation, Binary flagPicture) {
+        this.abbreviation = abbreviation;
         this.flagPicture = flagPicture;
     }
 
@@ -33,5 +36,9 @@ public enum Lang {
 
     public byte[] getFlagPicture() {
         return flagPicture.getData();
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
     }
 }

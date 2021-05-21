@@ -5,7 +5,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
 @Document(collection = "message")
 @NoArgsConstructor
@@ -20,9 +23,10 @@ public class Message {
     private String id;
 
     @NotNull
-    private String text;
+    @NotEmpty
+    private Map<String, String> text = new HashMap<>();
 
-    public Message(@NotNull String text) {
+    public Message(@NotNull @NotEmpty Map<String, String> text) {
         this.text = text;
     }
 }
