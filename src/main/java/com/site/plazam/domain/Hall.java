@@ -22,6 +22,9 @@ public class Hall {
     //todo set UUID (create custom repositories for generation)
 
     @NotNull
+    private Integer number;
+
+    @NotNull
     private Integer rows;
 
     @NotNull
@@ -34,18 +37,22 @@ public class Hall {
     @NotNull
     private String cinemaId;
 
-    public Hall(@NotNull Integer rows,
+    public Hall(@NotNull Integer number,
+                @NotNull Integer rows,
                 @NotNull Integer columns,
                 @NotNull Technology technology) {
+        this.number = number;
         this.rows = rows;
         this.columns = columns;
         this.technology = technology;
     }
 
-    public Hall(@NotNull Integer rows,
+    public Hall(@NotNull Integer number,
+                @NotNull Integer rows,
                 @NotNull Integer columns,
                 @NotNull Technology technology,
                 @NotNull String cinemaId) {
+        this.number = number;
         this.rows = rows;
         this.columns = columns;
         this.technology = technology;

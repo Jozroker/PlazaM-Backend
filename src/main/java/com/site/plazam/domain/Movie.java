@@ -37,6 +37,11 @@ public class Movie {
     private Map<String, String> description = new HashMap<>();
 
     @NotNull
+    @NotEmpty
+    @Field(name = "directed_by")
+    private Map<String, String> directedBy = new HashMap<>();
+
+    @NotNull
     private Integer duration;
 
     @NotNull
@@ -68,6 +73,9 @@ public class Movie {
     @Field(name = "movie_picture_id")
     private String widePictureId;
 
+    @Field(name = "movie_little_picture_id")
+    private String wideLittlePictureId;
+
     @Field(name = "movie_poster_id")
     private String posterPictureId;
 
@@ -82,4 +90,7 @@ public class Movie {
     @NotNull
     @NotEmpty
     private List<Genre> genres = new ArrayList<>();
+
+    @Field(name = "available_technologies")
+    private List<Technology> availableTechnologies;
 }

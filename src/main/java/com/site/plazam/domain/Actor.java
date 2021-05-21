@@ -34,7 +34,7 @@ public class Actor {
     private Map<String, String> lastName = new HashMap<>();
 
     @Field(name = "actor_picture_id")
-    private String actorPictureId;
+    private String pictureId;
 
     public Actor(@NotNull @NotEmpty Map<String, String> firstName,
                  @NotNull @NotEmpty Map<String, String> lastName) {
@@ -44,9 +44,9 @@ public class Actor {
 
     public Actor(@NotNull @NotEmpty Map<String, String> firstName,
                  @NotNull @NotEmpty Map<String, String> lastName,
-                 String actorPictureId) {
+                 String pictureId) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.actorPictureId = actorPictureId;
+        this.pictureId = pictureId;
     }
 }

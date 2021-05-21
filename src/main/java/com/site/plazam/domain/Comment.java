@@ -41,6 +41,9 @@ public class Comment {
     @Field(name = "movie_id")
     private String movieId;
 
+    @Field(name = "movie_rating_id")
+    private String ratingId;
+
     public Comment(@NotNull LocalDate date,
                    @NotNull LocalTime time,
                    @NotNull String text,

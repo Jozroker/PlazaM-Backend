@@ -27,8 +27,7 @@ public class Cinema {
     private Map<String, String> name = new HashMap<>();
 
     @NotNull
-    @NotEmpty
-    private Map<String, String> country = new HashMap<>();
+    private Country country;
 
     @NotNull
     @NotEmpty
@@ -40,7 +39,7 @@ public class Cinema {
 
     //todo self Cascade interface and its resolver
 
-    public Cinema(@NotNull @NotEmpty Map<String, String> country,
+    public Cinema(@NotNull Country country,
                   @NotNull @NotEmpty Map<String, String> city,
                   @NotNull @NotEmpty Map<String, String> street) {
         this.country = country;

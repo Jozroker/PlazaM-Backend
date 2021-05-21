@@ -90,4 +90,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @NotNull
     Page<User> findAll(@NotNull Pageable pageable);
+
+//    @Query(value = "{'_id':ObjectId('?0')},{'_id':0, 'favourite_movies_ids':1}")
+//    List<String> getFavouritesMoviesByUserId(String id);
 }

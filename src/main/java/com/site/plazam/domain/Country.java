@@ -7,15 +7,15 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-public enum Lang {
+public enum Country {
 
-    ENGLISH(generateFlagPicture("src/main/webapp/resources/img/png/en.png")),
-    UKRAINIAN(generateFlagPicture("src/main/webapp/resources/img/png/ua.png")),
-    POLISH(generateFlagPicture("src/main/webapp/resources/img/png/pl.png"));
+    GREAT_BRITAIN(generateFlagPicture("src/main/webapp/resources/img/png/en.png")),
+    UKRAINE(generateFlagPicture("src/main/webapp/resources/img/png/ua.png")),
+    POLAND(generateFlagPicture("src/main/webapp/resources/img/png/pl.png"));
 
     private final Binary flagPicture;
 
-    Lang(Binary flagPicture) {
+    Country(Binary flagPicture) {
         this.flagPicture = flagPicture;
     }
 

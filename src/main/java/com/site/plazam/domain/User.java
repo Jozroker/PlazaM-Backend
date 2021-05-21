@@ -43,8 +43,8 @@ public class User implements UserDetails {
 
     private String phone;
 
-    @Field(name = "home_country_id")
-    private String homeCountryId;
+    @Field(name = "home_country")
+    private Country homeCountry;
 
     @Field(name = "home_city")
     private String homeCity;
