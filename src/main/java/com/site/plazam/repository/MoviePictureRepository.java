@@ -1,9 +1,9 @@
 package com.site.plazam.repository;
 
-import com.site.plazam.domain.Cinema;
+import com.site.plazam.domain.MoviePicture;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CinemaRepository extends MongoRepository<Cinema, String> {
+public interface MoviePictureRepository extends MongoRepository<MoviePicture, String> {
 }

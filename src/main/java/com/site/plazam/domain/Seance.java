@@ -29,9 +29,9 @@ public class Seance {
     @Field(name = "start_seance")
     private LocalTime startSeance;
 
-    @NotNull
-    @Field(name = "end_seance")
-    private LocalTime endSeance;
+//    @NotNull
+//    @Field(name = "end_seance")
+//    private LocalTime endSeance;
 
     @NotNull
     @Field(name = "date_from")
@@ -58,7 +58,6 @@ public class Seance {
     private List<Day> days = new ArrayList<>();
 
     public Seance(@NotNull LocalTime startSeance,
-                  @NotNull LocalTime endSeance,
                   @NotNull LocalDate dateFrom,
                   @NotNull LocalDate dateTo,
                   @NotNull Float ticketPrice,
@@ -66,7 +65,6 @@ public class Seance {
                   @NotNull String movieId,
                   @NotNull @NotEmpty List<Day> days) {
         this.startSeance = startSeance;
-        this.endSeance = endSeance;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
         this.ticketPrice = ticketPrice;
