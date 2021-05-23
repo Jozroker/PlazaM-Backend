@@ -22,5 +22,4 @@ public class CommentForMovieDTO extends CommentSimpleDTO {
 
     @NotNull
     private LocalTime time;
-
 }

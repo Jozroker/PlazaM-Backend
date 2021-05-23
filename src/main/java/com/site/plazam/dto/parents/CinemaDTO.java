@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @ToString
-public class CinemaSimpleDTO {
+public class CinemaDTO {
 
     private String id;
 

@@ -3,6 +3,7 @@ package com.site.plazam.dto;
 import com.site.plazam.domain.Genre;
 import com.site.plazam.domain.MPAA;
 import com.site.plazam.dto.parents.MovieSimpleDTO;
+import com.site.plazam.dto.parents.PictureDTO;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -21,16 +22,15 @@ import java.util.Map;
 public class MovieCreateDTO extends MovieSimpleDTO {
 
     @NotNull
-    @NotEmpty
-    private byte[] posterPicture = new byte[0];
+    private Map<String, String> name;
+
+    private Map<String, String> surname;
 
     @NotNull
-    @NotEmpty
-    private byte[] widePicture = new byte[0];
+    private PictureDTO posterPicture;
 
     @NotNull
-    @NotEmpty
-    private byte[] wideLittlePicture = new byte[0];
+    private PictureDTO widePicture;
 
     @NotNull
     @NotEmpty
@@ -63,7 +63,7 @@ public class MovieCreateDTO extends MovieSimpleDTO {
     @NotEmpty
     private Map<String, String> movieCountry = new HashMap<>();
 
-    private List<byte[]> galleryPictures = new ArrayList<>();
+    private List<PictureDTO> galleryPictures = new ArrayList<>();
 
     @NotNull
     @NotEmpty

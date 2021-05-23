@@ -20,73 +20,75 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     Page<User> findByRole(Role role, Pageable pageable);
 
-    Optional<User> findByUsername(String username);
-
-    Optional<User> findByEmail(String email);
+//    Optional<User> findByUsername(String username);
+//
+//    Optional<User> findByEmail(String email);
 
     Optional<User> findByUsernameOrEmail(String username, String email);
 
-    @Query(value = "{'banned':true}")
-    List<User> findBannedUsers();
+    //    @Query(value = "{'banned':true}")
+    List<User> findByBannedTrue();
 
-    @Query(value = "{'banned':true}")
-    Page<User> findBannedUsers(Pageable pageable);
+    //    @Query(value = "{'banned':true}")
+    Page<User> findByBannedTrue(Pageable pageable);
 
     List<User> findByBannedToDate(LocalDate date);
 
-    @Query(value = "{" +
-            "$or: [" +
-            "{'first_name.en':/?0/}," +
-            "{'first_name.ua':/?0/}," +
-            "{'first_name.pl':/?0/}," +
-            "{'last_name.en':/?1/}," +
-            "{'last_name.ua':/?1/}," +
-            "{'last_name.pl':/?1/}" +
-            "]" +
-            "}")
-    List<User> findByFirstNameOrLastName(String firstName, String lastName);
+//    @Query(value = "{" +
+//            "$or: [" +
+//            "{'first_name.en':/?0/i}," +
+//            "{'first_name.ua':/?0/i}," +
+//            "{'first_name.pl':/?0/i}," +
+//            "{'last_name.en':/?1/i}," +
+//            "{'last_name.ua':/?1/i}," +
+//            "{'last_name.pl':/?1/i}" +
+//            "]" +
+//            "}")
+//    List<User> findByFirstNameOrLastName(String firstName, String lastName);
+//
+//    @Query(value = "{" +
+//            "$or: [" +
+//            "{'first_name.en':/?0/i}," +
+//            "{'first_name.ua':/?0/i}," +
+//            "{'first_name.pl':/?0/i}," +
+//            "{'last_name.en':/?1/i}," +
+//            "{'last_name.ua':/?1/i}," +
+//            "{'last_name.pl':/?1/i}" +
+//            "]" +
+//            "}")
+//    Page<User> findByFirstNameOrLastName(String firstName, String lastName,
+//                                         Pageable pageable);
 
     @Query(value = "{" +
             "$or: [" +
-            "{'first_name.en':/?0/}," +
-            "{'first_name.ua':/?0/}," +
-            "{'first_name.pl':/?0/}," +
-            "{'last_name.en':/?1/}," +
-            "{'last_name.ua':/?1/}," +
-            "{'last_name.pl':/?1/}" +
-            "]" +
-            "}")
-    Page<User> findByFirstNameOrLastName(String firstName, String lastName,
-                                         Pageable pageable);
-
-    @Query(value = "{" +
-            "$or: [" +
-            "{'first_name.en':/?0/}," +
-            "{'first_name.ua':/?0/}," +
-            "{'first_name.pl':/?0/}," +
-            "{'last_name.en':/?1/}," +
-            "{'last_name.ua':/?1/}," +
-            "{'last_name.pl':/?1/}," +
-            "{'email':/?2/}" +
+            "{'first_name.en':/?0/i}," +
+            "{'first_name.ua':/?0/i}," +
+            "{'first_name.pl':/?0/i}," +
+            "{'last_name.en':/?1/i}," +
+            "{'last_name.ua':/?1/i}," +
+            "{'last_name.pl':/?1/i}," +
+            "{'username':/?2/}" +
             "]" +
             "}")
     List<User> findByFirstNameOrLastNameOrUsername(String firstName,
-                                                   String lastName, String email);
+                                                   String lastName,
+                                                   String username);
 
     @Query(value = "{" +
             "$or: [" +
-            "{'first_name.en':/?0/}," +
-            "{'first_name.ua':/?0/}," +
-            "{'first_name.pl':/?0/}," +
-            "{'last_name.en':/?1/}," +
-            "{'last_name.ua':/?1/}," +
-            "{'last_name.pl':/?1/}," +
-            "{'email':/?2/}" +
+            "{'first_name.en':/?0/i}," +
+            "{'first_name.ua':/?0/i}," +
+            "{'first_name.pl':/?0/i}," +
+            "{'last_name.en':/?1/i}," +
+            "{'last_name.ua':/?1/i}," +
+            "{'last_name.pl':/?1/i}," +
+            "{'username':/?2/}" +
             "]" +
             "}")
     Page<User> findByFirstNameOrLastNameOrUsername(String firstName,
                                                    String lastName,
-                                                   String email, Pageable pageable);
+                                                   String username,
+                                                   Pageable pageable);
 
     @NotNull
     Page<User> findAll(@NotNull Pageable pageable);

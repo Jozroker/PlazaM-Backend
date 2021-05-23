@@ -17,36 +17,32 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
 
     @Query(value = "{" +
             "$or: [" +
-            "{'name.en':/?0/}," +
-            "{'name.ua':/?0/}," +
-            "{'name.pl':/?0/}," +
-            "{'surname.en':/?1/}," +
-            "{'surname.ua':/?1/}," +
-            "{'surname.pl':/?1/}" +
+            "{'full_name.en':/?0/i}," +
+            "{'full_name.ua':/?0/i}," +
+            "{'full_name.pl':/?0/i}" +
             "]" +
             "}")
-    List<Movie> findByMovieName(String name, String surname);
+    List<Movie> findByMovieName(String fullName);
 
     @Query(value = "{" +
             "$or: [" +
-            "{'name.en':/?0/}," +
-            "{'name.ua':/?0/}," +
-            "{'name.pl':/?0/}," +
-            "{'surname.en':/?1/}," +
-            "{'surname.ua':/?1/}," +
-            "{'surname.pl':/?1/}" +
+            "{'full_name.en':/?0/i}," +
+            "{'full_name.ua':/?0/i}," +
+            "{'full_name.pl':/?0/i}" +
             "]" +
             "}")
-    Page<Movie> findByMovieName(String name, String surname, Pageable pageable);
+    Page<Movie> findByMovieName(String fullName, Pageable pageable);
 
     @NotNull
     Page<Movie> findAll(@NotNull Pageable pageable);
 
-    List<Movie> findByGenresContains(Genre genre);
+    List<Movie> findByGenresIsContaining(List<Genre> genres);
 
-    Page<Movie> findByGenresContains(Genre genre, Pageable pageable);
+    Page<Movie> findByGenresIsContaining(List<Genre> genres, Pageable pageable);
 
     List<Movie> findByReleaseDateAfter(LocalDate date);
+
+    List<Movie> findByReleaseDateAfterOrderByReleaseDate(LocalDate date);
 
     List<Movie> findByReleaseDateBefore(LocalDate date);
 
@@ -57,4 +53,8 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
     Page<Movie> findByReleaseDateBefore(LocalDate date, Pageable pageable);
 
     Page<Movie> findByReleaseDateBetween(LocalDate from, LocalDate to, Pageable pageable);
+
+//    @Query(value = "{}")
+//    void updateMovieTechnologyListById(String id,
+//                                       List<Technology> technologies);
 }

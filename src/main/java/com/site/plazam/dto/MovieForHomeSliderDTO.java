@@ -1,9 +1,9 @@
 package com.site.plazam.dto;
 
 import com.site.plazam.dto.parents.MovieSimpleDTO;
+import com.site.plazam.dto.parents.PictureDTO;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
@@ -14,7 +14,11 @@ import javax.validation.constraints.NotNull;
 public class MovieForHomeSliderDTO extends MovieSimpleDTO {
 
     @NotNull
-    @NotEmpty
-    private byte[] widePicture = new byte[0];
+    private String name;
+
+    private String surname;
+
+    @NotNull
+    private PictureDTO widePicture;
 
 }

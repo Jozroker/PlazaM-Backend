@@ -1,10 +1,10 @@
 package com.site.plazam.dto;
 
 import com.site.plazam.domain.Country;
+import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.dto.parents.UserSimpleDTO;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -25,11 +25,12 @@ public class UserForBannedListDTO extends UserSimpleDTO {
     private String phone;
 
     @NotNull
-    @NotEmpty
-    private byte[] picture = new byte[0];
+    private PictureDTO picture;
+
+    private LocalDate bannedTo;
 
     @NotNull
-    private LocalDate bannedTo;
+    private boolean banned;
 
     @NotNull
     private Country country;

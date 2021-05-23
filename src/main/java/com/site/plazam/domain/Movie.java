@@ -28,6 +28,11 @@ public class Movie {
 
     @NotNull
     @NotEmpty
+    @Field(name = "full_name")
+    private Map<String, String> fullName = new HashMap<>();
+
+    @NotNull
+    @NotEmpty
     private Map<String, String> name = new HashMap<>();
 
     private Map<String, String> surname = new HashMap<>();
@@ -73,9 +78,6 @@ public class Movie {
     @Field(name = "movie_picture_id")
     private String widePictureId;
 
-    @Field(name = "movie_little_picture_id")
-    private String wideLittlePictureId;
-
     @Field(name = "movie_poster_id")
     private String posterPictureId;
 
@@ -92,5 +94,5 @@ public class Movie {
     private List<Genre> genres = new ArrayList<>();
 
     @Field(name = "available_technologies")
-    private List<Technology> availableTechnologies;
+    private List<Technology> availableTechnologies = new ArrayList<>();
 }

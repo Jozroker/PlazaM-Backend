@@ -31,11 +31,20 @@ public interface SeanceRepository extends MongoRepository<Seance, String> {
     List<Seance> findByDateFromBeforeAndDateToAfter(LocalDate date,
                                                     LocalDate date2);
 
+    List<Seance> findByDateFromBeforeAndDateToAfterAndHallIdIsIn(LocalDate date,
+                                                                 LocalDate date2,
+                                                                 List<String> hallIds);
+
     Page<Seance> findByHallId(String id, Pageable pageable);
 
     Page<Seance> findByDateFromBeforeAndDateToAfter(LocalDate date,
                                                     LocalDate date2,
                                                     Pageable pageable);
+
+    Page<Seance> findByDateFromBeforeAndDateToAfterAndHallIdIsIn(LocalDate date,
+                                                                 LocalDate date2,
+                                                                 List<String> hallIds,
+                                                                 Pageable pageable);
 
     @NotNull
     Page<Seance> findAll(@NotNull Pageable pageable);

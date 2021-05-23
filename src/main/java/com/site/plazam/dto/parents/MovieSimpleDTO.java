@@ -2,7 +2,7 @@ package com.site.plazam.dto.parents;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,8 +13,16 @@ public class MovieSimpleDTO {
 
     private String id;
 
-    @NotNull
-    private String name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MovieSimpleDTO that = (MovieSimpleDTO) o;
+        return Objects.equals(id, that.id);
+    }
 
-    private String surname;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

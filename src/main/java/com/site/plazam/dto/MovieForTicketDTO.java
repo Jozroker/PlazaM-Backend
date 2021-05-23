@@ -1,8 +1,8 @@
 package com.site.plazam.dto;
 
+import com.site.plazam.dto.parents.PictureDTO;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 public class MovieForTicketDTO extends MovieForHomeSliderDTO {
 
     @NotNull
-    @NotEmpty
-    private byte[] posterPicture = new byte[0];
+    private PictureDTO posterPicture;
 
 }

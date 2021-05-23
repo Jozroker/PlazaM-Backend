@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class RatingSimpleDTO {
 
+    private String id;
+
     @NotNull
     private float userRating;
 }

@@ -1,6 +1,7 @@
 package com.site.plazam.dto;
 
 import com.site.plazam.dto.parents.ActorSimpleDTO;
+import com.site.plazam.dto.parents.PictureDTO;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -24,6 +25,6 @@ public class ActorCreateDTO extends ActorSimpleDTO {
     private Map<String, String> lastName = new HashMap<>();
 
     @NotNull
-    private byte[] picture = new byte[0];
+    private PictureDTO picture;
 
 }

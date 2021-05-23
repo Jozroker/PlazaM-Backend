@@ -12,12 +12,12 @@ public interface ActorRepository extends MongoRepository<Actor, String> {
 
     @Query(value = "{" +
             "$or: [" +
-            "{'first_name.en':/?0/}," +
-            "{'first_name.ua':/?0/}," +
-            "{'first_name.pl':/?0/}," +
-            "{'last_name.en':/?1/}," +
-            "{'last_name.ua':/?1/}," +
-            "{'last_name.pl':/?1/}" +
+            "{'first_name.en':/?0/i}," +
+            "{'first_name.ua':/?0/i}," +
+            "{'first_name.pl':/?0/i}," +
+            "{'last_name.en':/?1/i}," +
+            "{'last_name.ua':/?1/i}," +
+            "{'last_name.pl':/?1/i}" +
             "]" +
             "}")
     List<Actor> findByFirstNameOrLastName(String firstName, String lastName);

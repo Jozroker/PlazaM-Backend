@@ -3,6 +3,7 @@ package com.site.plazam.dto;
 import com.site.plazam.domain.Genre;
 import com.site.plazam.domain.MPAA;
 import com.site.plazam.dto.parents.MovieSimpleDTO;
+import com.site.plazam.dto.parents.PictureDTO;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -19,22 +20,21 @@ import java.util.List;
 public class MovieFullDTO extends MovieSimpleDTO {
 
     @NotNull
-    @NotEmpty
-    private byte[] posterPicture = new byte[0];
+    private String name;
+
+    private String surname;
 
     @NotNull
-    @NotEmpty
-    private byte[] widePicture = new byte[0];
+    private PictureDTO posterPicture;
 
     @NotNull
-    @NotEmpty
-    private byte[] wideLittlePicture = new byte[0];
+    private PictureDTO widePicture;
 
     @NotNull
     private String description;
 
     @NotNull
-    private int duration;
+    private int durationInMinutes;
 
     @NotNull
     private LocalDate releaseDate;
@@ -52,12 +52,12 @@ public class MovieFullDTO extends MovieSimpleDTO {
     private String directedBy;
 
     @NotNull
-    private String movieLangString;
+    private String movieLang;
 
     @NotNull
     private String movieCountry;
 
-    private List<byte[]> galleryPictures = new ArrayList<>();
+    private List<PictureDTO> galleryPictures = new ArrayList<>();
 
     @NotNull
     @NotEmpty

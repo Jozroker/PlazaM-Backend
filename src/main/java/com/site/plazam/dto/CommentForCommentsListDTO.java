@@ -22,5 +22,4 @@ public class CommentForCommentsListDTO extends CommentSimpleDTO {
 
     @NotNull
     private LocalTime time;
-
 }

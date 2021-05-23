@@ -1,6 +1,6 @@
 package com.site.plazam.dto;
 
-import com.site.plazam.dto.parents.CommentSimpleDTO;
+import com.site.plazam.dto.parents.MovieSimpleDTO;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -10,9 +10,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @ToString
-public class CommentForReportedUserDTO extends CommentSimpleDTO {
+public class MovieForResultListDTO extends MovieSimpleDTO {
 
     @NotNull
-    private UserForReportedListDTO user;
+    private String fullName;
 
 }

@@ -3,12 +3,12 @@ package com.site.plazam.dto;
 import com.site.plazam.domain.Country;
 import com.site.plazam.domain.Lang;
 import com.site.plazam.domain.Sex;
-import com.site.plazam.dto.parents.CinemaSimpleDTO;
+import com.site.plazam.dto.parents.CinemaDTO;
+import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.dto.parents.TicketSimpleDTO;
 import com.site.plazam.dto.parents.UserSimpleDTO;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -35,8 +35,7 @@ public class UserForSelfInfoDTO extends UserSimpleDTO {
     private String phone;
 
     @NotNull
-    @NotEmpty
-    private byte[] picture = new byte[0];
+    private PictureDTO picture;
 
     @NotNull
     private Country country;
@@ -74,7 +73,14 @@ public class UserForSelfInfoDTO extends UserSimpleDTO {
     private Lang selectedLang;
 
     @NotNull
-    private CinemaSimpleDTO selectedCinema;
+    private CinemaDTO selectedCinema;
 
-    private List<MessageDTO> messages;
+    private List<MessageForUserDTO> messages;
+
+    private List<MovieForMoviesListDTO> favouriteMovies;
+
+    private List<MovieForMoviesListDTO> viewedMovies;
+
+    private List<MovieForMoviesListDTO> waitMovies;
+    //todo fix this lists to less-data
 }

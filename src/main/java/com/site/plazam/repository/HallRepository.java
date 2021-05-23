@@ -13,4 +13,6 @@ public interface HallRepository extends MongoRepository<Hall, String> {
     List<Hall> findByCinemaId(String cinemaId);
 
     List<Hall> findByTechnology(Technology technology);
+
+    List<Hall> findByTechnologyIsIn(List<Technology> technologies);
 }

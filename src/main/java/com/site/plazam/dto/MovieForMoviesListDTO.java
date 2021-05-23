@@ -2,9 +2,9 @@ package com.site.plazam.dto;
 
 import com.site.plazam.domain.Technology;
 import com.site.plazam.dto.parents.MovieSimpleDTO;
+import com.site.plazam.dto.parents.PictureDTO;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
@@ -17,8 +17,12 @@ import java.util.List;
 public class MovieForMoviesListDTO extends MovieSimpleDTO {
 
     @NotNull
-    @NotEmpty
-    private byte[] posterPicture = new byte[0];
+    private String name;
+
+    private String surname;
+
+    @NotNull
+    private PictureDTO posterPicture;
 
     @NotNull
     private int durationInMinutes;

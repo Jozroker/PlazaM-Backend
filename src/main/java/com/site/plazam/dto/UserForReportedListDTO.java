@@ -1,10 +1,9 @@
 package com.site.plazam.dto;
 
-import com.site.plazam.domain.Country;
+import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.dto.parents.UserSimpleDTO;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
@@ -18,12 +17,6 @@ public class UserForReportedListDTO extends UserSimpleDTO {
     private String username;
 
     @NotNull
-    private String comment;
+    private PictureDTO picture;
 
-    @NotNull
-    @NotEmpty
-    private byte[] picture = new byte[0];
-
-    @NotNull
-    private Country country;
 }
