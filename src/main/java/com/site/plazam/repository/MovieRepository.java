@@ -17,18 +17,18 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
 
     @Query(value = "{" +
             "$or: [" +
-            "{'full_name.en':/?0/i}," +
-            "{'full_name.ua':/?0/i}," +
-            "{'full_name.pl':/?0/i}" +
+            "{'full_name.eng': {$regex: ?0, $options: 'i'}}," +
+            "{'full_name.ukr': {$regex: ?0, $options: 'i'}}," +
+            "{'full_name.pol': {$regex: ?0, $options: 'i'}}" +
             "]" +
             "}")
     List<Movie> findByMovieName(String fullName);
 
     @Query(value = "{" +
             "$or: [" +
-            "{'full_name.en':/?0/i}," +
-            "{'full_name.ua':/?0/i}," +
-            "{'full_name.pl':/?0/i}" +
+            "{'full_name.eng': {$regex: ?0, $options: 'i'}}," +
+            "{'full_name.ukr': {$regex: ?0, $options: 'i'}}," +
+            "{'full_name.pol': {$regex: ?0, $options: 'i'}}" +
             "]" +
             "}")
     Page<Movie> findByMovieName(String fullName, Pageable pageable);
@@ -46,13 +46,19 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
 
     List<Movie> findByReleaseDateBefore(LocalDate date);
 
+    @Query("{'releaseDate' : { $gte: ?0, $lte: ?1 } }")
     List<Movie> findByReleaseDateBetween(LocalDate from, LocalDate to);
+//    List<Movie> findByReleaseDateGreaterThanEqualAndReleaseDateLessThanEqual(LocalDate from,
+//                                                   LocalDate to);
 
     Page<Movie> findByReleaseDateAfter(LocalDate date, Pageable pageable);
 
     Page<Movie> findByReleaseDateBefore(LocalDate date, Pageable pageable);
 
+    @Query("{'releaseDate' : { $gte: ?0, $lte: ?1 } }")
     Page<Movie> findByReleaseDateBetween(LocalDate from, LocalDate to, Pageable pageable);
+
+    List<Movie> findByActorIdsContains(String id);
 
 //    @Query(value = "{}")
 //    void updateMovieTechnologyListById(String id,

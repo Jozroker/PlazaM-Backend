@@ -10,7 +10,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class SeanceForSeancesListDTO extends SeanceSimpleDTO {
 
     @NotNull

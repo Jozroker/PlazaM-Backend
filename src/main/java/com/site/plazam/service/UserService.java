@@ -1,7 +1,11 @@
 package com.site.plazam.service;
 
+import com.site.plazam.domain.Country;
 import com.site.plazam.domain.Role;
+import com.site.plazam.domain.Sex;
 import com.site.plazam.dto.*;
+import com.site.plazam.dto.parents.MovieSimpleDTO;
+import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.dto.parents.UserSimpleDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +16,20 @@ import java.util.List;
 public interface UserService {
 
     UserForSelfInfoDTO save(UserForRegistrationDTO userForRegistrationDTO);
+
+    UserForSelfInfoDTO updateInfo(String id, PictureDTO picture, String username,
+                                  String firstName, String lastName, Sex sex,
+                                  Country country, String city, String about,
+                                  boolean hide18PlusMovies,
+                                  boolean useLightTheme);
+
+    UserForSelfInfoDTO updatePassword(String id, String oldPassword,
+                                      String newPassword,
+                                      String confirmPassword);
+
+    UserForSelfInfoDTO updateEmail(String id, String email);
+
+    UserForSelfInfoDTO updatePhone(String id, String phone);
 
     UserForUsersListDTO updateBannedStatus(UserForUsersListDTO userForUsersListDTO, LocalDate bannedTo);
 
@@ -68,6 +86,18 @@ public interface UserService {
 
     Page<UserForBannedListDTO> findUserForBannedListByFirstNameOrLastNameOrUsername(String firstName, String lastName, String username, Pageable pageable);
 
+
+    UserForSelfInfoDTO updateTicketList(UserForSelfInfoDTO user,
+                                        String ticketId);
+
+    UserForSelfInfoDTO updateMessageList(UserForSelfInfoDTO user,
+                                         String messageId);
+
+    void deleteMovieFromFavouriteMoviesList(MovieSimpleDTO movie);
+
+    void deleteMovieFromViewedMoviesList(MovieSimpleDTO movie);
+
+    void deleteMovieFromWaitMoviesList(MovieSimpleDTO movie);
 
     void delete(UserSimpleDTO user);
 

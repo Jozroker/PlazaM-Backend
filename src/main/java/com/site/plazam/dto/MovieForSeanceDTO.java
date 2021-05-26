@@ -12,7 +12,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class MovieForSeanceDTO extends MovieSimpleDTO {
 
     @NotNull
@@ -26,22 +26,23 @@ public class MovieForSeanceDTO extends MovieSimpleDTO {
     @NotNull
     private int durationInMinutes;
 
-    private float usersRating;
+    private double usersRating;
 
     @NotNull
     private MPAA mpaaRating;
 
     @NotNull
-    private float imdbRating;
+    private double imdbRating;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         MovieForSeanceDTO that = (MovieForSeanceDTO) o;
         return durationInMinutes == that.durationInMinutes &&
-                Float.compare(that.usersRating, usersRating) == 0 &&
-                Float.compare(that.imdbRating, imdbRating) == 0 &&
+                Double.compare(that.usersRating, usersRating) == 0 &&
+                Double.compare(that.imdbRating, imdbRating) == 0 &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(surname, that.surname) &&
                 Objects.equals(posterPicture, that.posterPicture) &&
@@ -50,6 +51,6 @@ public class MovieForSeanceDTO extends MovieSimpleDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, surname, posterPicture, durationInMinutes, usersRating, mpaaRating, imdbRating);
+        return Objects.hash(super.hashCode(), name, surname, posterPicture, durationInMinutes, usersRating, mpaaRating, imdbRating);
     }
 }

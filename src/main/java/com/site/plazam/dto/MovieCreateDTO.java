@@ -9,16 +9,13 @@ import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class MovieCreateDTO extends MovieSimpleDTO {
 
     @NotNull
@@ -27,9 +24,10 @@ public class MovieCreateDTO extends MovieSimpleDTO {
     private Map<String, String> surname;
 
     @NotNull
+    private Map<String, String> fullName;
+
     private PictureDTO posterPicture;
 
-    @NotNull
     private PictureDTO widePicture;
 
     @NotNull
@@ -43,13 +41,13 @@ public class MovieCreateDTO extends MovieSimpleDTO {
     private LocalDate releaseDate;
 
     @NotNull
-    private float usersRating = 0F;
+    private double usersRating = 0;
 
     @NotNull
     private MPAA mpaaRating;
 
     @NotNull
-    private float imdbRating = 0F;
+    private double imdbRating = 0;
 
     @NotNull
     @NotEmpty
@@ -65,12 +63,39 @@ public class MovieCreateDTO extends MovieSimpleDTO {
 
     private List<PictureDTO> galleryPictures = new ArrayList<>();
 
-    @NotNull
-    @NotEmpty
     private List<ActorForActorListDTO> actors = new ArrayList<>();
 
     @NotNull
     @NotEmpty
     private List<Genre> genres = new ArrayList<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        MovieCreateDTO that = (MovieCreateDTO) o;
+        return duration == that.duration &&
+                Double.compare(that.usersRating, usersRating) == 0 &&
+                Double.compare(that.imdbRating, imdbRating) == 0 &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(surname, that.surname) &&
+                Objects.equals(fullName, that.fullName) &&
+                Objects.equals(posterPicture, that.posterPicture) &&
+                Objects.equals(widePicture, that.widePicture) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(releaseDate, that.releaseDate) &&
+                mpaaRating == that.mpaaRating &&
+                Objects.equals(directedBy, that.directedBy) &&
+                Objects.equals(movieLang, that.movieLang) &&
+                Objects.equals(movieCountry, that.movieCountry) &&
+                Objects.equals(galleryPictures, that.galleryPictures) &&
+                Objects.equals(actors, that.actors) &&
+                Objects.equals(genres, that.genres);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, surname, fullName, posterPicture, widePicture, description, duration, releaseDate, usersRating, mpaaRating, imdbRating, directedBy, movieLang, movieCountry, galleryPictures, actors, genres);
+    }
 }

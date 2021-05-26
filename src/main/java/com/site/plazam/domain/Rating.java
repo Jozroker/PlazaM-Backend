@@ -22,7 +22,7 @@ public class Rating {
 
     @NotNull
     @Field(name = "user_rating")
-    private Float userRating;
+    private Double userRating;
 
     @NotNull
     @Field(name = "user_id")
@@ -32,7 +32,7 @@ public class Rating {
     @Field(name = "movie_id")
     private String movieId;
 
-    public Rating(@NotNull Float userRating,
+    public Rating(@NotNull Double userRating,
                   @NotNull String userId,
                   @NotNull String movieId) {
         this.userRating = userRating;

@@ -9,10 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Document(collection = "movie")
 @NoArgsConstructor
@@ -55,7 +52,7 @@ public class Movie {
 
     @NotNull
     @Field(name = "users_rating")
-    private Float usersRating = 0F;
+    private Double usersRating = (double) 0;
 
     @NotNull
     @Field(name = "mpaa_rating")
@@ -63,7 +60,7 @@ public class Movie {
 
     @NotNull
     @Field(name = "imdb_rating")
-    private Float imdbRating = 0F;
+    private Double imdbRating = (double) 0;
 
     @NotNull
     @NotEmpty
@@ -84,8 +81,6 @@ public class Movie {
     @Field(name = "movie_gallery_ids")
     private List<String> galleryPictureIds = new ArrayList<>();
 
-    @NotNull
-    @NotEmpty
     @Field(name = "actor_ids")
     private List<String> actorIds = new ArrayList<>();
 
@@ -94,5 +89,5 @@ public class Movie {
     private List<Genre> genres = new ArrayList<>();
 
     @Field(name = "available_technologies")
-    private List<Technology> availableTechnologies = new ArrayList<>();
+    private Set<Technology> availableTechnologies = new HashSet<>();
 }

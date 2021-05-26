@@ -11,42 +11,35 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class UserForSelfInfoDTO extends UserSimpleDTO {
 
     @NotNull
     private String username;
 
-    @NotNull
     private String firstName;
 
-    @NotNull
     private String lastName;
 
     @NotNull
     private String email;
 
-    @NotNull
     private String phone;
 
-    @NotNull
     private PictureDTO picture;
 
-    @NotNull
     private Country country;
 
-    @NotNull
     private String homeCity;
 
-    @NotNull
     private Sex sex;
 
-    @NotNull
     private String aboutMe;
 
     @NotNull
@@ -69,10 +62,8 @@ public class UserForSelfInfoDTO extends UserSimpleDTO {
 
     private List<TicketSimpleDTO> tickets;
 
-    @NotNull
     private Lang selectedLang;
 
-    @NotNull
     private CinemaDTO selectedCinema;
 
     private List<MessageForUserDTO> messages;
@@ -83,4 +74,41 @@ public class UserForSelfInfoDTO extends UserSimpleDTO {
 
     private List<MovieForMoviesListDTO> waitMovies;
     //todo fix this lists to less-data
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        UserForSelfInfoDTO that = (UserForSelfInfoDTO) o;
+        return phoneConfirmed == that.phoneConfirmed &&
+                emailConfirmed == that.emailConfirmed &&
+                useLightTheme == that.useLightTheme &&
+                hide18PlusMovies == that.hide18PlusMovies &&
+                banned == that.banned &&
+                useRealName == that.useRealName &&
+                Objects.equals(username, that.username) &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(phone, that.phone) &&
+                Objects.equals(picture, that.picture) &&
+                country == that.country &&
+                Objects.equals(homeCity, that.homeCity) &&
+                sex == that.sex &&
+                Objects.equals(aboutMe, that.aboutMe) &&
+                Objects.equals(tickets, that.tickets) &&
+                selectedLang == that.selectedLang &&
+                Objects.equals(selectedCinema, that.selectedCinema) &&
+                Objects.equals(messages, that.messages) &&
+                Objects.equals(favouriteMovies, that.favouriteMovies) &&
+                Objects.equals(viewedMovies, that.viewedMovies) &&
+                Objects.equals(waitMovies, that.waitMovies);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), username, firstName, lastName, email, phone, picture, country, homeCity, sex, aboutMe, phoneConfirmed, emailConfirmed, useLightTheme, hide18PlusMovies, banned, useRealName, tickets, selectedLang, selectedCinema, messages, favouriteMovies, viewedMovies, waitMovies);
+    }
 }

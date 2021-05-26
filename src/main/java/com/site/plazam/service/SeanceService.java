@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +32,16 @@ public interface SeanceService {
 
     List<SeanceForSeancesListDTO> findByDayContains(Day day);
 
-    List<SeanceForSeancesListDTO> findByDateFromBeforeAndDateToAfter(LocalDate date,
-                                                                     LocalDate date2);
+//    List<SeanceForSeancesListDTO> findByDateFromBeforeAndDateToAfter(LocalDate date,
+//                                                                     LocalDate date2);
 
     List<SeanceForSeancesListDTO> findByDateFromBeforeAndDateToAfterAndHalls(LocalDate date,
                                                                              LocalDate date2,
                                                                              List<HallForSeanceDTO> halls);
+
+    List<SeanceForSeancesListDTO> findByDateFromBeforeEqualsAndDateToAfterEqualsAndHalls(LocalDate date,
+                                                                                         LocalDate date2,
+                                                                                         List<HallForSeanceDTO> halls);
 
     Page<SeanceForSeancesListDTO> findByDateFromBeforeAndDateToAfter(LocalDate date,
                                                                      LocalDate date2,
@@ -47,7 +52,20 @@ public interface SeanceService {
                                                                              List<HallForSeanceDTO> halls,
                                                                              Pageable pageable);
 
-    Page<Map.Entry> findSeancesList(LocalDate currentDate, CinemaDTO cinema);
+    Page<Map.Entry> findSeancesList(LocalDate currentDate, CinemaDTO cinema,
+                                    Pageable pageable);
+
+    List<SeanceForSeancesListDTO> findByStartSeanceBetweenOrEndSeanceBetween(LocalTime start,
+                                                                             LocalTime end);
+
+    List<SeanceForSeancesListDTO> findByStartSeanceBeforeAndEndSeanceAfter(LocalTime start,
+                                                                           LocalTime end);
+
+    List<SeanceForSeancesListDTO> findByDateFromBetweenOrDateToBetween(LocalDate start,
+                                                                       LocalDate end);
+
+    List<SeanceForSeancesListDTO> findByDateFromBeforeAndDateToAfter(LocalDate start,
+                                                                     LocalDate end);
 
     void delete(SeanceSimpleDTO seance);
 

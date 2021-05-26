@@ -6,11 +6,9 @@ import com.site.plazam.dto.MessageForUserDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
 @Mapper(componentModel = "spring")
 public interface MessageMapper {
 
@@ -21,6 +19,6 @@ public interface MessageMapper {
     Message toEntity(MessageCreateDTO messageCreateDTO);
 
     default String toString(Map<String, String> map) {
-        return map.get(LocaleContextHolder.getLocale().getLanguage());
+        return map.get(LocaleContextHolder.getLocale().getISO3Language());
     }
 }

@@ -7,13 +7,14 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class MovieForMoviesListDTO extends MovieSimpleDTO {
 
     @NotNull
@@ -28,14 +29,34 @@ public class MovieForMoviesListDTO extends MovieSimpleDTO {
     private int durationInMinutes;
 
     @NotNull
-    private float imdbRating;
+    private double imdbRating;
 
-    private List<Technology> availableTechnologies;
+    private Set<Technology> availableTechnologies;
 
     @NotNull
     private LocalDate releaseDate;
 
     @NotNull
-    private float usersRating = 0F;
+    private double usersRating = 0;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        MovieForMoviesListDTO that = (MovieForMoviesListDTO) o;
+        return durationInMinutes == that.durationInMinutes &&
+                Double.compare(that.imdbRating, imdbRating) == 0 &&
+                Double.compare(that.usersRating, usersRating) == 0 &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(surname, that.surname) &&
+                Objects.equals(posterPicture, that.posterPicture) &&
+                Objects.equals(availableTechnologies, that.availableTechnologies) &&
+                Objects.equals(releaseDate, that.releaseDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, surname, posterPicture, durationInMinutes, imdbRating, availableTechnologies, releaseDate, usersRating);
+    }
 }

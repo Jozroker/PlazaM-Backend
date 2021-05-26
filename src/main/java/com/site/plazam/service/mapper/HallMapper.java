@@ -4,9 +4,7 @@ import com.site.plazam.domain.Hall;
 import com.site.plazam.dto.HallForSeanceDTO;
 import com.site.plazam.dto.HallForTicketDTO;
 import org.mapstruct.Mapper;
-import org.springframework.stereotype.Component;
 
-@Component
 @Mapper(componentModel = "spring")
 public interface HallMapper {
 

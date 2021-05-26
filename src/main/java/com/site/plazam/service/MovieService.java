@@ -1,7 +1,9 @@
 package com.site.plazam.service;
 
 import com.site.plazam.domain.Genre;
+import com.site.plazam.domain.Technology;
 import com.site.plazam.dto.*;
+import com.site.plazam.dto.parents.ActorSimpleDTO;
 import com.site.plazam.dto.parents.MovieSimpleDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,8 @@ public interface MovieService {
     MovieForSeanceDTO findMovieForSeanceById(String id);
 
     MovieForTicketDTO findMovieForTicketById(String id);
+
+    MovieForResultListDTO findMovieForResultListById(String id);
 
     MovieFullDTO findMovieFullById(String id);
 
@@ -80,6 +84,12 @@ public interface MovieService {
 //    List<MovieForHomeSliderDTO> findMovieForHomeSliderByLastSeances(LocalDate currentDate);
 
 //    Page<MovieForMoviesListDTO> findMovieForMoviesListByUserFavourites()
+
+    void removeActorFromMovies(ActorSimpleDTO actor);
+
+    void addAvailableTechnology(MovieSimpleDTO movie, Technology technology);
+
+    void removeAvailableTechnology(MovieSimpleDTO movie, Technology technology);
 
     void delete(MovieSimpleDTO movie);
 

@@ -3,11 +3,15 @@ package com.site.plazam.service.impl;
 import com.site.plazam.domain.Technology;
 import com.site.plazam.dto.HallForSeanceDTO;
 import com.site.plazam.dto.HallForTicketDTO;
+import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.dto.parents.HallSimpleDTO;
 import com.site.plazam.repository.HallRepository;
 import com.site.plazam.service.HallService;
+import com.site.plazam.service.SeanceService;
 import com.site.plazam.service.mapper.HallMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +23,15 @@ public class HallServiceImpl implements HallService {
 
     private final HallMapper hm;
 
-    public HallServiceImpl(HallRepository hallRepository, HallMapper hallMapper) {
+    @Lazy
+    private final SeanceService ss;
+
+    public HallServiceImpl(HallRepository hallRepository,
+                           HallMapper hallMapper,
+                           @Lazy SeanceService seanceService) {
         this.hr = hallRepository;
         this.hm = hallMapper;
+        this.ss = seanceService;
     }
 
     @Override
@@ -30,8 +40,8 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public List<HallForSeanceDTO> findHallForSeanceByCinemaId(String id) {
-        return hr.findByCinemaId(id).stream().map(hm::toHallForSeanceDTO).collect(Collectors.toList());
+    public List<HallForSeanceDTO> findHallForSeanceByCinema(CinemaDTO cinemaDTO) {
+        return hr.findByCinemaId(cinemaDTO.getId()).stream().map(hm::toHallForSeanceDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -50,8 +60,8 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public List<HallForTicketDTO> findHallForTicketByCinemaId(String id) {
-        return hr.findByCinemaId(id).stream().map(hm::toHallForTicketDTO).collect(Collectors.toList());
+    public List<HallForTicketDTO> findHallForTicketByCinema(CinemaDTO cinemaDTO) {
+        return hr.findByCinemaId(cinemaDTO.getId()).stream().map(hm::toHallForTicketDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -70,12 +80,18 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
+    @Transactional
     public void delete(HallSimpleDTO hall) {
+        HallForSeanceDTO hallSearch = new HallForSeanceDTO();
+        hall.setId(hall.getId());
+        ss.findByHall(hallSearch).forEach(ss::delete);
         hr.deleteById(hall.getId());
     }
 
     @Override
+    @Transactional
     public void deleteAll() {
+        ss.deleteAll();
         hr.deleteAll();
     }
 }

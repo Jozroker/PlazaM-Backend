@@ -12,12 +12,18 @@ public interface ActorRepository extends MongoRepository<Actor, String> {
 
     @Query(value = "{" +
             "$or: [" +
-            "{'first_name.en':/?0/i}," +
-            "{'first_name.ua':/?0/i}," +
-            "{'first_name.pl':/?0/i}," +
-            "{'last_name.en':/?1/i}," +
-            "{'last_name.ua':/?1/i}," +
-            "{'last_name.pl':/?1/i}" +
+            "{'first_name.eng': {$regex: ?0, $options: 'i'}}," +
+            "{'first_name.ukr': {$regex: ?0, $options: 'i'}}," +
+            "{'first_name.pol': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name.eng': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name.ukr': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name.pol': {$regex: ?1, $options: 'i'}}" +
+            "{'first_name.eng': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name.ukr': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name.pol': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name.eng': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name.ukr': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name.pol': {$regex: ?0, $options: 'i'}}" +
             "]" +
             "}")
     List<Actor> findByFirstNameOrLastName(String firstName, String lastName);

@@ -61,13 +61,19 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @Query(value = "{" +
             "$or: [" +
-            "{'first_name.en':/?0/i}," +
-            "{'first_name.ua':/?0/i}," +
-            "{'first_name.pl':/?0/i}," +
-            "{'last_name.en':/?1/i}," +
-            "{'last_name.ua':/?1/i}," +
-            "{'last_name.pl':/?1/i}," +
-            "{'username':/?2/}" +
+            "{'first_name.eng': {$regex: ?0, $options: 'i'}}," +
+            "{'first_name.ukr': {$regex: ?0, $options: 'i'}}," +
+            "{'first_name.pol': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name.eng': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name.ukr': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name.pol': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name.eng': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name.ukr': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name.pol': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name.eng': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name.ukr': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name.pol': {$regex: ?0, $options: 'i'}}," +
+            "{'username': {$regex: ?2}}" +
             "]" +
             "}")
     List<User> findByFirstNameOrLastNameOrUsername(String firstName,
@@ -76,13 +82,19 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @Query(value = "{" +
             "$or: [" +
-            "{'first_name.en':/?0/i}," +
-            "{'first_name.ua':/?0/i}," +
-            "{'first_name.pl':/?0/i}," +
-            "{'last_name.en':/?1/i}," +
-            "{'last_name.ua':/?1/i}," +
-            "{'last_name.pl':/?1/i}," +
-            "{'username':/?2/}" +
+            "{'first_name.eng': {$regex: ?0, $options: 'i'}}," +
+            "{'first_name.ukr': {$regex: ?0, $options: 'i'}}," +
+            "{'first_name.pol': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name.eng': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name.ukr': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name.pol': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name.eng': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name.ukr': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name.pol': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name.eng': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name.ukr': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name.pol': {$regex: ?0, $options: 'i'}}," +
+            "{'username': {$regex: ?2}}" +
             "]" +
             "}")
     Page<User> findByFirstNameOrLastNameOrUsername(String firstName,
@@ -92,6 +104,12 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @NotNull
     Page<User> findAll(@NotNull Pageable pageable);
+
+    List<User> findByFavouriteMovieIdsContains(String id);
+
+    List<User> findByViewedMovieIdsContains(String id);
+
+    List<User> findByWaitMovieIdsContains(String id);
 
 //    @Query(value = "{'_id':ObjectId('?0')},{'_id':0, 'favourite_movies_ids':1}")
 //    List<String> getFavouritesMoviesByUserId(String id);

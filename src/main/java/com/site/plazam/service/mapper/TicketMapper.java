@@ -6,17 +6,13 @@ import com.site.plazam.dto.parents.TicketSimpleDTO;
 import com.site.plazam.service.SeanceService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Component
 @Mapper(componentModel = "spring")
 public abstract class TicketMapper {
 
-    final SeanceService ss;
-
-    protected TicketMapper(SeanceService seanceService) {
-        this.ss = seanceService;
-    }
+    @Autowired
+    SeanceService ss;
 
     @Mapping(source = "seance.id", target = "seanceId")
     public abstract Ticket toEntity(TicketSimpleDTO ticketSimpleDTO);

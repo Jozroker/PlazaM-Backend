@@ -8,8 +8,9 @@ import com.site.plazam.service.ActorService;
 import com.site.plazam.service.PictureService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -19,36 +20,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component
 @Mapper(componentModel = "spring")
 public abstract class MovieMapper {
 
-    final PictureService ps;
+    @Autowired
+    PictureService ps;
 
-    final ActorService as;
+    @Autowired
+    ActorService as;
 
-    protected MovieMapper(PictureService pictureService, ActorService actorService) {
-        this.ps = pictureService;
-        this.as = actorService;
-    }
-
-    @Mapping(source = "widePicture.id", target = "widePictureId")
-    @Mapping(source = "posterPicture.id", target = "posterPictureId")
+    @Mapping(source = "widePicture", target = "widePictureId",
+            qualifiedByName = "toPictureId")
+    @Mapping(source = "posterPicture", target = "posterPictureId",
+            qualifiedByName = "toPictureId")
     @Mapping(source = "galleryPictures", target = "galleryPictureIds",
             qualifiedByName = "toPictureIdList")
     @Mapping(source = "actors", target = "actorIds",
             qualifiedByName = "toActorIdList")
     public abstract Movie toEntity(MovieCreateDTO movieCreateDTO);
 
-//    @Mapping(source = "posterPictureId", target = "posterPicture",
-//            qualifiedByName = "toPosterPicture")
-//    @Mapping(source = "widePictureId", target = "widePicture",
-//            qualifiedByName = "toWidePicture")
-//    @Mapping(source = "galleryPictureIds", target = "galleryPictures",
-//            qualifiedByName = "toPictureList")
-//    @Mapping(source = "actorIds", target = "actors",
-//            qualifiedByName = "toActorList")
-//    public abstract MovieCreateDTO toMovieCreateDTO(Movie movie);
+    @Mapping(source = "posterPictureId", target = "posterPicture",
+            qualifiedByName = "toPosterPicture")
+    @Mapping(source = "widePictureId", target = "widePicture",
+            qualifiedByName = "toWidePicture")
+    @Mapping(source = "galleryPictureIds", target = "galleryPictures",
+            qualifiedByName = "toPictureList")
+    @Mapping(source = "actorIds", target = "actors",
+            qualifiedByName = "toActorList")
+    public abstract MovieCreateDTO toMovieCreateDTO(Movie movie);
 
     @Mapping(source = "fullName", target = "fullName", qualifiedByName =
             "toString")
@@ -79,6 +78,7 @@ public abstract class MovieMapper {
     @Mapping(source = "duration", target = "durationInMinutes")
     public abstract MovieForMoviesListDTO toMovieForMoviesListDTO(Movie movie);
 
+    //
     @Mapping(source = "name", target = "name", qualifiedByName = "toString")
     @Mapping(source = "surname", target = "surname", qualifiedByName = "toString")
     @Mapping(source = "posterPictureId", target = "posterPicture",
@@ -86,6 +86,7 @@ public abstract class MovieMapper {
     @Mapping(source = "duration", target = "durationInMinutes")
     public abstract MovieForSeanceDTO toMovieForSeanceDTO(Movie movie);
 
+    //
     @Mapping(source = "name", target = "name", qualifiedByName = "toString")
     @Mapping(source = "surname", target = "surname", qualifiedByName = "toString")
     @Mapping(source = "posterPictureId", target = "posterPicture",
@@ -118,13 +119,20 @@ public abstract class MovieMapper {
 
 
     String toString(Map<String, String> map) {
-        return map.get(LocaleContextHolder.getLocale().getLanguage());
+        return map.get(LocaleContextHolder.getLocale().getISO3Language());
     }
 
+    String toPictureId(PictureDTO pictureDTO) {
+        if (pictureDTO == null) {
+            return null;
+        }
+        return pictureDTO.getId();
+    }
+
+    @Named("toPosterPicture")
     PictureDTO toPosterPicture(String id) {
-        PictureDTO pictureDTO;
         if (id == null) {
-            pictureDTO = new PictureDTO();
+            PictureDTO pictureDTO = new PictureDTO();
             try {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp" +
                         "/resources/img/jpg/poster/default_poster.jpg"));
@@ -133,16 +141,15 @@ public abstract class MovieMapper {
                 pictureDTO.setPicture(bos.toByteArray());
             } catch (Exception ignored) {
             }
-        } else {
-            pictureDTO = ps.findById(id, MoviePicture.class);
+            return pictureDTO;
         }
-        return pictureDTO;
+        return ps.findById(id, MoviePicture.class);
     }
 
+    @Named("toWidePicture")
     PictureDTO toWidePicture(String id) {
-        PictureDTO pictureDTO;
         if (id == null) {
-            pictureDTO = new PictureDTO();
+            PictureDTO pictureDTO = new PictureDTO();
             try {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp" +
                         "/resources/img/jpg/wide/default_wide.jpg"));
@@ -151,10 +158,9 @@ public abstract class MovieMapper {
                 pictureDTO.setPicture(bos.toByteArray());
             } catch (Exception ignored) {
             }
-        } else {
-            pictureDTO = ps.findById(id, MoviePicture.class);
+            return pictureDTO;
         }
-        return pictureDTO;
+        return ps.findById(id, MoviePicture.class);
     }
 
     List<PictureDTO> toPictureList(List<String> pictureIds) {

@@ -29,9 +29,9 @@ public class Seance {
     @Field(name = "start_seance")
     private LocalTime startSeance;
 
-//    @NotNull
-//    @Field(name = "end_seance")
-//    private LocalTime endSeance;
+    @NotNull
+    @Field(name = "end_seance")
+    private LocalTime endSeance;
 
     @NotNull
     @Field(name = "date_from")
@@ -43,7 +43,7 @@ public class Seance {
 
     @NotNull
     @Field(name = "ticket_price")
-    private Float ticketPrice;
+    private Double ticketPrice;
 
     @NotNull
     @Field(name = "hall_id")
@@ -60,7 +60,7 @@ public class Seance {
     public Seance(@NotNull LocalTime startSeance,
                   @NotNull LocalDate dateFrom,
                   @NotNull LocalDate dateTo,
-                  @NotNull Float ticketPrice,
+                  @NotNull Double ticketPrice,
                   @NotNull String hallId,
                   @NotNull String movieId,
                   @NotNull @NotEmpty List<Day> days) {

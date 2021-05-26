@@ -12,4 +12,9 @@ public class ApplicationExceptionHandler {
 //        log.error("resource not found", exception);
         return "not_found";
     }
+
+    @ExceptionHandler(TimeAlreadyScheduledException.class)
+    public String handleResource(TimeAlreadyScheduledException exception) {
+        return "seance_already_exists";
+    }
 }

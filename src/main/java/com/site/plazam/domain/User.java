@@ -64,11 +64,9 @@ public class User implements UserDetails {
     private String pictureId;
 
     @Field(name = "selected_language")
-    @NotNull
     private Lang selectedLang;
 
     @Field(name = "selected_cinema_id")
-    @NotNull
     private String selectedCinemaId;
 
     @Field(name = "favourite_movie_ids")

@@ -3,6 +3,7 @@ package com.site.plazam.service;
 import com.site.plazam.domain.Technology;
 import com.site.plazam.dto.HallForSeanceDTO;
 import com.site.plazam.dto.HallForTicketDTO;
+import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.dto.parents.HallSimpleDTO;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface HallService {
 
     HallForSeanceDTO findHallForSeanceById(String id);
 
-    List<HallForSeanceDTO> findHallForSeanceByCinemaId(String id);
+    List<HallForSeanceDTO> findHallForSeanceByCinema(CinemaDTO cinemaDTO);
 
     List<HallForSeanceDTO> findHallForSeanceByTechnology(Technology technology);
 
@@ -19,7 +20,7 @@ public interface HallService {
 
     HallForTicketDTO findHallForTicketById(String id);
 
-    List<HallForTicketDTO> findHallForTicketByCinemaId(String id);
+    List<HallForTicketDTO> findHallForTicketByCinema(CinemaDTO cinemaDTO);
 
     List<HallForTicketDTO> findHallForTicketByTechnology(Technology technology);
 

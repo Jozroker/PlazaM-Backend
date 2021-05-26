@@ -33,7 +33,7 @@ public class Ticket {
     private Integer placeSeat;
 
     @Field(name = "place_allowance")
-    private Float placeAllowance = 0F;
+    private Double placeAllowance = (double) 0;
 
     @NotNull
     @Field(name = "seance_id")
@@ -52,7 +52,7 @@ public class Ticket {
     public Ticket(@NotNull LocalDate date,
                   @NotNull Integer placeRow,
                   @NotNull Integer placeSeat,
-                  Float placeAllowance,
+                  Double placeAllowance,
                   @NotNull String seanceId) {
         this.date = date;
         this.placeRow = placeRow;

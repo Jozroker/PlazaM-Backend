@@ -6,20 +6,16 @@ import com.site.plazam.service.MovieService;
 import com.site.plazam.service.UserService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Component
 @Mapper(componentModel = "spring")
 public abstract class CommentMapper {
 
-    final UserService us;
+    @Autowired
+    UserService us;
 
-    final MovieService ms;
-
-    protected CommentMapper(UserService userService, MovieService movieService) {
-        this.us = userService;
-        this.ms = movieService;
-    }
+    @Autowired
+    MovieService ms;
 
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "movie.id", target = "movieId")

@@ -5,9 +5,7 @@ import com.site.plazam.dto.RatingCreateDTO;
 import com.site.plazam.dto.parents.RatingSimpleDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
 
-@Component
 @Mapper(componentModel = "spring")
 public interface RatingMapper {
 

@@ -9,6 +9,7 @@ import com.site.plazam.repository.CommentRepository;
 import com.site.plazam.service.CommentService;
 import com.site.plazam.service.UserService;
 import com.site.plazam.service.mapper.CommentMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,11 +31,12 @@ public class CommentServiceImpl implements CommentService {
 
     private final MongoTemplate mt;
 
+    @Lazy
     private final UserService us;
 
     public CommentServiceImpl(CommentRepository commentRepository,
                               CommentMapper commentMapper,
-                              UserService userService,
+                              @Lazy UserService userService,
                               MongoTemplate mongoTemplate) {
         this.cr = commentRepository;
         this.cm = commentMapper;

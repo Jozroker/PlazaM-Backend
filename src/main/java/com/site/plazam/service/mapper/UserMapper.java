@@ -9,7 +9,7 @@ import com.site.plazam.dto.parents.TicketSimpleDTO;
 import com.site.plazam.service.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,33 +18,24 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 @Mapper(componentModel = "spring")
 public abstract class UserMapper {
 
-    final PictureService ps;
+    @Autowired
+    PictureService ps;
 
-    final MovieService ms;
+    @Autowired
+    MovieService ms;
 
-    final TicketService ts;
+    @Autowired
+    TicketService ts;
 
-    final MessageService mss;
+    @Autowired
+    MessageService mss;
 
-    final CinemaService cs;
+    @Autowired
+    CinemaService cs;
 
-    protected UserMapper(PictureService pictureService,
-                         MovieService movieService,
-                         TicketService ticketService,
-                         MessageService messageService,
-                         CinemaService cinemaService) {
-        this.ps = pictureService;
-        this.ms = movieService;
-        this.ts = ticketService;
-        this.mss = messageService;
-        this.cs = cinemaService;
-    }
-
-    @Mapping(source = "picture.id", target = "pictureId")
     public abstract User toEntity(UserForRegistrationDTO userForRegistrationDTO);
 
     public abstract UserForResultListDTO toUserForResultListDTO(User user);

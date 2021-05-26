@@ -26,7 +26,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageForUserDTO save(MessageCreateDTO messageCreateDTO) {
-        return mm.toDTO(mm.toEntity(messageCreateDTO));
+        return mm.toDTO(mr.save(mm.toEntity(messageCreateDTO)));
     }
 
     @Override

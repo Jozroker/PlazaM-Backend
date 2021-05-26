@@ -23,6 +23,8 @@ public class SeanceSimpleDTO {
     @NotNull
     private LocalTime startSeance;
 
+    private LocalTime endSeance;
+
     @NotNull
     private LocalDate dateFrom;
 
@@ -40,6 +42,7 @@ public class SeanceSimpleDTO {
         SeanceSimpleDTO that = (SeanceSimpleDTO) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(startSeance, that.startSeance) &&
+                Objects.equals(endSeance, that.endSeance) &&
                 Objects.equals(dateFrom, that.dateFrom) &&
                 Objects.equals(dateTo, that.dateTo) &&
                 Objects.equals(days, that.days);
@@ -47,6 +50,6 @@ public class SeanceSimpleDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, startSeance, dateFrom, dateTo, days);
+        return Objects.hash(id, startSeance, endSeance, dateFrom, dateTo, days);
     }
 }

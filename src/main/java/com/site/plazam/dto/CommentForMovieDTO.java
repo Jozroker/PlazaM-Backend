@@ -6,12 +6,13 @@ import lombok.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class CommentForMovieDTO extends CommentSimpleDTO {
 
     @NotNull
@@ -22,4 +23,20 @@ public class CommentForMovieDTO extends CommentSimpleDTO {
 
     @NotNull
     private LocalTime time;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CommentForMovieDTO that = (CommentForMovieDTO) o;
+        return Objects.equals(user, that.user) &&
+                Objects.equals(date, that.date) &&
+                Objects.equals(time, that.time);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), user, date, time);
+    }
 }

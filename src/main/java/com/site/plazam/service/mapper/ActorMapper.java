@@ -8,34 +8,47 @@ import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.service.PictureService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Map;
 
-@Component
 @Mapper(componentModel = "spring")
 public abstract class ActorMapper {
 
-    final PictureService ps;
+    @Autowired
+    PictureService ps;
 
-    protected ActorMapper(PictureService pictureService) {
-        this.ps = pictureService;
-    }
-
-    @Mapping(source = "picture.id", target = "pictureId")
+    @Mapping(source = "picture", target = "pictureId", qualifiedByName =
+            "toPictureId")
     public abstract Actor toEntity(ActorCreateDTO actorCreateDTO);
 
     @Mapping(source = "pictureId", target = "picture", qualifiedByName =
             "toPicture")
+    @Mapping(source = "firstName", target = "firstName", qualifiedByName =
+            "toString")
+    @Mapping(source = "lastName", target = "lastName", qualifiedByName =
+            "toString")
     public abstract ActorForActorListDTO toActorForActorListDTO(Actor actor);
 
+    String toString(Map<String, String> map) {
+        return map.get(LocaleContextHolder.getLocale().getISO3Language());
+    }
+
+    String toPictureId(PictureDTO pictureDTO) {
+        if (pictureDTO == null) {
+            return null;
+        }
+        return pictureDTO.getId();
+    }
+
     PictureDTO toPicture(String id) {
-        PictureDTO pictureDTO;
         if (id == null) {
-            pictureDTO = new PictureDTO();
+            PictureDTO pictureDTO = new PictureDTO();
             try {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp/resources/img/jpg/default_avatar.jpg"));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -43,9 +56,8 @@ public abstract class ActorMapper {
                 pictureDTO.setPicture(bos.toByteArray());
             } catch (Exception ignored) {
             }
-        } else {
-            pictureDTO = ps.findById(id, ActorPicture.class);
+            return pictureDTO;
         }
-        return pictureDTO;
+        return ps.findById(id, ActorPicture.class);
     }
 }

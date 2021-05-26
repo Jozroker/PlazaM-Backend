@@ -10,7 +10,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class HallForSeanceDTO extends HallSimpleDTO {
 
     @NotNull
@@ -20,12 +20,13 @@ public class HallForSeanceDTO extends HallSimpleDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         HallForSeanceDTO that = (HallForSeanceDTO) o;
         return number == that.number;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(number);
+        return Objects.hash(super.hashCode(), number);
     }
 }

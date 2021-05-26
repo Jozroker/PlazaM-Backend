@@ -3,8 +3,11 @@ package com.site.plazam.service.impl;
 import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.repository.CinemaRepository;
 import com.site.plazam.service.CinemaService;
+import com.site.plazam.service.HallService;
 import com.site.plazam.service.mapper.CinemaMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,10 +19,15 @@ public class CinemaServiceImpl implements CinemaService {
 
     private final CinemaMapper cm;
 
+    @Lazy
+    private final HallService hs;
+
     public CinemaServiceImpl(CinemaRepository cinemaRepository,
-                             CinemaMapper cinemaMapper) {
+                             CinemaMapper cinemaMapper,
+                             @Lazy HallService hallService) {
         this.cr = cinemaRepository;
         this.cm = cinemaMapper;
+        this.hs = hallService;
     }
 
 //    @Override
@@ -38,12 +46,16 @@ public class CinemaServiceImpl implements CinemaService {
     }
 
     @Override
+    @Transactional
     public void delete(CinemaDTO cinema) {
+        hs.findHallForSeanceByCinema(cinema).forEach(hs::delete);
         cr.deleteById(cinema.getId());
     }
 
     @Override
+    @Transactional
     public void deleteAll() {
+        hs.deleteAll();
         cr.deleteAll();
     }
 }
