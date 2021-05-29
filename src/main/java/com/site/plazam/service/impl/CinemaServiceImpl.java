@@ -1,5 +1,6 @@
 package com.site.plazam.service.impl;
 
+import com.site.plazam.domain.Country;
 import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.repository.CinemaRepository;
 import com.site.plazam.service.CinemaService;
@@ -34,6 +35,13 @@ public class CinemaServiceImpl implements CinemaService {
 //    public CinemaDTO save(CinemaDTO cinemaDTO) {
 //        return cm.toDTO(cr.save(cm.to(pictureDTO)));
 //    }
+
+
+    @Override
+    public CinemaDTO findFirstByCountryAndCity(Country country,
+                                               String city) {
+        return cr.findFirstByCountryAndCity(country, city).stream().findFirst().map(cm::toDTO).orElse(null);
+    }
 
     @Override
     public CinemaDTO findById(String id) {

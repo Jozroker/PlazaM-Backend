@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -55,17 +55,19 @@ public interface SeanceService {
     Page<Map.Entry> findSeancesList(LocalDate currentDate, CinemaDTO cinema,
                                     Pageable pageable);
 
-    List<SeanceForSeancesListDTO> findByStartSeanceBetweenOrEndSeanceBetween(LocalTime start,
-                                                                             LocalTime end);
+    List<SeanceForSeancesListDTO> findByStartSeanceBetweenOrEndSeanceBetween(LocalDateTime start,
+                                                                             LocalDateTime end);
 
-    List<SeanceForSeancesListDTO> findByStartSeanceBeforeAndEndSeanceAfter(LocalTime start,
-                                                                           LocalTime end);
+    List<SeanceForSeancesListDTO> findByStartSeanceBeforeAndEndSeanceAfter(LocalDateTime start,
+                                                                           LocalDateTime end);
 
     List<SeanceForSeancesListDTO> findByDateFromBetweenOrDateToBetween(LocalDate start,
                                                                        LocalDate end);
 
     List<SeanceForSeancesListDTO> findByDateFromBeforeAndDateToAfter(LocalDate start,
                                                                      LocalDate end);
+
+    void deleteByDateToBefore(LocalDate date);
 
     void delete(SeanceSimpleDTO seance);
 

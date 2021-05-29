@@ -18,6 +18,8 @@ public interface TicketService {
 
     List<TicketSimpleDTO> findByDate(LocalDate date);
 
+    void deleteByDateBefore(LocalDate date);
+
     void delete(TicketSimpleDTO ticket);
 
     void deleteAll();

@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +27,11 @@ public class Seance {
 
     @NotNull
     @Field(name = "start_seance")
-    private LocalTime startSeance;
+    private LocalDateTime startSeance;
 
     @NotNull
     @Field(name = "end_seance")
-    private LocalTime endSeance;
+    private LocalDateTime endSeance;
 
     @NotNull
     @Field(name = "date_from")
@@ -57,7 +57,7 @@ public class Seance {
     @NotEmpty
     private List<Day> days = new ArrayList<>();
 
-    public Seance(@NotNull LocalTime startSeance,
+    public Seance(@NotNull LocalDateTime startSeance,
                   @NotNull LocalDate dateFrom,
                   @NotNull LocalDate dateTo,
                   @NotNull Double ticketPrice,

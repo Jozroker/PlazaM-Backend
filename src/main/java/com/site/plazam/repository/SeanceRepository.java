@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -41,6 +41,8 @@ public interface SeanceRepository extends MongoRepository<Seance, String> {
     List<Seance> findByDateFromBeforeAndDateToAfterAndHallIdIsIn(LocalDate start,
                                                                  LocalDate end,
                                                                  List<String> hallIds);
+
+    void deleteByDateToBefore(LocalDate date);
 
     @Query("{$and: [" +
             "{'dateFrom' : { $lte: ?0 }}," +
@@ -74,18 +76,28 @@ public interface SeanceRepository extends MongoRepository<Seance, String> {
     @Query("{$or: [" +
             "{'startSeance' : { $gte: ?0, $lte: ?1 }}," +
             "{'endSeance' : { $gte: ?2, $lte: ?3 }}" +
+
+//            "{$and: [" +
+//            "{'startSeance': {$gte: ?0}}," +
+//            "{'startSeance': {$lte: ?1}}" +
+//            "]}," +
+//            "{$and: [" +
+//            "{'endSeance': {$gte: ?0}}," +
+//            "{'endSeance': {$lte: ?1}}" +
+//            "]}" +
+
             "]}")
-    List<Seance> findByStartSeanceBetweenOrEndSeanceBetween(LocalTime start1,
-                                                            LocalTime end1,
-                                                            LocalTime start2,
-                                                            LocalTime end2);
+    List<Seance> findByStartSeanceBetweenOrEndSeanceBetween(LocalDateTime start1,
+                                                            LocalDateTime end1,
+                                                            LocalDateTime start2,
+                                                            LocalDateTime end2);
 
     @Query("{$and: [" +
             "{'startSeance' : { $lt: ?0 }}," +
             "{'endSeance' : { $gt: ?1 }}" +
             "]}")
-    List<Seance> findByStartSeanceBeforeAndEndSeanceAfter(LocalTime start,
-                                                          LocalTime end);
+    List<Seance> findByStartSeanceBeforeAndEndSeanceAfter(LocalDateTime start,
+                                                          LocalDateTime end);
 
     @Query("{$or: [" +
             "{'dateFrom' : { $gte: ?0, $lte: ?1 }}," +

@@ -16,5 +16,9 @@ public interface RatingRepository extends MongoRepository<Rating, String> {
 
     Optional<Rating> findByUserIdAndMovieId(String userId, String movieId);
 
+    void deleteByMovieId(String movieId);
+
+    void deleteByUserId(String userId);
+
 //    Integer countByMovieId(String id);
 }

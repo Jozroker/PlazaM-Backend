@@ -1,5 +1,6 @@
 package com.site.plazam.dto;
 
+import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.dto.parents.UserSimpleDTO;
 import lombok.*;
 
@@ -31,6 +32,8 @@ public class UserForRegistrationDTO extends UserSimpleDTO {
     @NotNull
     private String confirmPassword;
 
+    private CinemaDTO selectedCinema;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,11 +45,12 @@ public class UserForRegistrationDTO extends UserSimpleDTO {
                 Objects.equals(lastName, that.lastName) &&
                 Objects.equals(email, that.email) &&
                 Objects.equals(password, that.password) &&
-                Objects.equals(confirmPassword, that.confirmPassword);
+                Objects.equals(confirmPassword, that.confirmPassword) &&
+                Objects.equals(selectedCinema, that.selectedCinema);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), username, firstName, lastName, email, password, confirmPassword);
+        return Objects.hash(super.hashCode(), username, firstName, lastName, email, password, confirmPassword, selectedCinema);
     }
 }

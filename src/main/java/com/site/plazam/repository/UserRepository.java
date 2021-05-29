@@ -1,5 +1,6 @@
 package com.site.plazam.repository;
 
+import com.site.plazam.domain.Country;
 import com.site.plazam.domain.Role;
 import com.site.plazam.domain.User;
 import org.jetbrains.annotations.NotNull;
@@ -20,59 +21,26 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     Page<User> findByRole(Role role, Pageable pageable);
 
-//    Optional<User> findByUsername(String username);
-//
-//    Optional<User> findByEmail(String email);
+    List<User> findByHomeCountry(Country country);
 
-    Optional<User> findByUsernameOrEmail(String username, String email);
+    Page<User> findByHomeCountry(Country country, Pageable pageable);
 
-    //    @Query(value = "{'banned':true}")
+    Optional<User> findFirstByUsernameOrEmail(String username, String email);
+
+    Optional<User> findByPhone(String phone);
+
     List<User> findByBannedTrue();
 
-    //    @Query(value = "{'banned':true}")
     Page<User> findByBannedTrue(Pageable pageable);
 
     List<User> findByBannedToDate(LocalDate date);
 
-//    @Query(value = "{" +
-//            "$or: [" +
-//            "{'first_name.en':/?0/i}," +
-//            "{'first_name.ua':/?0/i}," +
-//            "{'first_name.pl':/?0/i}," +
-//            "{'last_name.en':/?1/i}," +
-//            "{'last_name.ua':/?1/i}," +
-//            "{'last_name.pl':/?1/i}" +
-//            "]" +
-//            "}")
-//    List<User> findByFirstNameOrLastName(String firstName, String lastName);
-//
-//    @Query(value = "{" +
-//            "$or: [" +
-//            "{'first_name.en':/?0/i}," +
-//            "{'first_name.ua':/?0/i}," +
-//            "{'first_name.pl':/?0/i}," +
-//            "{'last_name.en':/?1/i}," +
-//            "{'last_name.ua':/?1/i}," +
-//            "{'last_name.pl':/?1/i}" +
-//            "]" +
-//            "}")
-//    Page<User> findByFirstNameOrLastName(String firstName, String lastName,
-//                                         Pageable pageable);
-
     @Query(value = "{" +
             "$or: [" +
-            "{'first_name.eng': {$regex: ?0, $options: 'i'}}," +
-            "{'first_name.ukr': {$regex: ?0, $options: 'i'}}," +
-            "{'first_name.pol': {$regex: ?0, $options: 'i'}}," +
-            "{'last_name.eng': {$regex: ?1, $options: 'i'}}," +
-            "{'last_name.ukr': {$regex: ?1, $options: 'i'}}," +
-            "{'last_name.pol': {$regex: ?1, $options: 'i'}}," +
-            "{'first_name.eng': {$regex: ?1, $options: 'i'}}," +
-            "{'first_name.ukr': {$regex: ?1, $options: 'i'}}," +
-            "{'first_name.pol': {$regex: ?1, $options: 'i'}}," +
-            "{'last_name.eng': {$regex: ?0, $options: 'i'}}," +
-            "{'last_name.ukr': {$regex: ?0, $options: 'i'}}," +
-            "{'last_name.pol': {$regex: ?0, $options: 'i'}}," +
+            "{'first_name': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name': {$regex: ?0, $options: 'i'}}," +
             "{'username': {$regex: ?2}}" +
             "]" +
             "}")
@@ -82,18 +50,10 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @Query(value = "{" +
             "$or: [" +
-            "{'first_name.eng': {$regex: ?0, $options: 'i'}}," +
-            "{'first_name.ukr': {$regex: ?0, $options: 'i'}}," +
-            "{'first_name.pol': {$regex: ?0, $options: 'i'}}," +
-            "{'last_name.eng': {$regex: ?1, $options: 'i'}}," +
-            "{'last_name.ukr': {$regex: ?1, $options: 'i'}}," +
-            "{'last_name.pol': {$regex: ?1, $options: 'i'}}," +
-            "{'first_name.eng': {$regex: ?1, $options: 'i'}}," +
-            "{'first_name.ukr': {$regex: ?1, $options: 'i'}}," +
-            "{'first_name.pol': {$regex: ?1, $options: 'i'}}," +
-            "{'last_name.eng': {$regex: ?0, $options: 'i'}}," +
-            "{'last_name.ukr': {$regex: ?0, $options: 'i'}}," +
-            "{'last_name.pol': {$regex: ?0, $options: 'i'}}," +
+            "{'first_name': {$regex: ?0, $options: 'i'}}," +
+            "{'last_name': {$regex: ?1, $options: 'i'}}," +
+            "{'first_name': {$regex: ?1, $options: 'i'}}," +
+            "{'last_name': {$regex: ?0, $options: 'i'}}," +
             "{'username': {$regex: ?2}}" +
             "]" +
             "}")

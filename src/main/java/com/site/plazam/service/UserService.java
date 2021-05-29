@@ -2,10 +2,10 @@ package com.site.plazam.service;
 
 import com.site.plazam.domain.Country;
 import com.site.plazam.domain.Role;
-import com.site.plazam.domain.Sex;
 import com.site.plazam.dto.*;
+import com.site.plazam.dto.parents.MessageSimpleDTO;
 import com.site.plazam.dto.parents.MovieSimpleDTO;
-import com.site.plazam.dto.parents.PictureDTO;
+import com.site.plazam.dto.parents.TicketSimpleDTO;
 import com.site.plazam.dto.parents.UserSimpleDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,28 +17,30 @@ public interface UserService {
 
     UserForSelfInfoDTO save(UserForRegistrationDTO userForRegistrationDTO);
 
-    UserForSelfInfoDTO updateInfo(String id, PictureDTO picture, String username,
-                                  String firstName, String lastName, Sex sex,
-                                  Country country, String city, String about,
-                                  boolean hide18PlusMovies,
-                                  boolean useLightTheme);
+    UserForSelfInfoDTO updateInfo(UserForSelfInfoDTO user);
 
-    UserForSelfInfoDTO updatePassword(String id, String oldPassword,
+    UserForSelfInfoDTO updatePassword(UserForSelfInfoDTO user,
+                                      String oldPassword,
                                       String newPassword,
                                       String confirmPassword);
 
-    UserForSelfInfoDTO updateEmail(String id, String email);
+    UserForSelfInfoDTO updateLists(UserForSelfInfoDTO user);
 
-    UserForSelfInfoDTO updatePhone(String id, String phone);
+    UserForSelfInfoDTO updateEmail(UserForSelfInfoDTO user, String email);
 
-    UserForUsersListDTO updateBannedStatus(UserForUsersListDTO userForUsersListDTO, LocalDate bannedTo);
+    UserForSelfInfoDTO updatePhone(UserForSelfInfoDTO user, String phone);
 
-    void unbanBanned(UserForBannedListDTO userForBannedListDTO);
+    UserForUsersListDTO updateBannedStatus(UserSimpleDTO user,
+                                           LocalDate bannedTo);
 
-    void banReported(UserForReportedListDTO userForReportedListDTO, LocalDate bannedTo);
+    void unbanBanned(UserSimpleDTO user);
 
-    UserForUsersListDTO updateRole(UserForUsersListDTO userForUsersListDTO);
+    void banReported(UserSimpleDTO user, LocalDate bannedTo);
 
+    UserForUsersListDTO updateRole(UserSimpleDTO user);
+
+
+    UserForSelfInfoDTO findByPhone(String phone);
 
     UserForBannedListDTO findUserForBannedListById(String id);
 
@@ -60,6 +62,19 @@ public interface UserService {
 
     Page<UserForUsersListDTO> findUserForUsersListAll(Pageable pageable);
 
+    List<UserForUsersListDTO> findUserForUsersListByHomeCountry(Country country);
+
+    Page<UserForUsersListDTO> findUserForUsersListByHomeCountry(Country country, Pageable pageable);
+
+    List<UserForReportedListDTO> findUserForReportedListByHomeCountry(Country country);
+
+    Page<UserForReportedListDTO> findUserForReportedListByHomeCountry(Country country, Pageable pageable);
+
+    List<UserForBannedListDTO> findUserForBannedListByHomeCountry(Country country);
+
+    Page<UserForBannedListDTO> findUserForBannedListByHomeCountry(Country country,
+                                                                  Pageable pageable);
+
 
     List<UserForUsersListDTO> findUserForUsersListByRole(Role role);
 
@@ -70,7 +85,7 @@ public interface UserService {
     Page<UserForBannedListDTO> findUserForBannedListByRole(Role role,
                                                            Pageable pageable);
 
-    UserForSelfInfoDTO findByUsernameOrEmail(UserForLoginDTO userForLoginDTO);
+    UserForSelfInfoDTO findByUsernameOrEmail(String username, String email);
 
     List<UserForBannedListDTO> findByBannedTrue();
 
@@ -87,17 +102,17 @@ public interface UserService {
     Page<UserForBannedListDTO> findUserForBannedListByFirstNameOrLastNameOrUsername(String firstName, String lastName, String username, Pageable pageable);
 
 
-    UserForSelfInfoDTO updateTicketList(UserForSelfInfoDTO user,
-                                        String ticketId);
+    UserForSelfInfoDTO removeTicketFromTicketList(UserForSelfInfoDTO user,
+                                                  TicketSimpleDTO ticket);
 
-    UserForSelfInfoDTO updateMessageList(UserForSelfInfoDTO user,
-                                         String messageId);
+    UserForSelfInfoDTO removeMessageFromMessageList(UserForSelfInfoDTO user,
+                                                    MessageSimpleDTO message);
 
-    void deleteMovieFromFavouriteMoviesList(MovieSimpleDTO movie);
+    void removeMovieFromFavouriteMoviesList(MovieSimpleDTO movie);
 
-    void deleteMovieFromViewedMoviesList(MovieSimpleDTO movie);
+    void removeMovieFromViewedMoviesList(MovieSimpleDTO movie);
 
-    void deleteMovieFromWaitMoviesList(MovieSimpleDTO movie);
+    void removeMovieFromWaitMoviesList(MovieSimpleDTO movie);
 
     void delete(UserSimpleDTO user);
 

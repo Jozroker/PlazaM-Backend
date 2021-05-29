@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Document(collection = "comment")
 @NoArgsConstructor
@@ -26,7 +26,7 @@ public class Comment {
     private LocalDate date;
 
     @NotNull
-    private LocalTime time;
+    private LocalDateTime time;
 
     @NotNull
     private String text;
@@ -45,7 +45,7 @@ public class Comment {
     private String ratingId;
 
     public Comment(@NotNull LocalDate date,
-                   @NotNull LocalTime time,
+                   @NotNull LocalDateTime time,
                    @NotNull String text,
                    @NotNull String userId,
                    @NotNull String movieId) {
@@ -57,7 +57,7 @@ public class Comment {
     }
 
     public Comment(@NotNull LocalDate date,
-                   @NotNull LocalTime time,
+                   @NotNull LocalDateTime time,
                    @NotNull String text,
                    Boolean reported,
                    @NotNull String userId,

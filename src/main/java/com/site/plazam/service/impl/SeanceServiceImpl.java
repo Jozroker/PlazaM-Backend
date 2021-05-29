@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -120,6 +120,10 @@ public class SeanceServiceImpl implements SeanceService {
     @Override
     @Transactional
     public SeanceForSeancesListDTO save(SeanceCreateDTO seanceCreateDTO) throws TimeAlreadyScheduledException {
+        seanceCreateDTO.setStartSeance(seanceCreateDTO.getStartSeance().withYear(1)
+                .withMonth(1).withDayOfMonth(1).withSecond(0).withNano(0));
+        seanceCreateDTO.setEndSeance(seanceCreateDTO.getEndSeance().withYear(1)
+                .withMonth(1).withDayOfMonth(1).withSecond(0).withNano(0));
         MovieForMoviesListDTO movie =
                 ms.findMovieForMoviesListById(seanceCreateDTO.getMovie().getId());
         //todo if movie release date later than seance dateFrom - throw error
@@ -166,6 +170,11 @@ public class SeanceServiceImpl implements SeanceService {
             ms.addAvailableTechnology(movie, seanceCreateDTO.getHall().getTechnology());
         }
         return sm.toSeanceForSeancesListDTO(sr.save(sm.toEntity(seanceCreateDTO)));
+    }
+
+    @Override
+    public void deleteByDateToBefore(LocalDate date) {
+        sr.deleteByDateToBefore(date);
     }
 
     @Override
@@ -235,13 +244,17 @@ public class SeanceServiceImpl implements SeanceService {
     }
 
     @Override
-    public List<SeanceForSeancesListDTO> findByStartSeanceBetweenOrEndSeanceBetween(LocalTime start, LocalTime end) {
+    public List<SeanceForSeancesListDTO> findByStartSeanceBetweenOrEndSeanceBetween(LocalDateTime start, LocalDateTime end) {
+        start = start.withYear(1).withMonth(1).withDayOfMonth(1).withSecond(0).withNano(0);
+        end = end.withYear(1).withMonth(1).withDayOfMonth(1).withSecond(0).withNano(0);
         return sr.findByStartSeanceBetweenOrEndSeanceBetween(start, end,
                 start, end).stream().map(sm::toSeanceForSeancesListDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<SeanceForSeancesListDTO> findByStartSeanceBeforeAndEndSeanceAfter(LocalTime start, LocalTime end) {
+    public List<SeanceForSeancesListDTO> findByStartSeanceBeforeAndEndSeanceAfter(LocalDateTime start, LocalDateTime end) {
+        start = start.withYear(1).withMonth(1).withDayOfMonth(1).withSecond(0).withNano(0);
+        end = end.withYear(1).withMonth(1).withDayOfMonth(1).withSecond(0).withNano(0);
         return sr.findByStartSeanceBeforeAndEndSeanceAfter(start, end).stream().map(sm::toSeanceForSeancesListDTO).collect(Collectors.toList());
     }
 

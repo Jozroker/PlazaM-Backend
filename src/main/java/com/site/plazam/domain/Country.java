@@ -9,7 +9,8 @@ import java.io.File;
 
 public enum Country {
 
-    GREAT_BRITAIN(generateFlagPicture("src/main/webapp/resources/img/png/en.png")),
+    UNITED_KINGDOM(generateFlagPicture("src/main/webapp/resources/img/png/en" +
+            ".png")),
     UKRAINE(generateFlagPicture("src/main/webapp/resources/img/png/ua.png")),
     POLAND(generateFlagPicture("src/main/webapp/resources/img/png/pl.png"));
 

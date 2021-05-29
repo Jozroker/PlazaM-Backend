@@ -6,7 +6,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class CommentCreateDTO extends CommentSimpleDTO {
     private LocalDate date;
 
     @NotNull
-    private LocalTime time;
+    private LocalDateTime time;
 
     @NotNull
     private UserForSelfInfoDTO user;

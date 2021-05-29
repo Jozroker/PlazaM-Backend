@@ -34,9 +34,6 @@ public class UserForUsersListDTO extends UserSimpleDTO {
     private PictureDTO picture;
 
     @NotNull
-    private boolean banned;
-
-    @NotNull
     private Country country;
 
     @Override
@@ -45,8 +42,7 @@ public class UserForUsersListDTO extends UserSimpleDTO {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         UserForUsersListDTO that = (UserForUsersListDTO) o;
-        return banned == that.banned &&
-                Objects.equals(username, that.username) &&
+        return Objects.equals(username, that.username) &&
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&
                 Objects.equals(email, that.email) &&
@@ -57,6 +53,6 @@ public class UserForUsersListDTO extends UserSimpleDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), username, firstName, lastName, email, phone, picture, banned, country);
+        return Objects.hash(super.hashCode(), username, firstName, lastName, email, phone, picture, country);
     }
 }

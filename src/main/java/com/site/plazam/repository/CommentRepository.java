@@ -29,4 +29,8 @@ List<Comment> findByReportedTrue();
 
     Page<Comment> findByUserIdAndMovieId(String userId, String movieId,
                                          Pageable pageable);
+
+    void deleteByUserId(String id);
+
+    void deleteByMovieId(String id);
 }

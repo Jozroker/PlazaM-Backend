@@ -13,4 +13,6 @@ public interface TicketRepository extends MongoRepository<Ticket, String> {
     List<Ticket> findByDate(LocalDate date);
 
     List<Ticket> findBySeanceId(String id);
+
+    void deleteByDateBefore(LocalDate date);
 }

@@ -7,6 +7,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ public class MovieForMoviesListDTO extends MovieSimpleDTO {
     @NotNull
     private double imdbRating;
 
-    private Set<Technology> availableTechnologies;
+    private Set<Technology> availableTechnologies = new HashSet<>();
 
     @NotNull
     private LocalDate releaseDate;

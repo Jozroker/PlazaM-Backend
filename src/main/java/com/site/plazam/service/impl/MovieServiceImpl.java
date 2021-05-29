@@ -137,6 +137,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public MovieCreateDTO findMovieCreateById(String id) {
+        return mr.findById(id).map(mm::toMovieCreateDTO).orElse(null);
+    }
+
+    @Override
     public MovieForResultListDTO findMovieForResultListById(String id) {
         return mr.findById(id).map(mm::toMovieForResultListDTO).orElse(null);
     }
@@ -308,11 +313,11 @@ public class MovieServiceImpl implements MovieService {
             ps.delete(movieSearch.getPosterPicture(), MoviePicture.class);
         }
         movieSearch.getGalleryPictures().forEach(picture -> ps.delete(picture, MoviePicture.class));
-        cs.findByMovie(movieSearch).forEach(cs::delete);
-        rs.findByMovie(movieSearch).forEach(rs::delete);
-        us.deleteMovieFromFavouriteMoviesList(movie);
-        us.deleteMovieFromViewedMoviesList(movie);
-        us.deleteMovieFromWaitMoviesList(movie);
+        cs.deleteByMovie(movie);
+        rs.deleteByMovie(movie);
+        us.removeMovieFromFavouriteMoviesList(movie);
+        us.removeMovieFromViewedMoviesList(movie);
+        us.removeMovieFromWaitMoviesList(movie);
         mr.deleteById(movie.getId());
     }
 

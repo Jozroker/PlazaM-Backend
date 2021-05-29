@@ -6,7 +6,7 @@ import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,9 +21,9 @@ public class SeanceSimpleDTO {
     private String id;
 
     @NotNull
-    private LocalTime startSeance;
+    private LocalDateTime startSeance;
 
-    private LocalTime endSeance;
+    private LocalDateTime endSeance;
 
     @NotNull
     private LocalDate dateFrom;

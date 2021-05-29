@@ -36,6 +36,7 @@ public abstract class UserMapper {
     @Autowired
     CinemaService cs;
 
+    @Mapping(source = "selectedCinema.id", target = "selectedCinemaId")
     public abstract User toEntity(UserForRegistrationDTO userForRegistrationDTO);
 
     public abstract UserForResultListDTO toUserForResultListDTO(User user);
@@ -64,12 +65,6 @@ public abstract class UserMapper {
             "toMessage")
     @Mapping(source = "selectedCinemaId", target = "selectedCinema",
             qualifiedByName = "toCinema")
-    @Mapping(source = "favouriteMovieIds", target = "favouriteMovies",
-            qualifiedByName = "toMovie")
-    @Mapping(source = "viewedMovieIds", target = "viewedMovies",
-            qualifiedByName = "toMovie")
-    @Mapping(source = "waitMovieIds", target = "waitMovies",
-            qualifiedByName = "toMovie")
     public abstract UserForSelfInfoDTO toUserForSelfInfoDTO(User user);
 
     @Mapping(source = "homeCountry", target = "country")
@@ -105,9 +100,5 @@ public abstract class UserMapper {
 
     CinemaDTO toCinema(String id) {
         return cs.findById(id);
-    }
-
-    List<MovieForMoviesListDTO> toMovie(List<String> movieIds) {
-        return movieIds.stream().map(ms::findMovieForMoviesListById).collect(Collectors.toList());
     }
 }

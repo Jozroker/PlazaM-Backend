@@ -26,6 +26,8 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketSimpleDTO save(TicketSimpleDTO ticketSimpleDTO) {
+        //todo validation fina all by seance and if plase|row is busy - throw
+        // error
         return tm.toDTO(tr.save(tm.toEntity(ticketSimpleDTO)));
     }
 
@@ -48,6 +50,11 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<TicketSimpleDTO> findByDate(LocalDate date) {
         return tr.findByDate(date).stream().map(tm::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteByDateBefore(LocalDate date) {
+        tr.deleteByDateBefore(date);
     }
 
     @Override

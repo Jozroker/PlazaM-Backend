@@ -10,6 +10,7 @@ import com.site.plazam.dto.parents.UserSimpleDTO;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,26 +56,21 @@ public class UserForSelfInfoDTO extends UserSimpleDTO {
     private boolean hide18PlusMovies;
 
     @NotNull
-    private boolean banned;
-
-    @NotNull
     private boolean useRealName;
 
-    private List<TicketSimpleDTO> tickets;
+    private List<TicketSimpleDTO> tickets = new ArrayList<>();
 
     private Lang selectedLang;
 
     private CinemaDTO selectedCinema;
 
-    private List<MessageForUserDTO> messages;
+    private List<MessageForUserDTO> messages = new ArrayList<>();
 
-    private List<MovieForMoviesListDTO> favouriteMovies;
+    private List<String> favouriteMovieIds = new ArrayList<>();
 
-    private List<MovieForMoviesListDTO> viewedMovies;
+    private List<String> viewedMovieIds = new ArrayList<>();
 
-    private List<MovieForMoviesListDTO> waitMovies;
-    //todo fix this lists to less-data
-
+    private List<String> waitMovieIds = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
@@ -86,7 +82,6 @@ public class UserForSelfInfoDTO extends UserSimpleDTO {
                 emailConfirmed == that.emailConfirmed &&
                 useLightTheme == that.useLightTheme &&
                 hide18PlusMovies == that.hide18PlusMovies &&
-                banned == that.banned &&
                 useRealName == that.useRealName &&
                 Objects.equals(username, that.username) &&
                 Objects.equals(firstName, that.firstName) &&
@@ -102,13 +97,13 @@ public class UserForSelfInfoDTO extends UserSimpleDTO {
                 selectedLang == that.selectedLang &&
                 Objects.equals(selectedCinema, that.selectedCinema) &&
                 Objects.equals(messages, that.messages) &&
-                Objects.equals(favouriteMovies, that.favouriteMovies) &&
-                Objects.equals(viewedMovies, that.viewedMovies) &&
-                Objects.equals(waitMovies, that.waitMovies);
+                Objects.equals(favouriteMovieIds, that.favouriteMovieIds) &&
+                Objects.equals(viewedMovieIds, that.viewedMovieIds) &&
+                Objects.equals(waitMovieIds, that.waitMovieIds);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), username, firstName, lastName, email, phone, picture, country, homeCity, sex, aboutMe, phoneConfirmed, emailConfirmed, useLightTheme, hide18PlusMovies, banned, useRealName, tickets, selectedLang, selectedCinema, messages, favouriteMovies, viewedMovies, waitMovies);
+        return Objects.hash(super.hashCode(), username, firstName, lastName, email, phone, picture, country, homeCity, sex, aboutMe, phoneConfirmed, emailConfirmed, useLightTheme, hide18PlusMovies, useRealName, tickets, selectedLang, selectedCinema, messages, favouriteMovieIds, viewedMovieIds, waitMovieIds);
     }
 }

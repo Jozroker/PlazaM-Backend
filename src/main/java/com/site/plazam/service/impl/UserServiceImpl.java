@@ -1,6 +1,12 @@
 package com.site.plazam.service.impl;
 
-import com.site.plazam.domain.*;
+import com.maxmind.geoip2.WebServiceClient;
+import com.maxmind.geoip2.model.CityResponse;
+import com.maxmind.geoip2.model.CountryResponse;
+import com.site.plazam.domain.Country;
+import com.site.plazam.domain.Role;
+import com.site.plazam.domain.User;
+import com.site.plazam.domain.UserPicture;
 import com.site.plazam.dto.*;
 import com.site.plazam.dto.parents.*;
 import com.site.plazam.repository.UserRepository;
@@ -13,9 +19,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +55,11 @@ public class UserServiceImpl implements UserService {
     @Lazy
     private final MessageService ms;
 
+    @Lazy
+    private final CinemaService cms;
+
+    BCryptPasswordEncoder passwordEncoder;
+
     public UserServiceImpl(UserRepository userRepository,
                            UserMapper userMapper,
                            @Lazy PictureService pictureService,
@@ -51,7 +67,9 @@ public class UserServiceImpl implements UserService {
                            @Lazy TicketService ticketService,
                            @Lazy CommentService commentService,
                            @Lazy RatingService ratingService,
-                           @Lazy MessageService messageService) {
+                           @Lazy MessageService messageService,
+                           @Lazy CinemaService cinemaService,
+                           BCryptPasswordEncoder passwordEncoder) {
         this.ur = userRepository;
         this.um = userMapper;
         this.mt = mongoTemplate;
@@ -60,92 +78,174 @@ public class UserServiceImpl implements UserService {
         this.cs = commentService;
         this.rs = ratingService;
         this.ms = messageService;
-    }
-
-    @Override
-    public UserForSelfInfoDTO save(UserForRegistrationDTO userForRegistrationDTO) {
-        return um.toUserForSelfInfoDTO(ur.save(um.toEntity(userForRegistrationDTO)));
-    }
-
-    @Override
-    public UserForUsersListDTO updateBannedStatus(UserForUsersListDTO userForUsersListDTO, LocalDate bannedTo) {
-        Query query =
-                new Query(Criteria.where("id").is(userForUsersListDTO.getId()));
-        Update update = new Update().set("banned",
-                userForUsersListDTO.isBanned()).set("bannedToDate", bannedTo);
-        return um.toUserForUsersListDTO(mt.findAndModify(query, update,
-                User.class));
+        this.cms = cinemaService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional
-    public UserForSelfInfoDTO updateInfo(String id,
-                                         PictureDTO picture,
-                                         String username,
-                                         String firstName,
-                                         String lastName,
-                                         Sex sex,
-                                         Country country,
-                                         String city,
-                                         String about,
-                                         boolean hide18PlusMovies,
-                                         boolean useLightTheme) {
-        Query query = new Query(Criteria.where("id").is(id));
-        Update update = new Update()
-                .set("username", username).set("firstName", firstName)
-                .set("lastName", lastName).set("sex", sex)
-                .set("homeCountry", country).set("homeCity", city)
-                .set("aboutMe", about).set("useLightTheme", useLightTheme)
-                .set("hide18PlusMovies", hide18PlusMovies);
-        if (picture != null) {
-            if (picture.getId() == null) {
-                UserForCommentDTO user = findUserForCommentById(id);
-                ps.delete(user.getPicture(), UserPicture.class);
-                picture = ps.save(picture, UserPicture.class);
-                update.set("pictureId", picture.getId());
-            }
-        }
-        return um.toUserForSelfInfoDTO(mt.findAndModify(query, update, User.class));
-    }
+    public UserForSelfInfoDTO save(UserForRegistrationDTO userForRegistrationDTO) {
+        //get cinema by ip geolocation and then set it or default to register
+        // model
+        UserForSelfInfoDTO user =
+                findByUsernameOrEmail(userForRegistrationDTO.getUsername(),
+                        userForRegistrationDTO.getEmail());
+        if (userForRegistrationDTO.getPassword().equals(userForRegistrationDTO.getConfirmPassword()) && user == null) {
+            userForRegistrationDTO.setPassword(passwordEncoder.encode(userForRegistrationDTO.getPassword()));
+            try (WebServiceClient client =
+                         new WebServiceClient.Builder(559220,
+                                 "7hh3snpPVY1uaoE4").host("geolite.info").build()) {
+                URL checkIpService = new URL("http://checkip.amazonaws.com");
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        checkIpService.openStream()));
+                String myPublicIp = br.readLine();
 
-    @Override
-    public UserForSelfInfoDTO updatePassword(String id,
-                                             String oldPassword,
-                                             String newPassword,
-                                             String confirmPassword) {
-        //todo create this use bcryptencoder
+                CountryResponse countryResponse =
+                        client.country(InetAddress.getByName(myPublicIp));
+                CityResponse cityResponse =
+                        client.city(InetAddress.getByName(myPublicIp));
+                CinemaDTO cinema =
+                        cms.findFirstByCountryAndCity(Country.valueOf(countryResponse.getCountry().getName().replace(' ', '_').toUpperCase()),
+                                cityResponse.getCity().getName());
+                if (cinema == null) {
+                    cinema = cms.findAll().get(0);
+                }
+                userForRegistrationDTO.setSelectedCinema(cinema);
+            } catch (Exception e) {
+                userForRegistrationDTO.setSelectedCinema(cms.findAll().get(0));
+            }
+            return um.toUserForSelfInfoDTO(ur.save(um.toEntity(userForRegistrationDTO)));
+        }
         return null;
     }
 
     @Override
-    public UserForSelfInfoDTO updateEmail(String id, String email) {
-        Query query = new Query(Criteria.where("id").is(id));
-        Update update = new Update().set("email", email);
-        return um.toUserForSelfInfoDTO(mt.findAndModify(query, update,
-                User.class));
-    }
-
-    @Override
-    public UserForSelfInfoDTO updatePhone(String id, String phone) {
-        Query query = new Query(Criteria.where("id").is(id));
-        Update update = new Update().set("phone", phone);
-        return um.toUserForSelfInfoDTO(mt.findAndModify(query, update,
-                User.class));
-    }
-
-    @Override
-    public void unbanBanned(UserForBannedListDTO userForBannedListDTO) {
+    @Transactional
+    public UserForUsersListDTO updateBannedStatus(UserSimpleDTO user,
+                                                  LocalDate bannedTo) {
         Query query =
-                new Query(Criteria.where("id").is(userForBannedListDTO.getId()));
+                new Query(Criteria.where("id").is(user.getId()));
+        Update update = new Update().set("banned",
+                user.isBanned()).set("bannedToDate", bannedTo);
+        mt.findAndModify(query, update,
+                User.class);
+        return findUserForUsersListById(user.getId());
+    }
+
+    @Override
+    @Transactional
+    public UserForSelfInfoDTO updateInfo(UserForSelfInfoDTO user) {
+        Query query = new Query(Criteria.where("id").is(user.getId()));
+        Update update = new Update()
+                .set("username", user.getUsername()).set("firstName", user.getFirstName())
+                .set("lastName", user.getLastName()).set("sex", user.getSex())
+                .set("homeCountry", user.getCountry()).set("homeCity",
+                        user.getHomeCity()).set("aboutMe", user.getAboutMe())
+                .set("useLightTheme", user.isUseLightTheme())
+                .set("hide18PlusMovies", user.isHide18PlusMovies());
+        if (user.getPicture() != null) {
+            if (user.getPicture().getId() == null) {
+                UserForCommentDTO userForComment =
+                        findUserForCommentById(user.getId());
+                ps.delete(userForComment.getPicture(), UserPicture.class);
+                PictureDTO picture = ps.save(user.getPicture(), UserPicture.class);
+                update.set("pictureId", picture.getId());
+            }
+        }
+        mt.findAndModify(query, update, User.class);
+        //todo mapping error???  .findAndModify().find(query) - correct
+        return findUserForSelfInfoById(user.getId());
+    }
+
+    //    public UserForSelfInfoDTO updatePassword(String id,
+//                                             String oldPassword,
+//                                             String newPassword,
+//                                             String con
+    @Override
+    @Transactional
+    public UserForSelfInfoDTO updatePassword(UserForSelfInfoDTO user,
+                                             String oldPassword,
+                                             String newPassword,
+                                             String passwordConfirm) {
+//        UserDetails user = (UserDetails) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+//        new BCryptPasswordEncoder().matches("roots", user.getPassword());
+        //todo check this func
+        User userFromDB = ur.findById(user.getId()).orElse(null);
+        if (newPassword.equals(passwordConfirm) && passwordEncoder.matches(oldPassword, userFromDB.getPassword())) {
+            Query query = new Query(Criteria.where("id").is(user.getId()));
+            Update update = new Update().set("password",
+                    passwordEncoder.encode(newPassword));
+            mt.findAndModify(query, update,
+                    User.class);
+            return findUserForSelfInfoById(user.getId());
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public UserForSelfInfoDTO updateEmail(UserForSelfInfoDTO user, String email) {
+        UserForSelfInfoDTO userExists = findByUsernameOrEmail(email, email);
+        if (userExists == null) {
+            Query query = new Query(Criteria.where("id").is(user.getId()));
+            Update update = new Update().set("email", email);
+            mt.findAndModify(query, update,
+                    User.class);
+            return findUserForSelfInfoById(user.getId());
+        }
+        return null;
+    }
+
+    @Override
+    public UserForSelfInfoDTO findByPhone(String phone) {
+        return ur.findByPhone(phone).map(um::toUserForSelfInfoDTO).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public UserForSelfInfoDTO updateLists(UserForSelfInfoDTO user) {
+        Query query = new Query(Criteria.where("id").is(user.getId()));
+        List<String> ticketIds =
+                user.getTickets().stream().map(TicketSimpleDTO::getId).collect(Collectors.toList());
+        List<String> messageIds =
+                user.getMessages().stream().map(MessageSimpleDTO::getId).collect(Collectors.toList());
+        Update update = new Update().set("ticketIds", ticketIds).set(
+                "messageIds", messageIds).set("favouriteMovieIds",
+                user.getFavouriteMovieIds()).set("viewedMovieIds",
+                user.getViewedMovieIds()).set(
+                "waitMovieIds", user.getWaitMovieIds());
+        mt.findAndModify(query, update,
+                User.class);
+        return findUserForSelfInfoById(user.getId());
+    }
+
+    @Override
+    @Transactional
+    public UserForSelfInfoDTO updatePhone(UserForSelfInfoDTO user, String phone) {
+        UserForSelfInfoDTO userExists = findByPhone(phone);
+        if (userExists == null) {
+            Query query = new Query(Criteria.where("id").is(user.getId()));
+            Update update = new Update().set("phone", phone);
+            mt.findAndModify(query, update,
+                    User.class);
+            return findUserForSelfInfoById(user.getId());
+        }
+        return null;
+    }
+
+    @Override
+    public void unbanBanned(UserSimpleDTO user) {
+        Query query =
+                new Query(Criteria.where("id").is(user.getId()));
         Update update = new Update().set("banned", false).set("bannedToDate",
                 null);
         mt.findAndModify(query, update, User.class);
     }
 
     @Override
-    public void banReported(UserForReportedListDTO userForReportedListDTO, LocalDate bannedTo) {
+    public void banReported(UserSimpleDTO user, LocalDate bannedTo) {
         Query query =
-                new Query(Criteria.where("id").is(userForReportedListDTO.getId()));
+                new Query(Criteria.where("id").is(user.getId()));
         Update update = new Update().set("banned", true).set("bannedToDate",
                 bannedTo);
         mt.findAndModify(query, update, User.class);
@@ -153,13 +253,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserForUsersListDTO updateRole(UserForUsersListDTO userForUsersListDTO) {
+    public UserForUsersListDTO updateRole(UserSimpleDTO user) {
         Query query =
-                new Query(Criteria.where("id").is(userForUsersListDTO.getId()));
+                new Query(Criteria.where("id").is(user.getId()));
         Update update = new Update().set("role",
-                userForUsersListDTO.getRole());
-        return um.toUserForUsersListDTO(mt.findAndModify(query, update,
-                User.class));
+                user.getRole());
+        mt.findAndModify(query, update,
+                User.class);
+        return findUserForUsersListById(user.getId());
     }
 
     @Override
@@ -189,7 +290,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserForBannedListDTO> findUserForBannedListAll() {
-        return ur.findAll().stream().map(um::toUserForBannedListDTO).collect(Collectors.toList());
+        return ur.findByBannedTrue().stream().map(um::toUserForBannedListDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -233,9 +334,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserForSelfInfoDTO findByUsernameOrEmail(UserForLoginDTO userForLoginDTO) {
-        return ur.findByUsernameOrEmail(userForLoginDTO.getEmailOrUsername(),
-                userForLoginDTO.getEmailOrUsername()).map(um::toUserForSelfInfoDTO).orElse(null);
+    public List<UserForUsersListDTO> findUserForUsersListByHomeCountry(Country country) {
+        return ur.findByHomeCountry(country).stream().map(um::toUserForUsersListDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<UserForUsersListDTO> findUserForUsersListByHomeCountry(Country country, Pageable pageable) {
+        return ur.findByHomeCountry(country, pageable).map(um::toUserForUsersListDTO);
+    }
+
+    @Override
+    public List<UserForReportedListDTO> findUserForReportedListByHomeCountry(Country country) {
+        return ur.findByHomeCountry(country).stream().map(um::toUserForReportedListDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<UserForReportedListDTO> findUserForReportedListByHomeCountry(Country country, Pageable pageable) {
+        return ur.findByHomeCountry(country, pageable).map(um::toUserForReportedListDTO);
+    }
+
+    @Override
+    public List<UserForBannedListDTO> findUserForBannedListByHomeCountry(Country country) {
+        return ur.findByHomeCountry(country).stream().map(um::toUserForBannedListDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<UserForBannedListDTO> findUserForBannedListByHomeCountry(Country country, Pageable pageable) {
+        return ur.findByHomeCountry(country, pageable).map(um::toUserForBannedListDTO);
+    }
+
+    @Override
+    public UserForSelfInfoDTO findByUsernameOrEmail(String username,
+                                                    String email) {
+        return ur.findFirstByUsernameOrEmail(username, email).map(um::toUserForSelfInfoDTO).orElse(null);
     }
 
     @Override
@@ -278,74 +409,69 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserForSelfInfoDTO updateTicketList(UserForSelfInfoDTO user, String ticketId) {
+    @Transactional
+    public UserForSelfInfoDTO removeTicketFromTicketList(UserForSelfInfoDTO user, TicketSimpleDTO ticket) {
         List<String> newTicketList =
-                user.getTickets().stream().map(TicketSimpleDTO::getId).filter(id -> !id.equals(ticketId)).collect(Collectors.toList());
+                user.getTickets().stream().map(TicketSimpleDTO::getId).filter(id -> !id.equals(ticket.getId())).collect(Collectors.toList());
         Query query = new Query(Criteria.where("id").is(user.getId()));
         Update update = new Update().set("ticketIds", newTicketList);
-        return um.toUserForSelfInfoDTO(mt.findAndModify(query, update,
-                User.class));
+        mt.findAndModify(query, update,
+                User.class);
+        return findUserForSelfInfoById(user.getId());
     }
 
     @Override
-    public UserForSelfInfoDTO updateMessageList(UserForSelfInfoDTO user, String messageId) {
+    @Transactional
+    public UserForSelfInfoDTO removeMessageFromMessageList(UserForSelfInfoDTO user, MessageSimpleDTO message) {
         List<String> newMessageList =
-                user.getMessages().stream().map(MessageForUserDTO::getId).filter(id -> !id.equals(messageId)).collect(Collectors.toList());
+                user.getMessages().stream().map(MessageForUserDTO::getId).filter(id -> !id.equals(message.getId())).collect(Collectors.toList());
         Query query = new Query(Criteria.where("id").is(user.getId()));
         Update update = new Update().set("messageIds", newMessageList);
-        return um.toUserForSelfInfoDTO(mt.findAndModify(query, update,
-                User.class));
+        mt.findAndModify(query, update,
+                User.class);
+        return findUserForSelfInfoById(user.getId());
     }
 
     @Override
-    public void deleteMovieFromFavouriteMoviesList(MovieSimpleDTO movie) {
+    @Transactional
+    public void removeMovieFromFavouriteMoviesList(MovieSimpleDTO movie) {
         List<UserForSelfInfoDTO> users = ur.findByFavouriteMovieIdsContains(movie.getId())
                 .stream().map(um::toUserForSelfInfoDTO).collect(Collectors.toList());
         for (UserForSelfInfoDTO user : users) {
+            user.getFavouriteMovieIds().remove(movie.getId());
             Query query = new Query(Criteria.where("id").is(user.getId()));
-            List<String> newFavouriteList =
-                    user.getFavouriteMovies().stream()
-                            .map(MovieForMoviesListDTO::getId)
-                            .filter(id -> !id.equals(movie.getId()))
-                            .collect(Collectors.toList());
             Update update = new Update().set("favouriteMovieIds",
-                    newFavouriteList);
+                    user.getFavouriteMovieIds());
             mt.findAndModify(query, update, User.class);
         }
 
     }
 
     @Override
-    public void deleteMovieFromViewedMoviesList(MovieSimpleDTO movie) {
+    @Transactional
+    public void removeMovieFromViewedMoviesList(MovieSimpleDTO movie) {
         List<UserForSelfInfoDTO> users = ur.findByViewedMovieIdsContains(movie.getId())
                 .stream().map(um::toUserForSelfInfoDTO).collect(Collectors.toList());
         for (UserForSelfInfoDTO user : users) {
+            user.getViewedMovieIds().remove(movie.getId());
             Query query = new Query(Criteria.where("id").is(user.getId()));
-            List<String> newViewedList =
-                    user.getViewedMovies().stream()
-                            .map(MovieForMoviesListDTO::getId)
-                            .filter(id -> !id.equals(movie.getId()))
-                            .collect(Collectors.toList());
             Update update = new Update().set("viewedMovieIds",
-                    newViewedList);
+                    user.getViewedMovieIds());
             mt.findAndModify(query, update, User.class);
         }
 
     }
 
     @Override
-    public void deleteMovieFromWaitMoviesList(MovieSimpleDTO movie) {
+    @Transactional
+    public void removeMovieFromWaitMoviesList(MovieSimpleDTO movie) {
         List<UserForSelfInfoDTO> users = ur.findByWaitMovieIdsContains(movie.getId())
                 .stream().map(um::toUserForSelfInfoDTO).collect(Collectors.toList());
         for (UserForSelfInfoDTO user : users) {
+            user.getWaitMovieIds().remove(movie.getId());
             Query query = new Query(Criteria.where("id").is(user.getId()));
-            List<String> newWaitList =
-                    user.getWaitMovies().stream()
-                            .map(MovieForMoviesListDTO::getId)
-                            .filter(id -> !id.equals(movie.getId()))
-                            .collect(Collectors.toList());
             Update update = new Update().set("waitMovieIds",
-                    newWaitList);
+                    user.getWaitMovieIds());
             mt.findAndModify(query, update, User.class);
         }
     }
@@ -358,8 +484,8 @@ public class UserServiceImpl implements UserService {
         if (userSearch.getPicture() != null) {
             ps.delete(userSearch.getPicture(), UserPicture.class);
         }
-        rs.findByUser(userSearch).forEach(rs::delete);
-        cs.findByUser(userSearch).forEach(cs::delete);
+        rs.deleteByUser(user);
+        cs.deleteByUser(user);
         userSearch.getMessages().stream().map(message -> {
             MessageSimpleDTO messageSimpleDTO = new MessageSimpleDTO();
             messageSimpleDTO.setId(message.getId());

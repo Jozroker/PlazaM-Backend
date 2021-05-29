@@ -29,6 +29,8 @@ public interface MovieService {
 
     MovieForResultListDTO findMovieForResultListById(String id);
 
+    MovieCreateDTO findMovieCreateById(String id);
+
     MovieFullDTO findMovieFullById(String id);
 
 

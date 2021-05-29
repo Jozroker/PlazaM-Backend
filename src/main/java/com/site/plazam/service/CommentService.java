@@ -3,6 +3,8 @@ package com.site.plazam.service;
 import com.site.plazam.domain.Role;
 import com.site.plazam.dto.*;
 import com.site.plazam.dto.parents.CommentSimpleDTO;
+import com.site.plazam.dto.parents.MovieSimpleDTO;
+import com.site.plazam.dto.parents.UserSimpleDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -57,6 +59,10 @@ public interface CommentService {
     Page<CommentForReportedListDTO> findByReportedTrue(Pageable pageable);
 
     void delete(CommentSimpleDTO comment);
+
+    void deleteByMovie(MovieSimpleDTO movie);
+
+    void deleteByUser(UserSimpleDTO user);
 
     void deleteAll();
 }

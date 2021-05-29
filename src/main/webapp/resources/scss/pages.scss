@@ -1,0 +1,63 @@
+@import "default";
+@import "fonts";
+
+#pages {
+  .line {
+    margin: auto;
+  }
+
+  .pages {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 32px;
+    color: $gray-light;
+    margin: auto;
+    display: flex;
+
+    & > div {
+      width: 32px;
+      height: 32px;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .selected {
+      font-size: 22px;
+      color: $maroon;
+    }
+
+    .page, .first, .last {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .underline {
+    width: 32px;
+    height: 1px;
+    background-color: $maroon;
+    position: relative;
+    left: 0;
+  }
+}
+
+#pages-arrow-left, #pages-arrow-right {
+  margin: 0 15px;
+  font-size: 14px;
+
+  &:hover {
+    color: $maroon;
+    cursor: pointer;
+  }
+}
+
+#pages-arrow-left::before {
+  font-family: "icomoon" !important;
+  content: "\f053";
+}
+
+#pages-arrow-right::before {
+  font-family: "icomoon" !important;
+  content: "\f054";
+}

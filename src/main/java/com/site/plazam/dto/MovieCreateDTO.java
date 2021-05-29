@@ -19,12 +19,12 @@ import java.util.*;
 public class MovieCreateDTO extends MovieSimpleDTO {
 
     @NotNull
-    private Map<String, String> name;
+    private Map<String, String> name = new HashMap<>();
 
-    private Map<String, String> surname;
+    private Map<String, String> surname = new HashMap<>();
 
     @NotNull
-    private Map<String, String> fullName;
+    private Map<String, String> fullName = new HashMap<>();
 
     private PictureDTO posterPicture;
 

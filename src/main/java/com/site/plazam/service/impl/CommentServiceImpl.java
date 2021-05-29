@@ -4,6 +4,7 @@ import com.site.plazam.domain.Comment;
 import com.site.plazam.domain.Role;
 import com.site.plazam.dto.*;
 import com.site.plazam.dto.parents.CommentSimpleDTO;
+import com.site.plazam.dto.parents.MovieSimpleDTO;
 import com.site.plazam.dto.parents.UserSimpleDTO;
 import com.site.plazam.repository.CommentRepository;
 import com.site.plazam.service.CommentService;
@@ -18,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,17 +47,22 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public CommentForMovieDTO save(CommentCreateDTO commentCreateDTO) {
+        commentCreateDTO.setTime(commentCreateDTO.getTime().withYear(1).withMonth(1)
+                .withDayOfMonth(1).withSecond(0).withNano(0));
         return cm.toCommentForMovieDTO(cr.save(cm.toEntity(commentCreateDTO)));
     }
 
     @Override
+    @Transactional
     public CommentForCommentsListDTO updateCommentText(CommentForCommentsListDTO commentForCommentsListDTO) {
         Query query =
                 new Query(Criteria.where("id").is(commentForCommentsListDTO.getId()));
         Update update = new Update().set("text", commentForCommentsListDTO.getText());
-        return cm.toCommentForCommentsListDTO(mt.findAndModify(query, update,
-                Comment.class));
+        mt.findAndModify(query, update,
+                Comment.class);
+        return findCommentForCommentsListById(commentForCommentsListDTO.getId());
     }
 
     @Override
@@ -119,6 +126,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public List<CommentForReportedListDTO> findCommentForReportedListByFirstNameOrLastNameOrUsername(String firstName, String lastName, String username) {
         List<String> usersIds =
                 us.findUserForUsersListByFirstNameOrLastNameOrUsername(firstName, lastName, username)
@@ -176,6 +184,16 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void delete(CommentSimpleDTO comment) {
         cr.deleteById(comment.getId());
+    }
+
+    @Override
+    public void deleteByMovie(MovieSimpleDTO movie) {
+        cr.deleteByMovieId(movie.getId());
+    }
+
+    @Override
+    public void deleteByUser(UserSimpleDTO user) {
+        cr.deleteByUserId(user.getId());
     }
 
     @Override
