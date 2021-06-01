@@ -76,13 +76,15 @@ public class PictureServiceImpl implements PictureService {
 
     @Override
     public void delete(PictureDTO picture, Class className) {
-        if (picture.getId() != null) {
-            if (className == ActorPicture.class) {
-                apr.deleteById(picture.getId());
-            } else if (className == MoviePicture.class) {
-                mpr.deleteById(picture.getId());
-            } else if (className == UserPicture.class) {
-                upr.deleteById(picture.getId());
+        if (picture != null) {
+            if (picture.getId() != null) {
+                if (className == ActorPicture.class) {
+                    apr.deleteById(picture.getId());
+                } else if (className == MoviePicture.class) {
+                    mpr.deleteById(picture.getId());
+                } else if (className == UserPicture.class) {
+                    upr.deleteById(picture.getId());
+                }
             }
         }
     }

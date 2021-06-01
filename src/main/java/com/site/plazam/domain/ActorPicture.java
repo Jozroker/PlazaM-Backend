@@ -25,6 +25,9 @@ public class ActorPicture {
     @Field(name = "binary_picture")
     private Binary picture;
 
+    @NotNull
+    private String format;
+
     public ActorPicture(@NotNull Binary picture) {
         this.picture = picture;
     }

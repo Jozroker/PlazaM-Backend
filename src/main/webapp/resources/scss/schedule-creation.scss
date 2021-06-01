@@ -105,7 +105,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          flex-direction: column;
+          //flex-direction: column;
           position: relative;
           padding: 0 5px;
         }
@@ -132,8 +132,23 @@
 
       .movie-name {
         width: 25%;
-        max-width: 401px;
+        //max-width: 401px;
         min-width: 210px;
+
+        .input {
+          flex-direction: column;
+        }
+
+        .movie-result {
+          color: $gray-light;
+          transition: color 0.2s ease-in-out;
+
+          &:hover {
+            cursor: pointer;
+            color: $maroon;
+            transition: color 0.2s ease-in-out;
+          }
+        }
 
         input {
           &::placeholder {
@@ -152,7 +167,7 @@
 
       .price-select {
         width: 10%;
-        max-width: 160px;
+        //max-width: 160px;
         min-width: 160px;
 
         .input {
@@ -237,7 +252,7 @@
 
       .seance-time {
         width: 7%;
-        max-width: 100px;
+        //max-width: 100px;
         min-width: 97px;
 
         input {
@@ -280,7 +295,7 @@
 
       .hall-select, .date-from, .date-to {
         width: 12%;
-        max-width: 190px;
+        //max-width: 190px;
         min-width: 125px;
 
         .title {
@@ -346,7 +361,7 @@
 
       .cinema-select {
         width: 13%;
-        max-width: 214px;
+        //max-width: 214px;
         min-width: 140px;
 
         .scroll {
@@ -530,6 +545,28 @@
   display: block;
   width: 100%;
   left: 0;
+  height: 0;
+  background-color: rgba($black-light, 0.2);
+  overflow: hidden;
+
+  .scroll {
+    width: 100%;
+    height: 100%;
+    max-height: 100px;
+    padding-right: 10px;
+
+    .simplebar-vertical {
+
+    }
+
+    .movie-result {
+      height: 20px;
+      padding: 0 20px;
+      font-size: 16px;
+      line-height: 20px;
+
+    }
+  }
 }
 
 #date-from, #date-to {

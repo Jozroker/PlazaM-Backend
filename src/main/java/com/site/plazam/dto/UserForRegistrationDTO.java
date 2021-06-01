@@ -27,7 +27,7 @@ public class UserForRegistrationDTO extends UserSimpleDTO {
     private String email;
 
     @NotNull
-    private String password;
+    private String registerPassword;
 
     @NotNull
     private String confirmPassword;
@@ -44,13 +44,13 @@ public class UserForRegistrationDTO extends UserSimpleDTO {
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&
                 Objects.equals(email, that.email) &&
-                Objects.equals(password, that.password) &&
+                Objects.equals(registerPassword, that.registerPassword) &&
                 Objects.equals(confirmPassword, that.confirmPassword) &&
                 Objects.equals(selectedCinema, that.selectedCinema);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), username, firstName, lastName, email, password, confirmPassword, selectedCinema);
+        return Objects.hash(super.hashCode(), username, firstName, lastName, email, registerPassword, confirmPassword, selectedCinema);
     }
 }

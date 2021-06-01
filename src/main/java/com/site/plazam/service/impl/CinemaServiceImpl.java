@@ -1,5 +1,8 @@
 package com.site.plazam.service.impl;
 
+import com.maxmind.geoip2.WebServiceClient;
+import com.maxmind.geoip2.model.CityResponse;
+import com.maxmind.geoip2.model.CountryResponse;
 import com.site.plazam.domain.Country;
 import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.repository.CinemaRepository;
@@ -10,6 +13,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +53,31 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public CinemaDTO findById(String id) {
         return cr.findById(id).map(cm::toDTO).orElse(null);
+    }
+
+    @Override
+    public CinemaDTO getCinemaByLocation() {
+        CinemaDTO cinema;
+        try (WebServiceClient client = new WebServiceClient.Builder(559220,
+                "7hh3snpPVY1uaoE4").host("geolite.info").build()) {
+            URL checkIpService = new URL("http://checkip.amazonaws.com");
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    checkIpService.openStream()));
+            String myPublicIp = br.readLine();
+
+            CountryResponse countryResponse =
+                    client.country(InetAddress.getByName(myPublicIp));
+            CityResponse cityResponse =
+                    client.city(InetAddress.getByName(myPublicIp));
+            cinema = findFirstByCountryAndCity(Country.valueOf(countryResponse.getCountry().getName().replace(' ', '_').toUpperCase()),
+                    cityResponse.getCity().getName());
+            if (cinema == null) {
+                cinema = findAll().get(0);
+            }
+        } catch (Exception e) {
+            cinema = findAll().get(0);
+        }
+        return cinema;
     }
 
     @Override

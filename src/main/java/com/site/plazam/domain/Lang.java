@@ -9,9 +9,9 @@ import java.io.File;
 
 public enum Lang {
 
-    ENGLISH(generateFlagPicture("src/main/webapp/resources/img/png/en.png")),
-    UKRAINIAN(generateFlagPicture("src/main/webapp/resources/img/png/ua.png")),
-    POLISH(generateFlagPicture("src/main/webapp/resources/img/png/pl.png"));
+    ENG(generateFlagPicture("src/main/webapp/resources/img/png/en.png")),
+    UKR(generateFlagPicture("src/main/webapp/resources/img/png/ua.png")),
+    POL(generateFlagPicture("src/main/webapp/resources/img/png/pl.png"));
 
     private final Binary flagPicture;
 

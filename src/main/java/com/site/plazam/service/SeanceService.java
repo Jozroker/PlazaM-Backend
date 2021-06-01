@@ -52,7 +52,8 @@ public interface SeanceService {
                                                                              List<HallForSeanceDTO> halls,
                                                                              Pageable pageable);
 
-    Page<Map.Entry> findSeancesList(LocalDate currentDate, CinemaDTO cinema,
+    Page<Map.Entry> findSeancesList(LocalDate currentDate, CinemaDTO cinema, List<String> technologies,
+                                    List<String> genres,
                                     Pageable pageable);
 
     List<SeanceForSeancesListDTO> findByStartSeanceBetweenOrEndSeanceBetween(LocalDateTime start,

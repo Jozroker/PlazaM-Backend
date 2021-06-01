@@ -1,5 +1,6 @@
 package com.site.plazam.service.mapper;
 
+import com.site.plazam.domain.Lang;
 import com.site.plazam.domain.Message;
 import com.site.plazam.dto.MessageCreateDTO;
 import com.site.plazam.dto.MessageForUserDTO;
@@ -19,6 +20,14 @@ public interface MessageMapper {
     Message toEntity(MessageCreateDTO messageCreateDTO);
 
     default String toString(Map<String, String> map) {
-        return map.get(LocaleContextHolder.getLocale().getISO3Language());
+        Lang locale;
+        try {
+            locale =
+                    Lang.valueOf(LocaleContextHolder.getLocale().getISO3Language().toUpperCase());
+        } catch (Exception e) {
+            locale =
+                    Lang.ENG;
+        }
+        return map.get(locale.name().toLowerCase());
     }
 }

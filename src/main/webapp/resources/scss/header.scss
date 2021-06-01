@@ -1673,12 +1673,28 @@ header {
 }
 
 #search-result {
-  display: block;
+  display: none;
   width: 100%;
   height: max-content;
   position: absolute;
   top: 100%;
   left: 0;
+  background-color: rgba($black-light, 0.2);
+  overflow: hidden;
+
+  .scroll {
+    width: 100%;
+    max-height: 252px;
+    padding-right: 10px;
+
+    .movie-result {
+      height: 36px;
+      padding: 0 20px;
+      font-size: 22px;
+      line-height: 36px;
+
+    }
+  }
 }
 
 #locals {

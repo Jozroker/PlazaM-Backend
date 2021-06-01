@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -251,6 +252,17 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateBetween(LocalDate from, LocalDate to, Pageable pageable) {
         return mr.findByReleaseDateBetween(from, to, pageable).map(mm::toMovieForMoviesListDTO);
+    }
+
+    @Override
+    public List<MovieForHomeSliderDTO> findMovieForHomeSliderByReleaseDateBeforeOrderByReleaseDate(LocalDate date) {
+        List<MovieForHomeSliderDTO> movies = mr.findByReleaseDateBeforeOrderByReleaseDate(date)
+                .stream()
+                .limit(5)
+                .map(mm::toMovieForHomeSliderDTO)
+                .collect(Collectors.toList());
+        Collections.reverse(movies);
+        return movies;
     }
 
     @Override

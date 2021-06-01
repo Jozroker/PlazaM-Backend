@@ -1,6 +1,7 @@
 package com.site.plazam.service.impl;
 
 import com.site.plazam.domain.Day;
+import com.site.plazam.domain.Genre;
 import com.site.plazam.domain.Movie;
 import com.site.plazam.domain.Technology;
 import com.site.plazam.dto.*;
@@ -64,12 +65,27 @@ public class SeanceServiceImpl implements SeanceService {
     @Override
     @Transactional
     public Page<Map.Entry> findSeancesList(LocalDate currentDate,
-                                           CinemaDTO cinema, Pageable pageable) {
+                                           CinemaDTO cinema,
+                                           List<String> technologies,
+                                           List<String> genres,
+                                           Pageable pageable) {
         List<HallForSeanceDTO> availableHalls =
                 hs.findHallForSeanceByCinema(cinema);
+        if (technologies != null) {
+            List<Technology> techsList =
+                    technologies.stream().map(tech -> Technology.valueOf("_" + tech)).collect(Collectors.toList());
+            availableHalls =
+                    availableHalls.stream().filter(hall -> techsList.contains(hall.getTechnology())).collect(Collectors.toList());
+        }
         List<SeanceForSeancesListDTO> availableSeances =
                 findByDateFromBeforeEqualsAndDateToAfterEqualsAndHalls(currentDate,
                         currentDate, availableHalls);
+        if (genres != null) {
+            List<MovieForSeanceDTO> moviesByGenre =
+                    ms.findMovieForSeanceByGenresIsContaining(genres.stream().map(Genre::valueOf).collect(Collectors.toList()));
+            availableSeances =
+                    availableSeances.stream().filter(seance -> moviesByGenre.contains(seance.getMovie())).collect(Collectors.toList());
+        }
         Map<MovieForSeanceDTO, Map<LocalDate, Map<HallForSeanceDTO,
                 List<SeanceForSeancesListDTO>>>> mapOfSchedule = new HashMap<>();
 

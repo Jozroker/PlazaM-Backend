@@ -44,6 +44,8 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
 
     List<Movie> findByReleaseDateAfterOrderByReleaseDate(LocalDate date);
 
+    List<Movie> findByReleaseDateBeforeOrderByReleaseDate(LocalDate date);
+
     List<Movie> findByReleaseDateBefore(LocalDate date);
 
     @Query("{'releaseDate' : { $gte: ?0, $lte: ?1 } }")

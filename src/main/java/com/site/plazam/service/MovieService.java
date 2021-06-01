@@ -81,6 +81,8 @@ public interface MovieService {
     List<MovieForComingSoonDTO> findMovieForComingSoonByReleaseDateBetween(LocalDate from,
                                                                            LocalDate to);
 
+    List<MovieForHomeSliderDTO> findMovieForHomeSliderByReleaseDateBeforeOrderByReleaseDate(LocalDate date);
+
     List<MovieForComingSoonDTO> findMovieForComingSoonByReleaseDateAfterOrderByReleaseDate(LocalDate date);
 
 //    List<MovieForHomeSliderDTO> findMovieForHomeSliderByLastSeances(LocalDate currentDate);

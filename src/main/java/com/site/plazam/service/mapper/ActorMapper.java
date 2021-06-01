@@ -2,6 +2,7 @@ package com.site.plazam.service.mapper;
 
 import com.site.plazam.domain.Actor;
 import com.site.plazam.domain.ActorPicture;
+import com.site.plazam.domain.Lang;
 import com.site.plazam.dto.ActorCreateDTO;
 import com.site.plazam.dto.ActorForActorListDTO;
 import com.site.plazam.dto.parents.PictureDTO;
@@ -36,7 +37,15 @@ public abstract class ActorMapper {
     public abstract ActorForActorListDTO toActorForActorListDTO(Actor actor);
 
     String toString(Map<String, String> map) {
-        return map.get(LocaleContextHolder.getLocale().getISO3Language());
+        Lang locale;
+        try {
+            locale =
+                    Lang.valueOf(LocaleContextHolder.getLocale().getISO3Language().toUpperCase());
+        } catch (Exception e) {
+            locale =
+                    Lang.ENG;
+        }
+        return map.get(locale.name().toLowerCase());
     }
 
     String toPictureId(PictureDTO pictureDTO) {
@@ -52,7 +61,7 @@ public abstract class ActorMapper {
             try {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp/resources/img/jpg/default_avatar.jpg"));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "jpg", bos);
+                ImageIO.write(bImage, "jpeg", bos);
                 pictureDTO.setPicture(bos.toByteArray());
             } catch (Exception ignored) {
             }

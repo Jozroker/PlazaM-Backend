@@ -1,6 +1,7 @@
 package com.site.plazam.service.mapper;
 
 import com.site.plazam.domain.Cinema;
+import com.site.plazam.domain.Lang;
 import com.site.plazam.dto.parents.CinemaDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,6 +21,14 @@ public interface CinemaMapper {
     CinemaDTO toDTO(Cinema cinema);
 
     default String toString(Map<String, String> map) {
-        return map.get(LocaleContextHolder.getLocale().getISO3Language());
+        Lang locale;
+        try {
+            locale =
+                    Lang.valueOf(LocaleContextHolder.getLocale().getISO3Language().toUpperCase());
+        } catch (Exception e) {
+            locale =
+                    Lang.ENG;
+        }
+        return map.get(locale.name().toLowerCase());
     }
 }

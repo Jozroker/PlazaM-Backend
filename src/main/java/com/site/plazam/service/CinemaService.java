@@ -15,6 +15,8 @@ public interface CinemaService {
 
     List<CinemaDTO> findAll();
 
+    CinemaDTO getCinemaByLocation();
+
     void delete(CinemaDTO cinema);
 
     void deleteAll();

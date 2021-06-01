@@ -1,5 +1,6 @@
 package com.site.plazam.service.mapper;
 
+import com.site.plazam.domain.Lang;
 import com.site.plazam.domain.Movie;
 import com.site.plazam.domain.MoviePicture;
 import com.site.plazam.dto.*;
@@ -119,7 +120,15 @@ public abstract class MovieMapper {
 
 
     String toString(Map<String, String> map) {
-        return map.get(LocaleContextHolder.getLocale().getISO3Language());
+        Lang locale;
+        try {
+            locale =
+                    Lang.valueOf(LocaleContextHolder.getLocale().getISO3Language().toUpperCase());
+        } catch (Exception e) {
+            locale =
+                    Lang.ENG;
+        }
+        return map.get(locale.name().toLowerCase());
     }
 
     String toPictureId(PictureDTO pictureDTO) {
@@ -137,7 +146,7 @@ public abstract class MovieMapper {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp" +
                         "/resources/img/jpg/poster/default_poster.jpg"));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "jpg", bos);
+                ImageIO.write(bImage, "jpeg", bos);
                 pictureDTO.setPicture(bos.toByteArray());
             } catch (Exception ignored) {
             }
@@ -154,7 +163,7 @@ public abstract class MovieMapper {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp" +
                         "/resources/img/jpg/wide/default_wide.jpg"));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "jpg", bos);
+                ImageIO.write(bImage, "jpeg", bos);
                 pictureDTO.setPicture(bos.toByteArray());
             } catch (Exception ignored) {
             }

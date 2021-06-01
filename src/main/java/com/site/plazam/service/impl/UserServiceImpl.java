@@ -90,8 +90,8 @@ public class UserServiceImpl implements UserService {
         UserForSelfInfoDTO user =
                 findByUsernameOrEmail(userForRegistrationDTO.getUsername(),
                         userForRegistrationDTO.getEmail());
-        if (userForRegistrationDTO.getPassword().equals(userForRegistrationDTO.getConfirmPassword()) && user == null) {
-            userForRegistrationDTO.setPassword(passwordEncoder.encode(userForRegistrationDTO.getPassword()));
+        if (userForRegistrationDTO.getRegisterPassword().equals(userForRegistrationDTO.getConfirmPassword()) && user == null) {
+            userForRegistrationDTO.setRegisterPassword(passwordEncoder.encode(userForRegistrationDTO.getRegisterPassword()));
             try (WebServiceClient client =
                          new WebServiceClient.Builder(559220,
                                  "7hh3snpPVY1uaoE4").host("geolite.info").build()) {
@@ -142,7 +142,9 @@ public class UserServiceImpl implements UserService {
                 .set("homeCountry", user.getCountry()).set("homeCity",
                         user.getHomeCity()).set("aboutMe", user.getAboutMe())
                 .set("useLightTheme", user.isUseLightTheme())
-                .set("hide18PlusMovies", user.isHide18PlusMovies());
+                .set("hide18PlusMovies", user.isHide18PlusMovies())
+                .set("selectedLang", user.getSelectedLang())
+                .set("selectedCinemaId", user.getSelectedCinema().getId());
         if (user.getPicture() != null) {
             if (user.getPicture().getId() == null) {
                 UserForCommentDTO userForComment =

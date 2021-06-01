@@ -281,6 +281,10 @@
         line-height: 16px;
         transition: color 0.5s linear;
 
+        &.disabled {
+          color: $gray-middle !important;
+        }
+
         .day {
           width: 100%;
           margin-bottom: 6px;
@@ -308,7 +312,7 @@
           }
         }
 
-        &:not(.selected):hover {
+        &:not(.selected):not(.disabled):hover {
           cursor: pointer;
 
           .date {

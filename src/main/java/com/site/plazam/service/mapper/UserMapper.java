@@ -1,7 +1,7 @@
 package com.site.plazam.service.mapper;
 
-import com.site.plazam.domain.ActorPicture;
 import com.site.plazam.domain.User;
+import com.site.plazam.domain.UserPicture;
 import com.site.plazam.dto.*;
 import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.dto.parents.PictureDTO;
@@ -37,7 +37,10 @@ public abstract class UserMapper {
     CinemaService cs;
 
     @Mapping(source = "selectedCinema.id", target = "selectedCinemaId")
+    @Mapping(source = "registerPassword", target = "password")
     public abstract User toEntity(UserForRegistrationDTO userForRegistrationDTO);
+
+    public abstract User toEntity(UserForLoginDTO userForLoginDTO);
 
     public abstract UserForResultListDTO toUserForResultListDTO(User user);
 
@@ -80,12 +83,12 @@ public abstract class UserMapper {
             try {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp/resources/img/jpg/default_avatar.jpg"));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "jpg", bos);
+                ImageIO.write(bImage, "jpeg", bos);
                 pictureDTO.setPicture(bos.toByteArray());
             } catch (Exception ignored) {
             }
         } else {
-            pictureDTO = ps.findById(id, ActorPicture.class);
+            pictureDTO = ps.findById(id, UserPicture.class);
         }
         return pictureDTO;
     }

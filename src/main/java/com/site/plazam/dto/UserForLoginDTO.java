@@ -17,7 +17,7 @@ public class UserForLoginDTO extends UserSimpleDTO {
     private String emailOrUsername;
 
     @NotNull
-    private String password;
+    private String loginPassword;
 
     @Override
     public boolean equals(Object o) {
@@ -26,11 +26,11 @@ public class UserForLoginDTO extends UserSimpleDTO {
         if (!super.equals(o)) return false;
         UserForLoginDTO that = (UserForLoginDTO) o;
         return Objects.equals(emailOrUsername, that.emailOrUsername) &&
-                Objects.equals(password, that.password);
+                Objects.equals(loginPassword, that.loginPassword);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), emailOrUsername, password);
+        return Objects.hash(super.hashCode(), emailOrUsername, loginPassword);
     }
 }
