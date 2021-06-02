@@ -37,16 +37,20 @@
 <%--<jsp:include page="header.jsp"/>--%>
 <div id="home-content">
     <div id="slider">
-        <div id="coming-soon">
-        </div>
+        <div id="coming-soon"></div>
         <div id="movies-in-route">
             <div class="slider">
                 <div class="content">
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle selected"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
+                    <c:forEach var="movie" items="${sliderMovies}" varStatus="loop">
+                        <c:choose>
+                            <c:when test="${(sliderMovies.size() < 5 && loop.index == 0) || (sliderMovies.size() == 5 && loop.index == 2)}">
+                                <div class="circle selected"></div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="circle"></div>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
                 </div>
             </div>
 
@@ -56,28 +60,30 @@
             </div>
 
             <c:forEach var="movie" items="${sliderMovies}" varStatus="loop">
-                <c:if test="${loop.index == 2}">
-                    <div class="movie selected">
-                        <img alt="" src="data:image/${movie.widePicture.format};base64,${movie.widePicture.pictureString}">
-                        <div class="name">
-                            <a href="/movie/${movie.id}">
-                                <div class="movie-first-name">${movie.name}</div>
-                                <div class="movie-second-name">${movie.surname}</div>
-                            </a>
+                <c:choose>
+                    <c:when test="${(sliderMovies.size() < 5 && loop.index == 0) || (sliderMovies.size() == 5 && loop.index == 2)}">
+                        <div class="movie selected">
+                            <img alt="" src="data:image/${movie.widePicture.format};base64,${movie.widePicture.pictureString}">
+                            <div class="name">
+                                <a href="/movie/${movie.id}">
+                                    <div class="movie-first-name">${movie.name}</div>
+                                    <div class="movie-second-name">${movie.surname}</div>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </c:if>
-                <c:if test="${loop.index != 2}">
-                    <div class="movie">
-                        <img alt="" src="data:image/${movie.widePicture.format};base64,${movie.widePicture.picture}">
-                        <div class="name">
-                            <a href="/movie/${movie.id}">
-                                <div class="movie-first-name">${movie.name}</div>
-                                <div class="movie-second-name">${movie.surname}</div>
-                            </a>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="movie">
+                            <img alt="" src="data:image/${movie.widePicture.format};base64,${movie.widePicture.picture}">
+                            <div class="name">
+                                <a href="/movie/${movie.id}">
+                                    <div class="movie-first-name">${movie.name}</div>
+                                    <div class="movie-second-name">${movie.surname}</div>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </c:if>
+                    </c:otherwise>
+                </c:choose>
             </c:forEach>
         </div>
     </div>
@@ -125,13 +131,13 @@
         '<spring:message code="month.december.coming.soon"/>'
     ];
     let daysList = [
+        '<spring:message code="day.sunday"/>',
         '<spring:message code="day.monday"/>',
         '<spring:message code="day.tuesday"/>',
         '<spring:message code="day.wednesday"/>',
         '<spring:message code="day.thursday"/>',
         "<spring:message code="day.friday"/>",
-        '<spring:message code="day.saturday"/>',
-        '<spring:message code="day.sunday"/>'
+        '<spring:message code="day.saturday"/>'
     ];
     let fromLabel = '<spring:message code="movie.from.default"/>';
     let lastPage = parseInt(${pagesCount});

@@ -33,6 +33,20 @@ let settingsPosition = "-808px";
 let nextClickedElement = $();
 let userImage;
 let userImageFormat;
+let addedFavMovies = [],
+    removedFavMovies = [],
+    addedWaitedMovies = [],
+    removedWaitedMovies = [],
+    addedViewedMovies = [],
+    addedTickets = [],
+    removedTickets = [],
+    removedMessages = [],
+    addedMessages = [],
+    removedTicketsSeances = [];
+
+window.onbeforeunload = function () {
+    listsSaving();
+}
 
 $(document).ready(function () {
     let language = $("#current-local .flag").attr("identifier");
@@ -64,7 +78,7 @@ $(document).ready(function () {
             let ticketsList = '<div class="scroll">';
             for (let ticket in tickets) {
                 ticketsList += createTicket(tickets[ticket][0], tickets[ticket][1], tickets[ticket][2], tickets[ticket][3],
-                    tickets[ticket][4], tickets[ticket][5], tickets[ticket][6], tickets[ticket][7], tickets[ticket][8], tickets[ticket][9]);
+                    tickets[ticket][4], tickets[ticket][5], tickets[ticket][6], tickets[ticket][7], tickets[ticket][8], tickets[ticket][9], tickets[ticket][10]);
             }
             ticketsList += '</div>';
             $("#tickets .page").html(ticketsList);
@@ -323,6 +337,8 @@ $(document).ready(function () {
     })
 
     $(document).on("click", "#tickets .ticket .cross.active", function () {
+        removedTickets.push($(this).parents(".ticket").first().attr("identifier"));
+        removedTicketsSeances.push($(this).parents(".ticket").first().find(".barcode .identifier").text().trim());
         $(this).removeClass("active");
         $(this).parents(".ticket").first().animate({
             "height": "0"
@@ -956,6 +972,15 @@ $(document).ready(function () {
     //     })
     // })
 
+    // window.addEventListener("locationchange", function () {
+    //     listsSaving();
+    //     console.log(1)
+    // })
+
+    // window.addEventListener("popstate", function () {
+    //     listsSaving();
+    // })
+
     $(document).on("click", ".cinema-back", function () {
         $(this).click(function () {
             $(".cinema-list").animate({
@@ -1137,6 +1162,7 @@ $(document).ready(function () {
             } else if (elem.next(".line-between").length) {
                 elem.next(".line-between").remove();
             }
+            removedMessages.push($(this).parents(".message").first().attr("identifier"));
             elem.remove();
             messagesAnimate = false;
             nextClickedElement.click();
@@ -1627,8 +1653,18 @@ $(document).ready(function () {
     }
 })
 
-function createTicket(seanceDate, seanceTime, seanceHall, price, row, column, id, moviePicture, movieName, movieSurname) {
-    let ticketString = '<div class="ticket"><div class="ticket-info"><div class="movie-name"><span class="first-name">' +
+function createTicket(ticketId, seanceDate, seanceTime, seanceHall, price, row, column, id, moviePicture, movieName, movieSurname) {
+    let date = new Date(seanceDate.slice(-4) + "-" + seanceDate.slice(3, 5) + "-" + seanceDate.slice(0, 2));
+    let current = new Date();
+    current.setDate(current.getDate() + 3);
+    if (current.getDate() <= 3) {
+        current.setMonth(current.getMonth() + 1);
+        if (current.getMonth() === 0) {
+            current.setFullYear(current.getFullYear() + 1);
+        }
+    }
+
+    let ticket = '<div class="ticket" identifier="' + ticketId + '"><div class="ticket-info"><div class="movie-name"><span class="first-name">' +
         movieName + '</span><span class="space">_</span><span class="last-name">' + movieSurname + '</span></div>' +
         '<div class="info-items"><div class="info-item price-info">' +
         '<span class="title">Price:</span><span class="space">_</span><span class="value">' + price + '</span>' +
@@ -1643,7 +1679,13 @@ function createTicket(seanceDate, seanceTime, seanceHall, price, row, column, id
         '<svg class="barcode-value"></svg></div><div class="identifier">' + id + '</div></div><div class="copyright">' +
         'PlazaM</div></div><div class="picture"><img class="background-picture" src="' + moviePicture +
         '" alt=""><div class="movie-name"><div class="first-name">' + movieName + '</div><div class="last-name">' + movieSurname +
-        '</div></div><div class="blur"></div></div><div class="cross active"><div class="icon-cross"></div></div></div>';
+        '</div></div><div class="blur"></div></div>';
+    if (current <= date) {
+        ticket += '<div class="cross active"><div class="icon-cross"></div></div>';
+    }
+    ticket += '</div>';
+
+    return ticket;
 
     // $("#tickets .scroll .simplebar-content").append(ticketString);
     //
@@ -1655,7 +1697,6 @@ function createTicket(seanceDate, seanceTime, seanceHall, price, row, column, id
     //     lineColor: "#0D0E0D",
     //     margin: 0
     // })
-    return ticketString;
 }
 
 function ticketsFunction() {
@@ -1742,6 +1783,28 @@ function generateCinemas() {
             });
         });
     });
+}
+
+function listsSaving() {
+    $.ajax({
+        url: window.location.origin + "/user/" + userId + "/update/lists",
+        method: 'POST',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            addedFavouriteMovies: addedFavMovies,
+            removedFavouriteMovies: removedFavMovies,
+            addedWaitedMovies: addedWaitedMovies,
+            removedWaitedMovies: removedWaitedMovies,
+            addedViewedMovies: addedViewedMovies,
+            addedTickets: addedTickets,
+            removedTickets: removedTickets,
+            addedMessages: addedMessages,
+            removedMessages: removedMessages,
+            removedTicketsSeances: removedTicketsSeances
+        })
+    }).done(function (data) {
+        console.log(data)
+    })
 }
 
 // function generateMessages() {

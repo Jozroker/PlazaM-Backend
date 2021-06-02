@@ -153,19 +153,20 @@ function replaceContent(page) {
         })
         genres = genres.slice(0, -1);
         techs = techs.slice(0, -1);
-
-        $.ajax({
-            url: window.location.origin + '/page/' + page + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
-                (techs === '' ? '' : '&technologies=' + techs),
-            method: 'GET'
-        }).done(function (data) {
-            mapa = data;
-            $("#home-schedules-containers").html("");
-            for (let i = 0; i < 8; i++) {
-                $("#home-schedules-containers").append('<div class="schedule-container"></div>');
-            }
-            generateSchedule();
-            $("#home-schedules-containers .curtain").css("display", "none");
-        })
+        if (!isNaN(page)) {
+            $.ajax({
+                url: window.location.origin + '/page/' + page + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
+                    (techs === '' ? '' : '&technologies=' + techs),
+                method: 'GET'
+            }).done(function (data) {
+                mapa = data;
+                $("#home-schedules-containers").html("");
+                for (let i = 0; i < 8; i++) {
+                    $("#home-schedules-containers").append('<div class="schedule-container"></div>');
+                }
+                generateSchedule();
+                $("#home-schedules-containers .curtain").css("display", "none");
+            })
+        }
     }
 }

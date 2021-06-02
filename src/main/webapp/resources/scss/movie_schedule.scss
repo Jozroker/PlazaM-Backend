@@ -495,12 +495,20 @@
                 $maroon 15%,
                 $maroon 85%,
                 rgba($maroon, 0));
+
+        &.disabled {
+          height: 0;
+        }
       }
 
       .hall-container {
         position: relative;
         height: 40px;
         width: 100%;
+
+        &.empty {
+          height: 0;
+        }
 
         .name {
           color: $white-dark;

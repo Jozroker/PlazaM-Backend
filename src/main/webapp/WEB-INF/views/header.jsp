@@ -555,6 +555,7 @@
     ticketMonth = parseInt(ticketMonth) < 10 ? '0' + ticketMonth : ticketMonth;
     ticketHour = parseInt(ticketHour) < 10 ? '0' + ticketHour : ticketHour;
     ticketMinute = parseInt(ticketMinute) < 10 ? '0' + ticketMinute : ticketMinute;
+    ticket.push('${ticket.id}');
     ticket.push(ticketDate + "." + ticketMonth + "." + ticketYear);
     ticket.push(ticketHour + ":" + ticketMinute);
     ticket.push('${ticket.seance.hall.technology.name()}'.slice(1));

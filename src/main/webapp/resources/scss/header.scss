@@ -154,7 +154,7 @@ header {
         font-weight: 500;
 
         &:hover {
-          .cross {
+          .cross.active {
             right: 0;
             transition: right 0.1s ease-in-out, background-color 0.2s ease-in-out, color 0.2s ease-in-out;
           }

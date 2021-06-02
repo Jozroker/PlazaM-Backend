@@ -12,11 +12,16 @@ import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.service.*;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -31,20 +36,31 @@ public class UserController {
 
     private final MovieService movieService;
 
+    private final MessageService messageService;
+
+    private final TicketService ticketService;
+
     public UserController(CinemaService cinemaService,
                           UserService userService,
                           SeanceService seanceService,
                           HallService hallService,
-                          MovieService movieService) {
+                          MovieService movieService,
+                          MessageService messageService,
+                          TicketService ticketService) {
         this.cinemaService = cinemaService;
         this.userService = userService;
         this.seanceService = seanceService;
         this.hallService = hallService;
         this.movieService = movieService;
+        this.messageService = messageService;
+        this.ticketService = ticketService;
     }
 
     @GetMapping("/authorize")
-    public String authorize(ModelMap model) {
+    public String authorize(ModelMap model, Principal principal) {
+        if (principal != null) {
+            return "redirect:/home";
+        }
         UserForLoginDTO userForLoginDTO = new UserForLoginDTO();
         UserForRegistrationDTO userForRegistrationDTO =
                 new UserForRegistrationDTO();
@@ -69,6 +85,7 @@ public class UserController {
             {MediaType.APPLICATION_FORM_URLENCODED_VALUE,
                     MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
+    @Transactional
     public String updateInfo(@PathVariable String id,
                              @RequestBody String object) throws JsonProcessingException {
         UserForSelfInfoDTO user = userService.findUserForSelfInfoById(id);
@@ -132,6 +149,7 @@ public class UserController {
     @PostMapping(value = "/user/{id}/update/password", consumes =
             {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
+    @Transactional
     public String updatePassword(@PathVariable String id,
                                  @RequestBody String object) throws JsonProcessingException {
         UserForSelfInfoDTO user = userService.findUserForSelfInfoById(id);
@@ -179,6 +197,103 @@ public class UserController {
             if (user != null) {
                 return "success";
             }
+        }
+        return "failed";
+    }
+
+    @PostMapping(value = "/user/{id}/update/lists", consumes =
+            {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    @Transactional
+    public String updateLists(@PathVariable String id,
+                              @RequestBody String object) throws JsonProcessingException {
+        UserForSelfInfoDTO user = userService.findUserForSelfInfoById(id);
+        Object obj = new ObjectMapper().readValue(object, Object.class);
+        if (user != null) {
+            if (((LinkedHashMap) obj).get("addedFavouriteMovies") != null) {
+                if (!((LinkedHashMap) obj).get("addedFavouriteMovies").toString().equals("[]")) {
+                    int length = ((LinkedHashMap) obj).get(
+                            "addedFavouriteMovies").toString().length();
+                    user.getFavouriteMovieIds().addAll(Arrays.asList(((LinkedHashMap) obj).get(
+                            "addedFavouriteMovies").toString().substring(1,
+                            length - 1).split(",")));
+                }
+            }
+            if (((LinkedHashMap) obj).get("removedFavouriteMovies") != null) {
+                if (!((LinkedHashMap) obj).get("removedFavouriteMovies").toString().equals("[]")) {
+                    int length = ((LinkedHashMap) obj).get(
+                            "removedFavouriteMovies").toString().length();
+                    user.getFavouriteMovieIds().removeAll(Arrays.asList(((LinkedHashMap) obj).get(
+                            "removedFavouriteMovies").toString().substring(1,
+                            length - 1).split(",")));
+                }
+            }
+            if (((LinkedHashMap) obj).get("addedWaitedMovies") != null) {
+                if (!((LinkedHashMap) obj).get("addedWaitedMovies").toString().equals("[]")) {
+                    int length = ((LinkedHashMap) obj).get(
+                            "addedWaitedMovies").toString().length();
+                    user.getWaitMovieIds().addAll(Arrays.asList(((LinkedHashMap) obj).get(
+                            "addedWaitedMovies").toString().substring(1,
+                            length - 1).split(",")));
+                }
+            }
+            if (((LinkedHashMap) obj).get("removedWaitedMovies") != null) {
+                if (!((LinkedHashMap) obj).get("removedWaitedMovies").toString().equals("[]")) {
+                    int length = ((LinkedHashMap) obj).get(
+                            "removedWaitedMovies").toString().length();
+                    user.getWaitMovieIds().removeAll(Arrays.asList(((LinkedHashMap) obj).get(
+                            "removedWaitedMovies").toString().substring(1,
+                            length - 1).split(",")));
+                }
+            }
+            if (((LinkedHashMap) obj).get("addedViewedMovies") != null) {
+                if (!((LinkedHashMap) obj).get("addedViewedMovies").toString().equals("[]")) {
+                    int length = ((LinkedHashMap) obj).get(
+                            "addedViewedMovies").toString().length();
+                    user.getViewedMovieIds().addAll(Arrays.asList(((LinkedHashMap) obj).get(
+                            "addedViewedMovies").toString().substring(1,
+                            length - 1).split(",")));
+                }
+            }
+            if (((LinkedHashMap) obj).get("addedMessages") != null) {
+                if (!((LinkedHashMap) obj).get("addedMessages").toString().equals("[]")) {
+                    int length = ((LinkedHashMap) obj).get(
+                            "addedMessages").toString().length();
+                    user.getMessages().addAll(Arrays.stream(((LinkedHashMap) obj).get(
+                            "addedMessages").toString().substring(1,
+                            length - 1).split(",")).map(messageService::findById).collect(Collectors.toList()));
+                }
+            }
+            if (((LinkedHashMap) obj).get("removedMessages") != null) {
+                if (!((LinkedHashMap) obj).get("removedMessages").toString().equals("[]")) {
+                    int length = ((LinkedHashMap) obj).get(
+                            "removedMessages").toString().length();
+                    user.getMessages().removeAll(Arrays.stream(((LinkedHashMap) obj).get(
+                            "removedMessages").toString().substring(1,
+                            length - 1).split(",")).map(messageService::findById).collect(Collectors.toList()));
+                }
+            }
+            if (((LinkedHashMap) obj).get("addedTickets") != null) {
+                if (!((LinkedHashMap) obj).get("addedTickets").toString().equals("[]")) {
+                    int length = ((LinkedHashMap) obj).get(
+                            "addedTickets").toString().length();
+                    user.getTickets().addAll(Arrays.stream(((LinkedHashMap) obj).get(
+                            "addedTickets").toString().substring(1,
+                            length - 1).split(",")).map(ticketService::findById).collect(Collectors.toList()));
+                }
+            }
+            if (((LinkedHashMap) obj).get("removedTickets") != null) {
+                if (!((LinkedHashMap) obj).get("removedTickets").toString().equals("[]")) {
+                    int length = ((LinkedHashMap) obj).get(
+                            "removedTickets").toString().length();
+                    user.getTickets().removeAll(Arrays.stream(((LinkedHashMap) obj).get(
+                            "removedTickets").toString().substring(1,
+                            length - 1).split(",")).map(ticketService::findById).filter(ticket ->
+                            LocalDate.now().plusDays(3).isBefore(ticket.getDate())).collect(Collectors.toList()));
+                }
+            }
+            userService.updateLists(user);
+            return "success";
         }
         return "failed";
     }
