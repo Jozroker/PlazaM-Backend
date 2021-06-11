@@ -41,7 +41,7 @@ class RatingServiceTest {
         ratingCreateDTO = new RatingCreateDTO();
         ratingCreateDTO.setMovie(movie);
         ratingCreateDTO.setUser(user);
-        ratingCreateDTO.setUserRating(2.3);
+        ratingCreateDTO.setUserRating(2);
         ratingSimpleDTO = ratingService.save(ratingCreateDTO);
         System.out.println(ratingSimpleDTO);
         Assert.assertNotNull(ratingSimpleDTO);

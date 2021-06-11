@@ -129,22 +129,22 @@
                     <div id="locals">
                         <ul>
                             <li>
-                                <a href="?language=uk">
-                                    <div identifier="UKR" class="flag ua-flag"></div>
+                                <a language="uk">
+                                    <div class="flag ua-flag"></div>
                                     <div>Укр</div>
                                 </a>
                             </li>
                             <div class="line-between"></div>
                             <li>
-                                <a href="?language=en">
-                                    <div identifier="ENG" class="flag uk-flag"></div>
+                                <a language="en">
+                                    <div class="flag uk-flag"></div>
                                     <div>Eng</div>
                                 </a>
                             </li>
                             <div class="line-between"></div>
                             <li>
-                                <a href="?language=pl">
-                                    <div identifier="POL" class="flag pl-flag"></div>
+                                <a language="pl">
+                                    <div class="flag pl-flag"></div>
                                     <div>Pol</div>
                                 </a>
                             </li>
@@ -189,7 +189,7 @@
         </div>
         <nav id="menu-top">
             <div class="menu-item favour-btn">
-                <a href="${contextPath}/movies/favourites"><spring:message code="navbar.favourites"/></a>
+                <a href="${contextPath}/movies?userId=${user.id}&type=favourites"><spring:message code="navbar.favourites"/></a>
             </div>
             <div class="line-between"></div>
             <div class="menu-item messages-btn">
@@ -203,20 +203,20 @@
             </div>
             <div class="line-between"></div>
             <div class="menu-item comments-btn">
-                <a href="${contextPath}/user/{id}/comments"><spring:message code="comments.title.default"/></a>
+                <a href="${contextPath}/user/comments"><spring:message code="comments.title.default"/></a>
             </div>
             <div class="line-between"></div>
             <div class="menu-item viewed-btn">
-                <a href="${contextPath}/movies/viewed"><spring:message code="navbar.viewed"/></a>
+                <a href="${contextPath}/movies?userId=${user.id}&type=viewed"><spring:message code="navbar.viewed"/></a>
             </div>
             <div class="line-between"></div>
             <div class="menu-item waitlist-btn">
-                <a href="${contextPath}/movies/wait-list"><spring:message code="navbar.wait.list"/></a>
+                <a href="${contextPath}/movies?userId=${user.id}&type=waited"><spring:message code="navbar.wait.list"/></a>
             </div>
-            <sec:authorize access="hasAuthority('ADMIN')">
+            <sec:authorize access="hasRole('ADMIN')">
                 <div class="line-between"></div>
                 <div class="menu-item users-btn">
-                    <a href="${contextPath}/admin/users-list"><spring:message code="navbar.users"/></a>
+                    <a href="${contextPath}/admin/users"><spring:message code="navbar.users"/></a>
                 </div>
             </sec:authorize>
         </nav>
@@ -531,11 +531,11 @@
                 <div id="background"></div>
 </header>
 </body>
-<sec:authorize access="hasAuthority('ADMIN')">
-    <script>
-        let isAdmin = true;
-    </script>
-</sec:authorize>
+<%--<sec:authorize access="hasRole('ADMIN')">--%>
+<%--    <script>--%>
+<%--        let isAdmin = true;--%>
+<%--    </script>--%>
+<%--</sec:authorize>--%>
 <script>
     <c:if test="${user != null}">
     let userId = '${user.id}';

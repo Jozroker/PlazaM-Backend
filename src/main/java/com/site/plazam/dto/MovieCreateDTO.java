@@ -1,6 +1,7 @@
 package com.site.plazam.dto;
 
 import com.site.plazam.domain.Genre;
+import com.site.plazam.domain.Lang;
 import com.site.plazam.domain.MPAA;
 import com.site.plazam.dto.parents.MovieSimpleDTO;
 import com.site.plazam.dto.parents.PictureDTO;
@@ -54,8 +55,7 @@ public class MovieCreateDTO extends MovieSimpleDTO {
     private Map<String, String> directedBy = new HashMap<>();
 
     @NotNull
-    @NotEmpty
-    private Map<String, String> movieLang = new HashMap<>();
+    private Lang movieLang = Lang.ENG;
 
     @NotNull
     @NotEmpty

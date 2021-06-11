@@ -184,7 +184,7 @@ body {
                 line-height: 44px;
                 margin-left: 7.24%;
 
-                .row {
+                .row, .column {
                   margin-right: 5px;
                 }
 
@@ -347,6 +347,7 @@ body {
           //height: 30.73vw;
           width: 100%;
           overflow: hidden;
+          min-height: 500px;
 
           .buy-ticket-container {
             position: relative;
@@ -397,6 +398,7 @@ body {
                     margin-top: 12px;
                     top: 100%;
                     position: absolute;
+                    left: 0;
                   }
                 }
 
@@ -526,7 +528,7 @@ body {
                       }
 
                       .seat + .seat, .column + .column {
-                        margin-left: 0.56%;
+                        margin-left: 4px;
                       }
 
                       .seat {
@@ -577,6 +579,7 @@ body {
                   top: 100px;
                   right: 0;
                   width: 10%;
+                  min-width: 68px;
                 }
 
                 @media screen and (max-width: 1196px) {
@@ -662,7 +665,7 @@ body {
                   .selection {
                     position: absolute;
                     height: 0;
-                    width: 100px;
+                    width: 130px;
                     overflow: hidden;
                     background-color: rgba($black-light, 0.95);
 
@@ -853,7 +856,7 @@ body {
                 }
 
                 &.cash-method {
-                  width: 260px;
+                  //width: 260px;
                   top: 0;
                   left: 0;
 

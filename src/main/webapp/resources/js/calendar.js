@@ -11,8 +11,8 @@ $(document).ready(function () {
             // currentMonth: null,
             // currentDay: null,
             // currentCalendar: null,
-            months: monthsList,
-            days: daysList,
+            months: monthsCalendarList,
+            days: daysCalendarList,
             onSelect: function (event) {
             }
         }, $.fn.calendar.defaults, opts);
@@ -113,7 +113,7 @@ $(document).ready(function () {
         currentCalendar.find('.header-label').html(calendar.label);
 
         frame.on('click', 'td', function () {
-            if (!$(this).hasClass("disabled")) {
+            if (!$(this).hasClass("disabled") && !$(this).find("span").hasClass("disabled")) {
                 $('td').removeClass('selected');
                 $(this).addClass('selected');
                 $('thead th').removeClass("selected");
@@ -175,16 +175,16 @@ $(document).ready(function () {
 
         for (let j = 0; j < calendar.length; j++) {
             let frameRow = $('<tr>').appendTo(frameBody);
-            let currentDate;
 
             $.each(calendar[j], function (index, item) {
                 let frameItem = $('<td>').appendTo(frameRow);
                 if (typeof item !== "undefined" && item !== "") {
-                    if (typeof dateFrom === 'undefined' || typeof dateTo === 'undefined') {
+                    if (typeof availableDates === 'undefined') {
                         frameItem.html("<span class='date'>" + item + "</span>");
                     } else {
-                        currentDate = new Date(currentYear + '-' + currentMonth + '-' + item);
-                        if (currentDate >= dateFrom && currentDate <= dateTo) {
+                        let dateString = currentYear + '-' + (currentMonth + 1 < 10 ? '0' + (currentMonth + 1) : (currentMonth + 1)) + '-' +
+                            (item < 10 ? '0' + item : item);
+                        if (availableDates.includes(dateString) && new Date(dateString) >= new Date()) {
                             frameItem.html("<span class='date'>" + item + "</span>");
                         } else {
                             frameItem.html("<span class='date disabled'>" + item + "</span>");

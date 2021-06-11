@@ -18,6 +18,7 @@ $(document).ready(function () {
             $(this).addClass("selected");
         }
         $("#home-schedules-containers .curtain").css("display", "block");
+        $("#schedules .curtain").css("display", "block");
         let genres = '', techs = '';
         $(".genre.selected").each(function () {
             genres += $(this).attr("identifier") + ",";
@@ -27,19 +28,42 @@ $(document).ready(function () {
         })
         genres = genres.slice(0, -1);
         techs = techs.slice(0, -1);
+        let pagesUrl = window.location.origin + '/page/' + page + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
+            (techs === '' ? '' : '&technologies=' + techs);
+        // let countUrl = window.location.origin + '/page/count' + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
+        //     (techs === '' ? '' : '&technologies=' + techs);
+        if (window.location.pathname === '/schedule') {
+            let selectedDate = $("#schedule-content .selected-date").text().trim();
+            pagesUrl += "&date=" + selectedDate;
+            // countUrl += "&date=" + selectedDate;
+        }
 
         $.ajax({
-            url: window.location.origin + '/page/' + page + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
-                (techs === '' ? '' : '&technologies=' + techs),
+            url: pagesUrl,
             method: 'GET'
         }).done(function (data) {
-            mapa = data;
+            mapa = data.slice(1);
+            $("#pages").html("");
+            lastPage = data[0][0];
+            page = parseInt(new URLSearchParams(window.location.search).get("page"));
+            page = isNaN(page) ? 1 : page;
+            if (lastPage < 1) {
+                $("#pages").html("");
+            } else {
+                setPagesValues(lastPage);
+                pagesAnimation();
+            }
             $("#home-schedules-containers").html("");
+            $("#schedules").html("");
             for (let i = 0; i < 8; i++) {
                 $("#home-schedules-containers").append('<div class="schedule-container"></div>');
+                $("#schedules").append('<div class="schedule-container"></div>');
             }
             generateSchedule();
+            // let parent = $($(this).parents(".movie-schedule")[0]);
+            // animateSchedule(parent)
             $("#home-schedules-containers .curtain").css("display", "none");
+            $("#schedules .curtain").css("display", "none");
         })
     })
 

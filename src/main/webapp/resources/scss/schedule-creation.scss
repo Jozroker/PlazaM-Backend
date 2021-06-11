@@ -6,11 +6,11 @@
   position: absolute;
   padding: 0 10px;
   left: 0;
-  top: 100%;
+  //top: 100%;
   z-index: 2;
   background-color: $black-light;
   overflow-y: hidden;
-  height: 0;
+  //height: 0;
 
   & > div {
     width: 100%;
@@ -575,7 +575,7 @@
   overflow: hidden;
   height: 25px;
   top: 92px;
-  z-index: 5;
+  //z-index: 5;
 
   .content {
     height: 186px;

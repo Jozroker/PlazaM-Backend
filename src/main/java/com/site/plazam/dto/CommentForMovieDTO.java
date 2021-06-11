@@ -1,6 +1,7 @@
 package com.site.plazam.dto;
 
 import com.site.plazam.dto.parents.CommentSimpleDTO;
+import com.site.plazam.dto.parents.RatingSimpleDTO;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,8 @@ public class CommentForMovieDTO extends CommentSimpleDTO {
 
     @NotNull
     private LocalDateTime time;
+
+    private RatingSimpleDTO userRating;
 
     @Override
     public boolean equals(Object o) {

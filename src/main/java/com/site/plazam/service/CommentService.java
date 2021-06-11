@@ -16,6 +16,8 @@ public interface CommentService {
 
     CommentForCommentsListDTO updateCommentText(CommentForCommentsListDTO commentForCommentsListDTO);
 
+    CommentForCommentsListDTO updateReportedStatus(CommentForReportedListDTO commentForReportedListDTO, boolean status);
+
 
     CommentForCommentsListDTO findCommentForCommentsListById(String id);
 

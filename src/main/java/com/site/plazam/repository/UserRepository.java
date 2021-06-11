@@ -71,6 +71,8 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     List<User> findByWaitMovieIdsContains(String id);
 
+    Optional<User> findByTicketIdsContains(String id);
+
 //    @Query(value = "{'_id':ObjectId('?0')},{'_id':0, 'favourite_movies_ids':1}")
 //    List<String> getFavouritesMoviesByUserId(String id);
 }

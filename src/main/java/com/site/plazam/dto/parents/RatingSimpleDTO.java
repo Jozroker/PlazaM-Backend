@@ -15,15 +15,14 @@ public class RatingSimpleDTO {
     private String id;
 
     @NotNull
-    private double userRating;
+    private int userRating;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RatingSimpleDTO that = (RatingSimpleDTO) o;
-        return Double.compare(that.userRating, userRating) == 0 &&
-                Objects.equals(id, that.id);
+        return userRating == that.userRating && Objects.equals(id, that.id);
     }
 
     @Override

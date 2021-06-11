@@ -101,7 +101,7 @@
       transition: background-position 0.3s linear;
       cursor: pointer;
 
-      &:hover {
+      &:not(.disabled):hover {
         color: $maroon;
       }
     }

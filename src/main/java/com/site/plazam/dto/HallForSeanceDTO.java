@@ -16,17 +16,23 @@ public class HallForSeanceDTO extends HallSimpleDTO {
     @NotNull
     private int number;
 
+    @NotNull
+    private int rows;
+
+    @NotNull
+    private int columns;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         HallForSeanceDTO that = (HallForSeanceDTO) o;
-        return number == that.number;
+        return number == that.number && rows == that.rows && columns == that.columns;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), number);
+        return Objects.hash(super.hashCode(), number, rows, columns);
     }
 }

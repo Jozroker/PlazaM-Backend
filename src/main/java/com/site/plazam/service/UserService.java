@@ -85,6 +85,8 @@ public interface UserService {
     Page<UserForBannedListDTO> findUserForBannedListByRole(Role role,
                                                            Pageable pageable);
 
+    UserForSelfInfoDTO findByTicketsContains(TicketSimpleDTO ticket);
+
     UserForSelfInfoDTO findByUsernameOrEmail(String username, String email);
 
     List<UserForBannedListDTO> findByBannedTrue();

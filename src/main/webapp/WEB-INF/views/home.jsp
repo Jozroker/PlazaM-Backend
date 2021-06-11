@@ -110,12 +110,14 @@
 </div>
 <div id="footer-container"></div>
 </body>
-<sec:authorize access="hasAuthority('ADMIN')">
+<sec:authorize access="hasRole('ADMIN')">
     <script>
         let isAdmin = true;
     </script>
 </sec:authorize>
 <script>
+    let hallValue = '<spring:message code="hall.title.default"/>';
+    let timeValue = '<spring:message code="time.title.default"/>';
     let monthsList = [
         '<spring:message code="month.january.coming.soon"/>',
         '<spring:message code="month.february.coming.soon"/>',
@@ -139,11 +141,39 @@
         "<spring:message code="day.friday"/>",
         '<spring:message code="day.saturday"/>'
     ];
+    let daysCalendarList = [
+        '<spring:message code="day.friday.short"/>',
+        '<spring:message code="day.monday.short"/>',
+        '<spring:message code="day.tuesday.short"/>',
+        '<spring:message code="day.wednesday.short"/>',
+        '<spring:message code="day.thursday.short"/>',
+        "<spring:message code="day.friday.short"/>",
+        '<spring:message code="day.saturday.short"/>'
+    ];
+    let monthsCalendarList = [
+        '<spring:message code="month.january"/>',
+        '<spring:message code="month.february"/>',
+        '<spring:message code="month.march"/>',
+        '<spring:message code="month.april"/>',
+        '<spring:message code="month.may"/>',
+        '<spring:message code="month.june"/>',
+        '<spring:message code="month.july"/>',
+        '<spring:message code="month.august"/>',
+        '<spring:message code="month.september"/>',
+        '<spring:message code="month.october"/>',
+        '<spring:message code="month.november"/>',
+        '<spring:message code="month.december"/>'
+    ];
     let fromLabel = '<spring:message code="movie.from.default"/>';
     let lastPage = parseInt(${pagesCount});
     let ukraine = '<spring:message code="ukraine.default"/>';
+    let createMovieValue = '<spring:message code="button.create.movie.title"/>';
     let unitedKingdom = '<spring:message code="united.kingdom.default"/>';
     let poland = '<spring:message code="poland.default"/>';
+    let minuteValue = '<spring:message code="minute.default"/>';
+    let minuteShortValue = '<spring:message code="minute.short.default"/>';
+    let hourShortValue = '<spring:message code="hour.short.default"/>';
+    let changeValue = '<spring:message code="button.change"/>';
 </script>
 <script crossorigin="anonymous"
         integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="

@@ -43,6 +43,13 @@ public interface SeanceService {
                                                                                          LocalDate date2,
                                                                                          List<HallForSeanceDTO> halls);
 
+    Page<SeanceForSeancesListDTO> findByDateFromBeforeEqualsAndDateToAfterEqualsAndHalls(LocalDate date,
+                                                                                         LocalDate date2,
+                                                                                         List<HallForSeanceDTO> halls,
+                                                                                         List<String> technologies,
+                                                                                         List<String> genres,
+                                                                                         Pageable pageable);
+
     Page<SeanceForSeancesListDTO> findByDateFromBeforeAndDateToAfter(LocalDate date,
                                                                      LocalDate date2,
                                                                      Pageable pageable);
@@ -53,7 +60,8 @@ public interface SeanceService {
                                                                              Pageable pageable);
 
     Page<Map.Entry> findSeancesList(LocalDate currentDate, CinemaDTO cinema, List<String> technologies,
-                                    List<String> genres,
+                                    List<String> genres, boolean singleDate,
+                                    MovieForSeanceDTO currentMovie,
                                     Pageable pageable);
 
     List<SeanceForSeancesListDTO> findByStartSeanceBetweenOrEndSeanceBetween(LocalDateTime start,

@@ -116,10 +116,12 @@
       .comments {
         position: relative;
         overflow: hidden;
+        min-height: 235px;
 
         .scroll {
           width: 100%;
           padding: 0 14px;
+          min-height: 190px;
         }
 
         .comment-form {
@@ -207,6 +209,8 @@
           position: relative;
           overflow: hidden;
           padding: 0 14px;
+          max-height: 292px;
+          max-width: 590px;
 
           .pictures {
             //position: relative;
@@ -215,6 +219,7 @@
 
             img {
               width: 100%;
+              object-fit: cover;
               //display: inline-block;
             }
           }
@@ -307,6 +312,7 @@
         .text {
           width: 100%;
           padding: 0 14px;
+          min-height: 100px;
 
           p {
             font-size: 20px;
@@ -347,7 +353,12 @@
 }
 
 #poster {
+  max-width: 192px;
+
   img {
+    width: 100%;
+    object-fit: cover;
+
     @media screen and (max-width: 510px) {
       margin-bottom: 10px;
     }
@@ -644,7 +655,7 @@
       margin-top: 4px;
     }
 
-    .imdb-rating, .pg-rating {
+    .imdb-rating, .mpaa-rating {
       font-size: 20px;
       line-height: 20px;
       font-weight: 300;

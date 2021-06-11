@@ -26,7 +26,8 @@ let settingsMenuAnimate = false;
 let ticketsAnimate = false;
 let comingSoonAnimate = false;
 
-let scrollBar;
+let scrollBar, cinemaId, language;
+let windowResize = false;
 // let currentScrollPosition;
 let settingsPosition = "-808px";
 // let settingsPosition = "-858px";
@@ -41,16 +42,16 @@ let addedFavMovies = [],
     addedTickets = [],
     removedTickets = [],
     removedMessages = [],
-    addedMessages = [],
-    removedTicketsSeances = [];
+    addedMessages = [];
+// removedTicketsSeances = [];
 
 window.onbeforeunload = function () {
     listsSaving();
 }
 
 $(document).ready(function () {
-    let language = $("#current-local .flag").attr("identifier");
-    let cinemaId = $("#current-cinema a").attr("identifier");
+    language = $("#current-local .flag").attr("identifier");
+    cinemaId = $("#current-cinema a").attr("identifier");
 
     {
         $($(".link")[4]).css("height", $("#current-cinema").height() <= 18 ? "32px" : "54px");
@@ -74,7 +75,7 @@ $(document).ready(function () {
             $(this).css("width", 26 + width + "px");
         })
 
-        if (typeof tickets !== 'undefined') {
+        if (typeof tickets !== 'undefined' && Array.isArray(tickets)) {
             let ticketsList = '<div class="scroll">';
             for (let ticket in tickets) {
                 ticketsList += createTicket(tickets[ticket][0], tickets[ticket][1], tickets[ticket][2], tickets[ticket][3],
@@ -112,7 +113,7 @@ $(document).ready(function () {
         window.removeEventListener("scroll", noScroll);
     })
 
-    $(window).resize(function () {
+    $(window).on("resize", function () {
         if ($(window).width() < 1770) {
             $("#menu-btn div").css("left", "-20px");
         } else {
@@ -154,6 +155,17 @@ $(document).ready(function () {
         if (!settingsMenuHidden) {
             $(".settings-btn").css("top", settingsPosition);
         }
+
+        clearTimeout(windowResize);
+        windowResize = setTimeout(function () {
+
+            windowResize = false;
+            $(window).trigger('resizeend');
+
+        }, 100);
+    }).on("resizeend", function () {
+        $($(".link")[4]).css("height", $("#current-cinema").height() <= 18 ? "32px" : "54px");
+        $($(".link")[4]).css("top", $("#current-cinema").height() <= 18 ? "0" : "-10px");
     })
 
     $(document).mousemove(function () {
@@ -185,13 +197,13 @@ $(document).ready(function () {
     })
 
     $("#coming-soon-link").click(function () {
-        if ($(this).hasClass("select")) {
-            $(this).removeClass("select");
-        } else {
-            $(this).parent().find(".select").removeClass("select");
-            $(this).addClass("select");
-        }
-        if ($("#coming-soon").length != 0) {
+        if (window.location.pathname === '/home') {
+            if ($(this).hasClass("select")) {
+                $(this).removeClass("select");
+            } else {
+                $(this).parent().find(".select").removeClass("select");
+                $(this).addClass("select");
+            }
             if (!comingSoonAnimate) {
                 comingSoonAnimate = true;
 
@@ -219,9 +231,8 @@ $(document).ready(function () {
             } else {
                 nextClickedElement = $("#coming-soon-link");
             }
-
         } else {
-            //todo go to home page
+            window.location.href = window.location.origin + '/home';
         }
     })
 
@@ -337,13 +348,21 @@ $(document).ready(function () {
     })
 
     $(document).on("click", "#tickets .ticket .cross.active", function () {
-        removedTickets.push($(this).parents(".ticket").first().attr("identifier"));
-        removedTicketsSeances.push($(this).parents(".ticket").first().find(".barcode .identifier").text().trim());
-        $(this).removeClass("active");
-        $(this).parents(".ticket").first().animate({
-            "height": "0"
-        }, 300, "easeInOutQuint", function () {
-            $(this).remove();
+        let ticketElem = $(this);
+        $.ajax({
+            url: window.location.origin + '/ticket/' + $(ticketElem).parent().attr("identifier") + '/remove',
+            method: 'POST'
+        }).done(function (data) {
+            if (data === 'success') {
+                removedTickets.push($(ticketElem).parents(".ticket").first().attr("identifier"));
+                // removedTicketsSeances.push($(this).parents(".ticket").first().find(".barcode .identifier").text().trim());
+                $(ticketElem).removeClass("active");
+                $(ticketElem).parents(".ticket").first().animate({
+                    "height": "0"
+                }, 300, "easeInOutQuint", function () {
+                    $(this).remove();
+                })
+            }
         })
     })
 
@@ -685,7 +704,7 @@ $(document).ready(function () {
                         "opacity": "1"
                     }, 100, "linear").css("pointer-events", "auto");
                     $("#search-result").css("display", "block").animate({
-                        "height": "252px"
+                        "height": $(".movie-result").length * 36 + "px"
                     }, 300, "easeInOutQuint");
                 });
             } else {
@@ -803,24 +822,35 @@ $(document).ready(function () {
         cinemaId = $(this).attr("identifier");
         $("#current-cinema a").text($(this).text());
 
-        if (window.location.pathname === '/home') {
+        if (window.location.pathname === '/home' || window.location.pathname === '/schedule') {
             $("#home-schedules-containers .curtain").css("display", "block");
+            $("#schedules .curtain").css("display", "block");
             let genres = '', techs = '';
             $(".genre.selected").each(function () {
                 genres += $(this).attr("identifier") + ",";
-            })
+            });
             $(".tech.selected").each(function () {
                 techs += $(this).text().trim() + ",";
-            })
+            });
             genres = genres.slice(0, -1);
             techs = techs.slice(0, -1);
+            // let pagesUrl = window.location.origin + '/page/count' + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
+            //     (techs === '' ? '' : '&technologies=' + techs);
+            let schedulesUrl = window.location.origin + '/page/' + (isNaN(page) ? 1 : page) + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
+                (techs === '' ? '' : '&technologies=' + techs);
+            if (window.location.pathname === '/schedule') {
+                let selectedDate = $("#schedule-content .selected-date").text().trim();
+                // pagesUrl += "&date=" + selectedDate;
+                schedulesUrl += "&date=" + selectedDate;
+            }
+
             $.ajax({
-                url: window.location.origin + '/page/count' + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
-                    (techs === '' ? '' : '&technologies=' + techs),
+                url: schedulesUrl,
                 method: 'GET'
-            }).done(function (count) {
+            }).done(function (data) {
+                mapa = data.slice(1);
                 $("#pages").html("");
-                lastPage = count;
+                lastPage = data[0][0];
                 page = parseInt(new URLSearchParams(window.location.search).get("page"));
                 page = isNaN(page) ? 1 : page;
                 if (lastPage < 1) {
@@ -829,19 +859,15 @@ $(document).ready(function () {
                     setPagesValues(lastPage);
                     pagesAnimation();
                 }
-            })
-            $.ajax({
-                url: window.location.origin + '/page/' + (isNaN(page) ? 1 : page) + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
-                    (techs === '' ? '' : '&technologies=' + techs),
-                method: 'GET'
-            }).done(function (data) {
-                mapa = data;
                 $("#home-schedules-containers").html("");
+                $("#schedules").html("");
                 for (let i = 0; i < 8; i++) {
                     $("#home-schedules-containers").append('<div class="schedule-container"></div>');
+                    $("#schedules").append('<div class="schedule-container"></div>');
                 }
                 generateSchedule();
                 $("#home-schedules-containers .curtain").css("display", "none");
+                $("#schedules .curtain").css("display", "none");
             })
         }
 
@@ -1154,22 +1180,30 @@ $(document).ready(function () {
     })
 
     $(document).on("click", "#messages .cross", function () {
-        if (!messagesAnimate) {
-            messagesAnimate = true;
-            let elem = $(this).parent();
-            if (elem.prev(".line-between").length) {
-                elem.prev(".line-between").remove();
-            } else if (elem.next(".line-between").length) {
-                elem.next(".line-between").remove();
+        let messageElem = $(this);
+        $.ajax({
+            url: window.location.origin + '/message/' + $(messageElem).parent().attr("identifier") + '/remove',
+            method: 'POST'
+        }).done(function (data) {
+            if (data === 'success') {
+                if (!messagesAnimate) {
+                    messagesAnimate = true;
+                    let elem = $(messageElem).parent();
+                    if (elem.prev(".line-between").length) {
+                        elem.prev(".line-between").remove();
+                    } else if (elem.next(".line-between").length) {
+                        elem.next(".line-between").remove();
+                    }
+                    removedMessages.push($(messageElem).parents(".message").first().attr("identifier"));
+                    elem.remove();
+                    messagesAnimate = false;
+                    nextClickedElement.click();
+                    nextClickedElement = $();
+                } else {
+                    nextClickedElement = $(messageElem);
+                }
             }
-            removedMessages.push($(this).parents(".message").first().attr("identifier"));
-            elem.remove();
-            messagesAnimate = false;
-            nextClickedElement.click();
-            nextClickedElement = $();
-        } else {
-            nextClickedElement = $(this);
-        }
+        })
     })
 
     $(".settings-btn").click(function () {
@@ -1610,20 +1644,26 @@ $(document).ready(function () {
         $($(this).parents(".field")[0]).addClass("checked");
     })
 
+    $("#locals a").click(function () {
+        let url = new URL(document.location);
+        url.searchParams.set("language", $(this).attr("language"));
+        window.location.href = url.href;
+    })
+
     $("#search-line").focusin(function () {
         if (!searchLineAnimate) {
             $("#search-result").animate({
-                "height": "252px"
+                "height": $(".movie-result").length * 36 + "px"
             }, 300, "easeInOutQuint");
         }
     })
 
     $("#search-line").focusout(function () {
-        if (!searchLineAnimate) {
+        // if (!searchLineAnimate) {
             $("#search-result").animate({
                 "height": "0"
             }, 300, "easeInOutQuint");
-        }
+        // }
     })
 
     $("#search-line").keyup(function () {
@@ -1631,19 +1671,25 @@ $(document).ready(function () {
         let resultList = "";
         if (movieName === "") {
             $("#search-result .simplebar-content").html(resultList);
+            $("#search-result").animate({
+                "height": "0"
+            }, 300, "easeInOutQuint");
         } else {
             $.ajax({
                 url: window.location.origin + "/movies/result?movieFullName=" + movieName,
                 method: "GET"
             }).done(function (movies) {
                 if (typeof isAdmin !== 'undefined') {
-                    resultList += '<div class="movie-result"><a href="' + window.location.origin + '/admin/movie/create">' + createMovie + '</a></div>';
+                    resultList += '<div class="movie-result"><a href="' + window.location.origin + '/admin/movie/create">' + createMovieValue + '</a></div>';
                 }
                 for (let movie in movies) {
                     resultList += '<div class="movie-result"><a href="' + window.location.origin + '/movie/' +
                         movies[movie].id + '">' + movies[movie].fullName + '</a></div>';
                 }
                 $("#search-result .simplebar-content").html(resultList);
+                $("#search-result").animate({
+                    "height": $(".movie-result").length * 36 + "px"
+                }, 300, "easeInOutQuint");
             })
         }
     })
@@ -1656,8 +1702,8 @@ $(document).ready(function () {
 function createTicket(ticketId, seanceDate, seanceTime, seanceHall, price, row, column, id, moviePicture, movieName, movieSurname) {
     let date = new Date(seanceDate.slice(-4) + "-" + seanceDate.slice(3, 5) + "-" + seanceDate.slice(0, 2));
     let current = new Date();
-    current.setDate(current.getDate() + 3);
-    if (current.getDate() <= 3) {
+    current.setDate(current.getDate() + 1);
+    if (current.getDate() <= 1) {
         current.setMonth(current.getMonth() + 1);
         if (current.getMonth() === 0) {
             current.setFullYear(current.getFullYear() + 1);
@@ -1786,25 +1832,25 @@ function generateCinemas() {
 }
 
 function listsSaving() {
-    $.ajax({
-        url: window.location.origin + "/user/" + userId + "/update/lists",
-        method: 'POST',
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({
-            addedFavouriteMovies: addedFavMovies,
-            removedFavouriteMovies: removedFavMovies,
-            addedWaitedMovies: addedWaitedMovies,
-            removedWaitedMovies: removedWaitedMovies,
-            addedViewedMovies: addedViewedMovies,
-            addedTickets: addedTickets,
-            removedTickets: removedTickets,
-            addedMessages: addedMessages,
-            removedMessages: removedMessages,
-            removedTicketsSeances: removedTicketsSeances
-        })
-    }).done(function (data) {
-        console.log(data)
-    })
+    if (typeof userId !== "undefined") {
+        $.ajax({
+            url: window.location.origin + "/user/" + userId + "/update/lists",
+            method: 'POST',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                addedFavouriteMovies: addedFavMovies,
+                removedFavouriteMovies: removedFavMovies,
+                addedWaitedMovies: addedWaitedMovies,
+                removedWaitedMovies: removedWaitedMovies,
+                addedViewedMovies: addedViewedMovies,
+                addedTickets: addedTickets,
+                removedTickets: removedTickets,
+                addedMessages: addedMessages,
+                removedMessages: removedMessages
+                // removedTicketsSeances: removedTicketsSeances
+            })
+        });
+    }
 }
 
 // function generateMessages() {

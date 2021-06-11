@@ -1,6 +1,7 @@
 package com.site.plazam.dto;
 
 import com.site.plazam.domain.Genre;
+import com.site.plazam.domain.Lang;
 import com.site.plazam.domain.MPAA;
 import com.site.plazam.dto.parents.MovieSimpleDTO;
 import com.site.plazam.dto.parents.PictureDTO;
@@ -53,7 +54,7 @@ public class MovieFullDTO extends MovieSimpleDTO {
     private String directedBy;
 
     @NotNull
-    private String movieLang;
+    private Lang movieLang;
 
     @NotNull
     private String movieCountry;

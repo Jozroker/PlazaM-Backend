@@ -14,12 +14,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.LocaleResolver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -35,44 +33,40 @@ public class HomeController {
 
     private final MovieService movieService;
 
-    private final LocaleResolver localeResolver;
-
     public HomeController(CinemaService cinemaService,
                           UserService userService,
                           SeanceService seanceService,
                           HallService hallService,
-                          MovieService movieService,
-                          LocaleResolver localeResolver) {
+                          MovieService movieService) {
         this.cinemaService = cinemaService;
         this.userService = userService;
         this.seanceService = seanceService;
         this.hallService = hallService;
         this.movieService = movieService;
-        this.localeResolver = localeResolver;
     }
 
     @GetMapping("favicon.ico")
     @ResponseBody
-    void returnNoFavicon() {
+    public void returnNoFavicon() {
     }
 
     @GetMapping({"/home", "/"})
     @Transactional
-    public String home(ModelMap model, Principal principal) {
-        CinemaDTO cinema = cinemaService.getCinemaByLocation();
-        if (principal != null) {
-            UserForSelfInfoDTO user =
-                    userService.findByUsernameOrEmail(principal.getName(), principal.getName());
-            if (user != null) {
-                cinema = user.getSelectedCinema();
-            }
-        }
-        Page<Map.Entry> seances = seanceService.findSeancesList(LocalDate.now(),
-                cinemaService.findById(cinema.getId()), null, null,
-                PageRequest.of(0, 8));
+    public String home(ModelMap model) {
+//        CinemaDTO cinema = cinemaService.getCinemaByLocation();
+//        if (principal != null) {
+//            UserForSelfInfoDTO user =
+//                    userService.findByUsernameOrEmail(principal.getName(), principal.getName());
+//            if (user != null) {
+//                cinema = user.getSelectedCinema();
+//            }
+//        }
+//        Page<Map.Entry> seances = seanceService.findSeancesList(LocalDate.now(),
+//                cinemaService.findById(cinema.getId()), null, null,
+//                false, PageRequest.of(0, 8));
         List<MovieForHomeSliderDTO> homeSliderMovies =
                 movieService.findMovieForHomeSliderByReleaseDateBeforeOrderByReleaseDate(LocalDate.now());
-        model.addAttribute("pagesCount", seances.getTotalPages());
+//        model.addAttribute("pagesCount", seances.getTotalPages());
         model.addAttribute("sliderMovies", homeSliderMovies);
         return "home";
     }
@@ -91,9 +85,7 @@ public class HomeController {
     @Transactional
     public String header(@RequestParam(name = "path", required = false) String path,
                          ModelMap model,
-                         Principal principal,
-                         HttpServletRequest request, HttpServletResponse response
-    ) {
+                         Principal principal) {
         Lang currentLang = Lang.ENG;
         CinemaDTO currentCinema = cinemaService.findAll().get(0);
         try {
@@ -185,9 +177,24 @@ public class HomeController {
         return new JSONObject(cinemaMap).toString();
     }
 
-//    @GetMapping("/footer")
-//    @Transactional
-//    public String footer()
+    @GetMapping("/schedule")
+    @Transactional
+    public String schedule(ModelMap model, Principal principal) {
+        CinemaDTO cinema = cinemaService.getCinemaByLocation();
+        if (principal != null) {
+            UserForSelfInfoDTO user =
+                    userService.findByUsernameOrEmail(principal.getName(), principal.getName());
+            if (user != null) {
+                cinema = user.getSelectedCinema();
+            }
+        }
+        Page<Map.Entry> seances = seanceService.findSeancesList(LocalDate.now(),
+                cinemaService.findById(cinema.getId()), null, null,
+                true, null, PageRequest.of(0, 8));
+        model.addAttribute("pagesCount", seances.getTotalPages());
+        model.addAttribute("currentDate", LocalDate.now());
+        return "schedule";
+    }
 
     @GetMapping("/halls")
     @ResponseBody
@@ -201,74 +208,136 @@ public class HomeController {
         return hallService.findHallForSeanceByCinema(currentCinema);
     }
 
-    @GetMapping({"/home/page/{page}", "/page/{page}"})
+    @GetMapping({"/home/page/{page}", "/page/{page}", "/schedule/page/{page}"})
     @ResponseBody
+    @Transactional
     public List<List<Object>> getSeancesPage(@PathVariable int page,
                                              @RequestParam String cinemaId,
                                              @RequestParam(required = false) String genres,
-                                             @RequestParam(required = false) String technologies) {
+                                             @RequestParam(required = false) String technologies,
+                                             @RequestParam(required = false) String date) {
         Page<Map.Entry> seances;
+        boolean singleDate = false;
+        LocalDate selectedDate = LocalDate.now();
         if (cinemaId == null) {
             cinemaId = cinemaService.getCinemaByLocation().getId();
         }
+        if (date != null) {
+            singleDate = true;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
+            selectedDate = LocalDate.parse(date, formatter);
+        }
         if (genres != null && technologies != null) {
-            seances = seanceService.findSeancesList(LocalDate.now(),
+            seances = seanceService.findSeancesList(selectedDate,
                     cinemaService.findById(cinemaId), Arrays.asList(technologies.split(",").clone()),
                     Arrays.asList(genres.split(",").clone()),
-                    PageRequest.of(page - 1, 8));
+                    singleDate, null, PageRequest.of(page - 1, 8));
         } else if (genres != null) {
-            seances = seanceService.findSeancesList(LocalDate.now(),
+            seances = seanceService.findSeancesList(selectedDate,
                     cinemaService.findById(cinemaId), null,
                     Arrays.asList(genres.split(",").clone()),
-                    PageRequest.of(page - 1, 8));
+                    singleDate, null, PageRequest.of(page - 1, 8));
         } else if (technologies != null) {
-            seances = seanceService.findSeancesList(LocalDate.now(),
+            seances = seanceService.findSeancesList(selectedDate,
                     cinemaService.findById(cinemaId), Arrays.asList(technologies.split(",").clone()),
-                    null, PageRequest.of(page - 1, 8));
+                    null, singleDate, null, PageRequest.of(page - 1, 8));
         } else {
-            seances = seanceService.findSeancesList(LocalDate.now(),
+            seances = seanceService.findSeancesList(selectedDate,
                     cinemaService.findById(cinemaId), null,
-                    null, PageRequest.of(page - 1, 8));
+                    null, singleDate, null, PageRequest.of(page - 1, 8));
         }
 
         List<List<Object>> list = new ArrayList<>();
         if (seances != null) {
-            seances.forEach(entry -> list.add(Arrays.asList(entry.getKey(),
+            list.add(Collections.singletonList(seances.getTotalPages()));
+            seances.getContent().forEach(entry -> list.add(Arrays.asList(entry.getKey(),
                     entry.getValue())));
         }
         return list;
+        //todo change list to json object
     }
 
-    @GetMapping({"/home/page/count", "/page/count"})
-    @ResponseBody
-    public int getSeancesPagesCount(@RequestParam String cinemaId,
-                                    @RequestParam(required = false) String genres,
-                                    @RequestParam(required = false) String technologies) {
-        Page<Map.Entry> seances;
-        if (cinemaId == null) {
-            cinemaId = cinemaService.getCinemaByLocation().getId();
-        }
-        if (genres != null && technologies != null) {
-            seances = seanceService.findSeancesList(LocalDate.now(),
-                    cinemaService.findById(cinemaId), Arrays.asList(technologies.split(",").clone()),
-                    Arrays.asList(genres.split(",").clone()),
-                    PageRequest.of(0, 8));
-        } else if (genres != null) {
-            seances = seanceService.findSeancesList(LocalDate.now(),
-                    cinemaService.findById(cinemaId), null,
-                    Arrays.asList(genres.split(",").clone()),
-                    PageRequest.of(0, 8));
-        } else if (technologies != null) {
-            seances = seanceService.findSeancesList(LocalDate.now(),
-                    cinemaService.findById(cinemaId), Arrays.asList(technologies.split(",").clone()),
-                    null, PageRequest.of(0, 8));
-        } else {
-            seances = seanceService.findSeancesList(LocalDate.now(),
-                    cinemaService.findById(cinemaId), null,
-                    null, PageRequest.of(0, 8));
-        }
-        return seances.getTotalPages();
-    }
+//    @GetMapping({"/page/count", "/home/page/count", "/schedule/page/count"})
+//    @ResponseBody
+//    @Transactional
+//    public int getSeancesPagesCount(@RequestParam String cinemaId,
+//                                    @RequestParam(required = false) String genres,
+//                                    @RequestParam(required = false) String technologies,
+//                                    @RequestParam(required = false) String date) {
+//        Page<Map.Entry> seances;
+//        boolean singleDate = false;
+//        LocalDate selectedDate = LocalDate.now();
+//        if (cinemaId == null) {
+//            cinemaId = cinemaService.getCinemaByLocation().getId();
+//        }
+//        if (date != null) {
+//            singleDate = true;
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
+//            selectedDate = LocalDate.parse(date, formatter);
+//        }
+//        if (genres != null && technologies != null) {
+//            seances = seanceService.findSeancesList(selectedDate,
+//                    cinemaService.findById(cinemaId), Arrays.asList(technologies.split(",").clone()),
+//                    Arrays.asList(genres.split(",").clone()),
+//                    singleDate, PageRequest.of(0, 8));
+//        } else if (genres != null) {
+//            seances = seanceService.findSeancesList(selectedDate,
+//                    cinemaService.findById(cinemaId), null,
+//                    Arrays.asList(genres.split(",").clone()),
+//                    singleDate, PageRequest.of(0, 8));
+//        } else if (technologies != null) {
+//            seances = seanceService.findSeancesList(selectedDate,
+//                    cinemaService.findById(cinemaId), Arrays.asList(technologies.split(",").clone()),
+//                    null, singleDate, PageRequest.of(0, 8));
+//        } else {
+//            seances = seanceService.findSeancesList(selectedDate,
+//                    cinemaService.findById(cinemaId), null,
+//                    null, singleDate, PageRequest.of(0, 8));
+//        }
+//        return seances.getTotalPages();
+//    }
+
+//    @GetMapping("/schedule/page/count")
+//    @ResponseBody
+//    public int getScheduleSeancesPagesCount(@RequestParam String cinemaId,
+//                                    @RequestParam(required = false) String genres,
+//                                    @RequestParam(required = false) String technologies,
+//                                    @RequestParam(required = false) String date) {
+//        Page<Map.Entry> seances;
+//        LocalDate selectedDate = LocalDate.now();
+//        CinemaDTO cinema = cinemaService.getCinemaByLocation();
+//        if (cinemaId != null) {
+//            cinema = cinemaService.findById(cinemaId);
+//        }
+//        List<HallForSeanceDTO> halls =
+//                hallService.findHallForSeanceByCinema(cinema);
+//        if (date != null) {
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
+//            selectedDate = LocalDate.parse(date, formatter);
+//        }
+//        if (genres != null && technologies != null) {
+//            seances = seanceService.findSeancesList(selectedDate,
+//                    cinemaService.findById(cinemaId), Arrays.asList(technologies.split(",").clone()),
+//                    Arrays.asList(genres.split(",").clone()),
+//                    PageRequest.of(0, 8));
+//            seances =
+//                    seanceService.findByDateFromBeforeEqualsAndDateToAfterEqualsAndHalls(selectedDate, selectedDate, halls, PageRequest.)
+//        } else if (genres != null) {
+//            seances = seanceService.findSeancesList(selectedDate,
+//                    cinemaService.findById(cinemaId), null,
+//                    Arrays.asList(genres.split(",").clone()),
+//                    PageRequest.of(0, 8));
+//        } else if (technologies != null) {
+//            seances = seanceService.findSeancesList(selectedDate,
+//                    cinemaService.findById(cinemaId), Arrays.asList(technologies.split(",").clone()),
+//                    null, PageRequest.of(0, 8));
+//        } else {
+//            seances = seanceService.findSeancesList(selectedDate,
+//                    cinemaService.findById(cinemaId), null,
+//                    null, PageRequest.of(0, 8));
+//        }
+//        return seances.getTotalPages();
+//    }
 
 //    private Map<MovieForSeanceDTO, Map<LocalDate, Map<HallForSeanceDTO,
 //            List<SeanceForSeancesListDTO>>>> getSeanceMap (Page<Map.Entry> map) {

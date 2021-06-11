@@ -245,6 +245,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Deprecated
     public void banReported(UserSimpleDTO user, LocalDate bannedTo) {
         Query query =
                 new Query(Criteria.where("id").is(user.getId()));
@@ -318,6 +319,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserForUsersListDTO> findUserForUsersListByRole(Role role) {
         return ur.findByRole(role).stream().map(um::toUserForUsersListDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserForSelfInfoDTO findByTicketsContains(TicketSimpleDTO ticket) {
+        return um.toUserForSelfInfoDTO(ur.findByTicketIdsContains(ticket.getId()).orElse(null));
     }
 
     @Override

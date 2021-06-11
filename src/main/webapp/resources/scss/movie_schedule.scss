@@ -100,10 +100,14 @@
       }
 
       .hall, .time {
-        &:hover {
+        &:not(.disabled):hover {
           color: $white-dark;
           text-shadow: $white-dark 0 0 2px;
           cursor: pointer;
+        }
+
+        &.disabled {
+          color: $gray-middle;
         }
       }
     }
@@ -567,6 +571,13 @@
               background-image: linear-gradient(to left, $maroon 0%, $maroon 50%, $white-dark 50%, $white-dark 100%);
             }
 
+            &:hover {
+              .change {
+                right: -74px;
+                transition: right 0.3s ease-in-out;
+              }
+            }
+
             .hovered {
               &:hover {
                 cursor: pointer;
@@ -589,7 +600,7 @@
               background-color: rgba($gray-light, 0.2);
               box-shadow: inset 1px 1px 5px black;
               padding-right: 10px;
-              transition: color 0.1s linear;
+              transition: color 0.1s linear, right 0.3s ease-in-out;
               border-radius: 0 12px 12px 0;
               z-index: 0;
 

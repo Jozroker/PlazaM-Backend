@@ -11,6 +11,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Schedule create</title>
@@ -24,18 +25,37 @@
     <link href="${contextPath}/resources/scss/schedule-creation.css" rel="stylesheet">
 </head>
 <body>
-<div id="schedule-creation">
+<c:if test="${seance == null}">
+    <c:set var="id" value=""/>
+    <c:set var="movieName" value=""/>
+    <c:set var="hall" value=""/>
+    <c:set var="days" value=""/>
+    <c:set var="price" value=""/>
+</c:if>
+<c:if test="${seance != null}">
+    <c:set var="id" value="${seance.id}"/>
+    <c:set var="movieName" value="${seance.movie.name} ${seance.movie.surname}"/>
+    <c:set var="hall" value="${seance.hall}"/>
+    <c:set var="days" value="${seance.days}"/>
+    <c:set var="price" value="${seance.ticketPrice}"/>
+</c:if>
+<div id="schedule-creation" identifier="${id}">
     <div class="title"><spring:message code="movie.schedule.creation.title"/></div>
     <div class="underline"></div>
     <div class="form scroll">
         <div class="form-content">
             <div class="movie-name">
-                <div class="title-2"><spring:message code="movie.schedule.creation.movie"/></div>
+                <c:if test="${seance == null}">
+                    <div class="title-2"><spring:message code="movie.schedule.creation.movie"/></div>
+                </c:if>
+                <c:if test="${seance == null}">
+                    <div class="title-2"><spring:message code="movie.schedule.changing.title"/></div>
+                </c:if>
                 <div class="input">
                     <div id="search-movie">
                         <div>
                             <div>
-                                <input id="movie-search-line" placeholder="<spring:message code="movie.schedule.creation.movie"/>" type="text">
+                                <input id="movie-search-line" placeholder="<spring:message code="movie.schedule.creation.movie"/>" type="text" value="${movieName}">
                             </div>
                             <div class="underline"></div>
                         </div>
@@ -59,7 +79,12 @@
                 <div class="input">
                     <ul class="list">
                         <li class="selected">
-                            <div><spring:message code="list.not.selected.default"/></div>
+                            <c:if test="${hall == ''}">
+                                <div><spring:message code="list.not.selected.default"/></div>
+                            </c:if>
+                            <c:if test="${hall != ''}">
+                                <div identifier="${hall.id}">${hall.technology.type} (${hall.number})</div>
+                            </c:if>
                             <div class="triangle"></div>
                         </li>
                         <li class="scroll">
@@ -107,25 +132,25 @@
             <div class="days-select">
                 <div class="title-2"><spring:message code="movie.schedule.creation.days"/></div>
                 <div class="input">
-                    <div class="day">
+                    <div class="day" id="MONDAY">
                         <div class="checkbox"><spring:message code="day.monday"/></div>
                     </div>
-                    <div class="day">
+                    <div class="day" id="TUESDAY">
                         <div class="checkbox"><spring:message code="day.tuesday"/></div>
                     </div>
-                    <div class="day">
+                    <div class="day" id="WEDNESDAY">
                         <div class="checkbox"><spring:message code="day.wednesday"/></div>
                     </div>
-                    <div class="day">
+                    <div class="day" id="THURSDAY">
                         <div class="checkbox"><spring:message code="day.thursday"/></div>
                     </div>
-                    <div class="day">
+                    <div class="day" id="FRIDAY">
                         <div class="checkbox"><spring:message code="day.friday"/></div>
                     </div>
-                    <div class="day">
+                    <div class="day" id="SATURDAY">
                         <div class="checkbox"><spring:message code="day.saturday"/></div>
                     </div>
-                    <div class="day">
+                    <div class="day" id="SUNDAY">
                         <div class="checkbox"><spring:message code="day.sunday"/></div>
                     </div>
                 </div>
@@ -135,7 +160,7 @@
                 <div class="input">
                     <div class="sign" id="minus">&#9866;</div>
                     <div>
-                        <input id="price" placeholder="0.00" type="text">
+                        <input id="price" placeholder="0.00" type="text" value="${price}">
                     </div>
                     <div class="sign" id="plus">&#10010;</div>
                     <div class="currency"></div>
@@ -169,11 +194,39 @@
         </div>
     </div>
     <div class="button">
-        <div class="create-btn"><spring:message code="button.create.title"/></div>
+        <c:if test="${seance == null}">
+            <div class="create-btn"><spring:message code="button.create.title"/></div>
+        </c:if>
+        <c:if test="${seance != null}">
+            <div class="create-btn"><spring:message code="button.change.title"/></div>
+        </c:if>
     </div>
 </div>
 </body>
 <script>
+    let monthsCalendarList = [
+        '<spring:message code="month.january"/>',
+        '<spring:message code="month.february"/>',
+        '<spring:message code="month.march"/>',
+        '<spring:message code="month.april"/>',
+        '<spring:message code="month.may"/>',
+        '<spring:message code="month.june"/>',
+        '<spring:message code="month.july"/>',
+        '<spring:message code="month.august"/>',
+        '<spring:message code="month.september"/>',
+        '<spring:message code="month.october"/>',
+        '<spring:message code="month.november"/>',
+        '<spring:message code="month.december"/>'
+    ];
+    let daysCalendarList = [
+        '<spring:message code="day.friday.short"/>',
+        '<spring:message code="day.monday.short"/>',
+        '<spring:message code="day.tuesday.short"/>',
+        '<spring:message code="day.wednesday.short"/>',
+        '<spring:message code="day.thursday.short"/>',
+        "<spring:message code="day.friday.short"/>",
+        '<spring:message code="day.saturday.short"/>'
+    ];
     let monthsList = [
         '<spring:message code="month.january"/>',
         '<spring:message code="month.february"/>',
@@ -197,14 +250,32 @@
         '<spring:message code="day.saturday.short"/>',
         '<spring:message code="day.sunday.short"/>'
     ];
-    let createMovie = '<spring:message code="button.create.title"/>';
+    let createValue = '<spring:message code="button.create.title"/>';
     let notSelected = '<spring:message code="list.not.selected.default"/>';
+    let scheduleCreationTitle = '<spring:message code="movie.schedule.creation.title"/>';
+
+    <c:if test="${seance != null}">
+    let selectedDays = [];
+    <c:forEach var="day" items="${seance.days}">
+    selectedDays.push('${day.name()}');
+    </c:forEach>
+
+    let seanceTimeHour = ${seance.startSeance.hour};
+    let seanceTimeMinute = ${seance.startSeance.minute};
+    let dateFromDate = ${seance.dateFrom.dayOfMonth};
+    let dateFromMonth = ${seance.dateFrom.monthValue};
+    let dateFromYear = ${seance.dateFrom.year};
+    let dateToDate = ${seance.dateTo.dayOfMonth};
+    let dateToMonth = ${seance.dateTo.monthValue};
+    let dateToYear = ${seance.dateTo.year};
+    </c:if>
+
 </script>
-<sec:authorize access="hasAuthority('ADMIN')">
-    <script>
-        let isAdmin = true;
-    </script>
-</sec:authorize>
+<%--<sec:authorize access="hasRole('ADMIN')">--%>
+<%--    <script>--%>
+<%--        let isAdmin = true;--%>
+<%--    </script>--%>
+<%--</sec:authorize>--%>
 <%--<script crossorigin="anonymous"--%>
 <%--        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="--%>
 <%--        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>--%>

@@ -54,7 +54,10 @@ public class ActorServiceImpl implements ActorService {
     public ActorForActorListDTO save(ActorCreateDTO actorCreateDTO) {
         if (actorCreateDTO.getPicture() != null) {
             if (actorCreateDTO.getPicture().getId() == null) {
-                ActorForActorListDTO actor = findById(actorCreateDTO.getId());
+                ActorForActorListDTO actor = null;
+                if (actorCreateDTO.getId() != null) {
+                    actor = findById(actorCreateDTO.getId());
+                }
                 if (actor != null) {
                     ps.delete(actor.getPicture(), ActorPicture.class);
                 }

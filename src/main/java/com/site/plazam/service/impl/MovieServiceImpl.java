@@ -255,6 +255,29 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateAfterAndGenresMatches(LocalDate date, List<Genre> genres, Pageable pageable) {
+        return mr.findByReleaseDateAfterAndGenresMatches(date, genres,
+                pageable).map(mm::toMovieForMoviesListDTO);
+    }
+
+    @Override
+    public Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateBeforeAndGenresMatches(LocalDate date, List<Genre> genres, Pageable pageable) {
+        return mr.findByReleaseDateBeforeAndGenresMatches(date, genres,
+                pageable).map(mm::toMovieForMoviesListDTO);
+    }
+
+    @Override
+    public Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateBetweenAndGenresMatches(LocalDate from, LocalDate to, List<Genre> genres, Pageable pageable) {
+        return mr.findByReleaseDateBetweenAndGenresMatches(from, to,
+                genres, pageable).map(mm::toMovieForMoviesListDTO);
+    }
+
+    @Override
+    public Page<MovieForMoviesListDTO> findAllByGenresMatches(List<Genre> genres, Pageable pageable) {
+        return mr.findAllByGenresMatches(genres, pageable).map(mm::toMovieForMoviesListDTO);
+    }
+
+    @Override
     public List<MovieForHomeSliderDTO> findMovieForHomeSliderByReleaseDateBeforeOrderByReleaseDate(LocalDate date) {
         List<MovieForHomeSliderDTO> movies = mr.findByReleaseDateBeforeOrderByReleaseDate(date)
                 .stream()

@@ -1,5 +1,6 @@
 package com.site.plazam.dto;
 
+import com.site.plazam.domain.Country;
 import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.dto.parents.UserSimpleDTO;
 import lombok.*;
@@ -19,6 +20,9 @@ public class UserForReportedListDTO extends UserSimpleDTO {
 
     @NotNull
     private PictureDTO picture;
+
+    @NotNull
+    private Country country;
 
     @Override
     public boolean equals(Object o) {

@@ -39,6 +39,13 @@ public class Ticket {
     @Field(name = "seance_id")
     private String seanceId;
 
+    @NotNull
+    @Field(name = "payment_status")
+    private Boolean paymentStatus = false;
+
+    //todo add payed field
+    //todo create receipt entity end liquidpay api
+
     public Ticket(@NotNull LocalDate date,
                   @NotNull Integer placeRow,
                   @NotNull Integer placeSeat,

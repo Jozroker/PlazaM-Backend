@@ -142,8 +142,9 @@ function setPagesValues(lastPageNumber) {
 }
 
 function replaceContent(page) {
-    if (window.location.pathname === '/home') {
+    if (window.location.pathname === '/home' || window.location.pathname === '/schedule') {
         $("#home-schedules-containers .curtain").css("display", "block");
+        $("#schedules .curtain").css("display", "block");
         let genres = '', techs = '';
         $(".genre.selected").each(function () {
             genres += $(this).attr("identifier") + ",";
@@ -153,20 +154,142 @@ function replaceContent(page) {
         })
         genres = genres.slice(0, -1);
         techs = techs.slice(0, -1);
+        let url = window.location.origin + '/page/' + page + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
+            (techs === '' ? '' : '&technologies=' + techs);
+        if (window.location.pathname === '/schedule') {
+            let selectedDate = $("#schedule-content .selected-date").text().trim();
+            url += "&date=" + selectedDate;
+        }
         if (!isNaN(page)) {
             $.ajax({
-                url: window.location.origin + '/page/' + page + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
-                    (techs === '' ? '' : '&technologies=' + techs),
+                url: url,
                 method: 'GET'
             }).done(function (data) {
-                mapa = data;
+                mapa = data.slice(1);
+                $("#pages").html("");
+                lastPage = data[0];
+                page = parseInt(new URLSearchParams(window.location.search).get("page"));
+                page = isNaN(page) ? 1 : page;
+                if (lastPage < 1) {
+                    $("#pages").html("");
+                } else {
+                    setPagesValues(lastPage);
+                    pagesAnimation();
+                }
                 $("#home-schedules-containers").html("");
+                $("#schedules").html("");
                 for (let i = 0; i < 8; i++) {
                     $("#home-schedules-containers").append('<div class="schedule-container"></div>');
+                    $("#schedules").append('<div class="schedule-container"></div>');
                 }
                 generateSchedule();
                 $("#home-schedules-containers .curtain").css("display", "none");
+                $("#schedules .curtain").css("display", "none");
             })
         }
+    } else if (window.location.pathname === '/movies') {
+        $("#movies .curtain").css("display", "block");
+        let genres = '';
+        $(".genre.selected").each(function () {
+            genres += $(this).attr("identifier") + ",";
+        });
+        genres = genres.slice(0, -1);
+        let url = window.location.origin + '/movies/' + page + '?sort=' + $(".category.selected").attr("identifier") + (genres === '' ? '' : '&genres=' + genres);
+        if (!isNaN(parseInt($(".year-from .selected > div").first().text()))) {
+            url += '&yearFrom=' + parseInt($(".year-from .selected > div").first().text());
+        }
+        if (!isNaN(parseInt($(".year-to .selected > div").first().text()))) {
+            url += '&yearTo=' + parseInt($(".year-to .selected > div").first().text());
+        }
+        if (window.location.search.indexOf("userId") > 0) {
+            let searchParams = new URL(document.location).searchParams;
+            url += '&userId=' + searchParams.get("userId") + "&type=" + searchParams.get("type");
+        }
+        if (!isNaN(page)) {
+            $.ajax({
+                url: url,
+                method: 'GET'
+            }).done(function (data) {
+                moviesList = data.slice(1);
+                $("#pages").html("");
+                lastPage = data[0];
+                page = parseInt(new URLSearchParams(window.location.search).get("page"));
+                page = isNaN(page) ? 1 : page;
+                if (lastPage < 1) {
+                    $("#pages").html("");
+                } else {
+                    setPagesValues(lastPage);
+                    pagesAnimation();
+                }
+                $("#movies").html("");
+                moviesGenerator();
+            })
+        }
+    } else if (window.location.pathname === '/user/comments') {
+        $("#comments .curtain").css("display", "block");
+        let url = window.location.origin + '/user/comments/' + page + '?sort=' + $(".category.selected").attr("identifier");
+        if (!isNaN(page)) {
+            $.ajax({
+                url: url,
+                method: 'GET'
+            }).done(function (data) {
+                commentsList = JSON.parse(data)[1];
+                $("#pages").html("");
+                lastPage = JSON.parse(data)[0];
+                page = parseInt(new URLSearchParams(window.location.search).get("page"));
+                page = isNaN(page) ? 1 : page;
+                if (lastPage < 1) {
+                    $("#pages").html("");
+                } else {
+                    setPagesValues(lastPage);
+                    pagesAnimation();
+                }
+                $("#comments").html("");
+                generateComments(commentsList);
+            })
+        }
+    } else if (window.location.pathname === '/admin/users') {
+        $("#users .curtain").css("display", "block");
+        let roles = '', countries = '', banStatuses = '', name = $("#user-search-line").val().trim();
+        $("#filter .role.selected").each(function () {
+            roles += $(this).attr("identifier") + ',';
+        });
+        roles = roles.slice(0, -1);
+        $("#filter .country.selected").each(function () {
+            countries += $(this).attr("identifier") + ',';
+        });
+        countries = countries.slice(0, -1);
+        $("#filter .ban-status.selected").each(function () {
+            banStatuses += $(this).attr("identifier") + ',';
+        });
+        banStatuses = banStatuses.slice(0, -1);
+        let url = window.location.origin + '/admin/users/' + page + '?sort=' + $(".sort .category.selected").attr("identifier") + (roles === '' ? '' : '&roles=' + roles) +
+            (countries === '' ? '' : '&countries=' + countries) + (banStatuses === '' ? '' : '&banStatuses=' + banStatuses) + (name === '' ? '' : '&name=' + name);
+        $.ajax({
+            url: url,
+            method: 'GET'
+        }).done(function (data) {
+            allUsersLastPage = JSON.parse(data)[0];
+            reportedUsersLastPage = JSON.parse(data)[2];
+            bannedUsersLastPage = JSON.parse(data)[4];
+            $("#pages").html("");
+            if ($("#users .nav-item.selected").attr("identifier") === 'ALL') {
+                lastPage = allUsersLastPage;
+            } else if ($("#users .nav-item.selected").attr("identifier") === 'REPORTED') {
+                lastPage = reportedUsersLastPage;
+            } else {
+                lastPage = bannedUsersLastPage;
+            }
+            if (lastPage < 1) {
+                $("#pages").html("");
+            } else {
+                setPagesValues(lastPage);
+                pagesAnimation();
+            }
+            generateAllUsers(JSON.parse(data)[1]);
+            generateReportedUsers(JSON.parse(data)[3]);
+            generateBannedUsers(JSON.parse(data)[5]);
+            $("#users .curtain").css("display", "none");
+        })
     }
 }

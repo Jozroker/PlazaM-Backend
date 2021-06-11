@@ -55,6 +55,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public CommentForCommentsListDTO updateReportedStatus(CommentForReportedListDTO commentForReportedListDTO, boolean status) {
+        Query query =
+                new Query(Criteria.where("id").is(commentForReportedListDTO.getId()));
+        Update update = new Update().set("reported", status);
+        mt.findAndModify(query, update, Comment.class);
+        return findCommentForCommentsListById(commentForReportedListDTO.getId());
+    }
+
+    @Override
     @Transactional
     public CommentForCommentsListDTO updateCommentText(CommentForCommentsListDTO commentForCommentsListDTO) {
         Query query =
@@ -173,7 +182,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentForReportedListDTO> findByReportedTrue() {
-        return cr.findByReportedTrue().stream().map(cm::toCommentForReportedListDTO).collect(Collectors.toList());
+        return cr.findByReportedTrue().stream().map(cm::toCommentForReportedListDTO)
+                .filter(comment -> !comment.getUser().isBanned()).collect(Collectors.toList());
     }
 
     @Override

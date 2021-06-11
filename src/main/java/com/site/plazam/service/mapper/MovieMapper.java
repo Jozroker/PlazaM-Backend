@@ -7,6 +7,7 @@ import com.site.plazam.dto.*;
 import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.service.ActorService;
 import com.site.plazam.service.PictureService;
+import org.bson.internal.Base64;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -102,8 +103,6 @@ public abstract class MovieMapper {
             "toString")
     @Mapping(source = "directedBy", target = "directedBy", qualifiedByName =
             "toString")
-    @Mapping(source = "movieLang", target = "movieLang", qualifiedByName =
-            "toString")
     @Mapping(source = "movieCountry", target = "movieCountry",
             qualifiedByName =
                     "toString")
@@ -146,8 +145,9 @@ public abstract class MovieMapper {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp" +
                         "/resources/img/jpg/poster/default_poster.jpg"));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "jpeg", bos);
-                pictureDTO.setPicture(bos.toByteArray());
+                ImageIO.write(bImage, "jpg", bos);
+                pictureDTO.setPictureString(Base64.encode(bos.toByteArray()));
+                pictureDTO.setFormat("jpg");
             } catch (Exception ignored) {
             }
             return pictureDTO;
@@ -163,8 +163,9 @@ public abstract class MovieMapper {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp" +
                         "/resources/img/jpg/wide/default_wide.jpg"));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "jpeg", bos);
-                pictureDTO.setPicture(bos.toByteArray());
+                ImageIO.write(bImage, "jpg", bos);
+                pictureDTO.setPictureString(Base64.encode(bos.toByteArray()));
+                pictureDTO.setFormat("jpg");
             } catch (Exception ignored) {
             }
             return pictureDTO;
@@ -178,7 +179,12 @@ public abstract class MovieMapper {
     }
 
     List<String> toPictureIdList(List<PictureDTO> pictures) {
-        return pictures.stream().map(PictureDTO::getId).collect(Collectors.toList());
+        return pictures.stream().map(picture -> {
+            if (picture.getId() == null) {
+                picture = ps.save(picture, MoviePicture.class);
+            }
+            return picture.getId();
+        }).collect(Collectors.toList());
     }
 
     List<ActorForActorListDTO> toActorList(List<String> actorIds) {

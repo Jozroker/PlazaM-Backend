@@ -16,7 +16,7 @@ import java.util.Objects;
 public class UserForCommentDTO extends UserSimpleDTO {
 
     @NotNull
-    private String name;
+    private String username;
 
     @NotNull
     private PictureDTO picture;
@@ -30,13 +30,11 @@ public class UserForCommentDTO extends UserSimpleDTO {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         UserForCommentDTO that = (UserForCommentDTO) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(picture, that.picture) &&
-                country == that.country;
+        return Objects.equals(username, that.username) && Objects.equals(picture, that.picture) && country == that.country;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, picture, country);
+        return Objects.hash(super.hashCode(), username, picture, country);
     }
 }

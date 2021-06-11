@@ -7,6 +7,7 @@ import com.site.plazam.dto.ActorCreateDTO;
 import com.site.plazam.dto.ActorForActorListDTO;
 import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.service.PictureService;
+import org.bson.internal.Base64;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +62,9 @@ public abstract class ActorMapper {
             try {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp/resources/img/jpg/default_avatar.jpg"));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "jpeg", bos);
-                pictureDTO.setPicture(bos.toByteArray());
+                ImageIO.write(bImage, "jpg", bos);
+                pictureDTO.setPictureString(Base64.encode(bos.toByteArray()));
+                pictureDTO.setFormat("jpg");
             } catch (Exception ignored) {
             }
             return pictureDTO;

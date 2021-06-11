@@ -1,8 +1,6 @@
-let lastPage = 5;
+nextClickedElement = $();
 
 $(document).ready(function () {
-    let nextClickedElement = $();
-    let currentScrollPosition;
 
     let filterHidden = true;
     let banListHidden = true;
@@ -13,13 +11,23 @@ $(document).ready(function () {
     {
         $(".sort .underline").css("width", $(".category.selected").first().width() + 14 + "px");
 
-        $("#footer-container").load("footer.html #footer", function () {
-            $.getScript("../js/footer.js");
-        });
-        $("#header-container").load("header.html #header", function () {
-            $.getScript("../js/header.js");
-        });
-        $.getScript("../js/pages.js");
+        $.ajax({
+            url: window.location.origin + '/footer',
+            method: "GET"
+        }).done(function (page) {
+            $("#footer-container").html(page);
+            // $.getScript("../js/footer.js");
+            $.getScript("/resources/js/footer.js");
+        })
+
+        $.ajax({
+            url: window.location.origin + '/header?path=' + window.location.pathname,
+            method: "GET"
+        }).done(function (page) {
+            $("#header-container").html(page);
+            $.getScript("/resources/js/header.js");
+            $.getScript("/resources/js/pages.js");
+        })
     }
 
     $("#filter .scroll").each(function (index) {
@@ -34,18 +42,62 @@ $(document).ready(function () {
         });
     })
 
-    $(".category").click(function () {
-        if (!$(this).hasClass("selected")) {
-            $(".categories").find(".selected").removeClass("selected");
-            $(this).addClass("selected");
-            $(".sort .underline").animate({
-                left: $(this).position().left + "px",
-                width: $(this).width() + 14 + "px"
-            }, 300, "easeInOutQuint")
+    $(".category, #user-search-icon").click(function () {
+        if (!$(this).hasClass("selected") && typeof setPagesValues !== 'undefined') {
+            if ($(this).hasClass("category")) {
+                $(".categories").find(".selected").removeClass("selected");
+                $(this).addClass("selected");
+                $(".sort .underline").animate({
+                    left: $(this).position().left + "px",
+                    width: $(this).width() + 14 + "px"
+                }, 300, "easeInOutQuint");
+            }
+            $("#users .curtain").css("display", "block");
+            let roles = '', countries = '', banStatuses = '', name = $("#user-search-line").val().trim();
+            $("#filter .role.selected").each(function () {
+                roles += $(this).attr("identifier") + ',';
+            });
+            roles = roles.slice(0, -1);
+            $("#filter .country.selected").each(function () {
+                countries += $(this).attr("identifier") + ',';
+            });
+            countries = countries.slice(0, -1);
+            $("#filter .ban-status.selected").each(function () {
+                banStatuses += $(this).attr("identifier") + ',';
+            });
+            banStatuses = banStatuses.slice(0, -1);
+            let url = window.location.origin + '/admin/users/1?sort=' + $(".sort .category.selected").attr("identifier") + (roles === '' ? '' : '&roles=' + roles) +
+                (countries === '' ? '' : '&countries=' + countries) + (banStatuses === '' ? '' : '&banStatuses=' + banStatuses) + (name === '' ? '' : '&name=' + name);
+            $.ajax({
+                url: url,
+                method: 'GET'
+            }).done(function (data) {
+                allUsersLastPage = JSON.parse(data)[0];
+                reportedUsersLastPage = JSON.parse(data)[2];
+                bannedUsersLastPage = JSON.parse(data)[4];
+                $("#pages").html("");
+                if ($("#users .nav-item.selected").attr("identifier") === 'ALL') {
+                    lastPage = allUsersLastPage;
+                } else if ($("#users .nav-item.selected").attr("identifier") === 'REPORTED') {
+                    lastPage = reportedUsersLastPage;
+                } else {
+                    lastPage = bannedUsersLastPage;
+                }
+                if (lastPage < 1) {
+                    $("#pages").html("");
+                } else {
+                    setPagesValues(lastPage);
+                    pagesAnimation();
+                }
+                generateAllUsers(JSON.parse(data)[1]);
+                generateReportedUsers(JSON.parse(data)[3]);
+                generateBannedUsers(JSON.parse(data)[5]);
+                $("#users .curtain").css("display", "none");
+            })
         }
     })
 
-    $(".selected-role").click(function () {
+    $(document).on("click", ".selected-role", function () {
         if ($(this).parent().css("height") == "18px") {
             $(this).parent().find(".triangle").addClass("triangle-0");
             $(this).parent().css("background-color", "rgba(85, 85, 85, 0.2)").animate({
@@ -59,9 +111,16 @@ $(document).ready(function () {
         }
     })
 
-    $(".user-right-side .role li:not(.selected-role)").click(function () {
-        $(this).parent().find(".selected-role > div:first-child").text($(this).text().trim());
-        $(this).parent().find(".selected-role").click();
+    $(document).on("click", ".user-right-side .role li:not(.selected-role)", function () {
+        $.ajax({
+            url: window.origin.origin + '/admin/user/' + $(this).parents(".user").first().attr("identifier") + '/' + $(this).attr("identifier"),
+            method: 'POST'
+        }).done(function (data) {
+            if (data === 'success') {
+                $(this).parent().find(".selected-role > div:first-child").text($(this).text().trim());
+                $(this).parent().find(".selected-role").click();
+            }
+        })
     })
 
     $("#filter .country, #filter .ban-status, #filter .role").click(function () {
@@ -113,15 +172,73 @@ $(document).ready(function () {
 
     $(".apply-btn").click(function () {
         $(".arrow").click();
+        $("#users .curtain").css("display", "block");
+        let roles = '', countries = '', banStatuses = '', name = $("#user-search-line").val().trim();
+        $("#filter .role.selected").each(function () {
+            roles += $(this).attr("identifier") + ',';
+        });
+        roles = roles.slice(0, -1);
+        $("#filter .country.selected").each(function () {
+            countries += $(this).attr("identifier") + ',';
+        });
+        countries = countries.slice(0, -1);
+        $("#filter .ban-status.selected").each(function () {
+            banStatuses += $(this).attr("identifier") + ',';
+        });
+        banStatuses = banStatuses.slice(0, -1);
+        let url = window.location.origin + '/admin/users/1?sort=' + $(".sort .category.selected").attr("identifier") + (roles === '' ? '' : '&roles=' + roles) +
+            (countries === '' ? '' : '&countries=' + countries) + (banStatuses === '' ? '' : '&banStatuses=' + banStatuses) + (name === '' ? '' : '&name=' + name);
+        $.ajax({
+            url: url,
+            method: 'GET'
+        }).done(function (data) {
+            allUsersLastPage = JSON.parse(data)[0];
+            reportedUsersLastPage = JSON.parse(data)[2];
+            bannedUsersLastPage = JSON.parse(data)[4];
+            $("#pages").html("");
+            if ($("#users .nav-item.selected").attr("identifier") === 'ALL') {
+                lastPage = allUsersLastPage;
+            } else if ($("#users .nav-item.selected").attr("identifier") === 'REPORTED') {
+                lastPage = reportedUsersLastPage;
+            } else {
+                lastPage = bannedUsersLastPage;
+            }
+            if (lastPage < 1) {
+                $("#pages").html("");
+            } else {
+                setPagesValues(lastPage);
+                pagesAnimation();
+            }
+            generateAllUsers(JSON.parse(data)[1]);
+            generateReportedUsers(JSON.parse(data)[3]);
+            generateBannedUsers(JSON.parse(data)[5]);
+            $("#users .curtain").css("display", "none");
+        })
     })
 
     $("#users .nav-item").click(function () {
-        if (!$(this).hasClass("selected")) {
+        if (!$(this).hasClass("selected") && typeof setPagesValues !== 'undefined') {
             $(this).parent().find(".selected").removeClass("selected");
             $(this).addClass("selected");
             $(".users-container").animate({
                 "left": "-" + $("#users").find(".nav-item").index($(this)) * 100 + "%"
             }, 500, "easeInOutQuint");
+            $("#pages").html("");
+            if ($(this).attr("identifier") === 'ALL') {
+                lastPage = allUsersLastPage;
+            } else if ($(this).attr("identifier") === 'REPORTED') {
+                lastPage = reportedUsersLastPage;
+            } else {
+                lastPage = bannedUsersLastPage;
+            }
+            page = parseInt(new URLSearchParams(window.location.search).get("page"));
+            page = isNaN(page) ? 1 : page;
+            if (lastPage < 1) {
+                $("#pages").html("");
+            } else {
+                setPagesValues(lastPage);
+                pagesAnimation();
+            }
         }
     })
 
@@ -155,22 +272,30 @@ $(document).ready(function () {
         }
     })
 
-    $(".ban-button").mouseleave(function () {
+    $(document).on("mouseleave", ".ban-button", function () {
         if ($(this).hasClass("selected")) {
             $(this).find(".text").click();
         }
     })
 
-    $(".skip-button").click(function () {
-        //todo autoskip if user is already banned
-        $(this).parents(".user").animate({
-            "opacity": "0"
-        }, 500, "linear", function () {
-            $(this).remove();
+    $(document).on("click", ".skip-button", function () {
+        let currentElement = $(this);
+        $.ajax({
+            url: window.location.origin + '/admin/comment/' + $(currentElement).parents(".user").first().find(".comment").first().attr("identifier") + '/skip',
+            method: 'POST'
+        }).done(function (data) {
+            if (data === 'success') {
+                $(currentElement).parents(".user").animate({
+                    "opacity": "0"
+                }, 500, "linear", function () {
+                    $(currentElement).remove();
+                })
+            }
         })
     })
 
     $(document).on("click", ".ban", function () {
+        let currentElement = $(this);
         $(this).parents(".ban-button").find(".selection").animate({
             "height": "0"
         }, 500, "linear");
@@ -202,58 +327,145 @@ $(document).ready(function () {
                 bannedToDate = bannedToDate.toLocaleDateString();
                 break;
             case 4:
-                bannedToDate = "Forever"
+                bannedToDate = foreverValue;
                 break;
             default:
                 break;
         }
-        $("#users .all-users, #users .banned-users").find(query).find(".user-left-side").first().append(element);
-        $("#users .all-users, #users .banned-users").find(query).find(".ban-button").remove();
 
-        let bannedUser = '<div identifier="' + id + '" class="user"><div class="user-left-side"><img src="' + image +
-            '" alt=""><div class="button unban-button selectable"><div class="text">Unban</div></div></div>' +
-            '<div class="user-right-side"><div class="fields"><div class="field username"><div class="title-2">Username</div>' +
-            '<div class="value">' + username + '</div></div><div class="field email"><div class="title-2">Email</div>' +
-            '<div class="value">' + email + '</div></div><div class="field phone"><div class="title-2">Phone</div>' +
-            '<div class="value">' + phone + '</div></div><div class="field banned-to-date"><div class="title-2">Banned To</div>' +
-            '<div class="value">' + bannedToDate + '</div></div></div></div></div>';
-        $("#users .banned-users").prepend(bannedUser);
+        $.ajax({
+            url: window.location.origin + '/admin/user/' + id + '/ban' + (bannedToDate === foreverValue ? '' : '?dateTo=' +
+                $(currentElement).attr("identifier")),
+            method: 'POST'
+        }).done(function (data) {
+            if (data === 'success') {
+                $("#users .all-users, #users .banned-users").find(query).find(".user-left-side").first().append(element);
+                $("#users .all-users, #users .banned-users").find(query).find(".ban-button").remove();
 
-        if ($("#users .navbar .selected").index() == 1) {
-            $(this).parents(".user").animate({
-                "opacity": "0"
-            }, 500, "linear", function () {
-                $(this).remove();
-            })
-        } else {
-            $("#users .reported-users").find(query).remove();
-            banListHidden = true;
-            banListAnimate = false;
-        }
+                let bannedUser = '<div identifier="' + id + '" class="user"><div class="user-left-side"><img src="' + image +
+                    '" alt=""><div class="button unban-button selectable"><div class="text">' + unbanValue + '</div></div></div>' +
+                    '<div class="user-right-side"><div class="fields"><div class="field username"><div class="title-2">' + usernameValue + '</div>' +
+                    '<div class="value">' + username + '</div></div><div class="field email"><div class="title-2">' + emailValue + '</div>' +
+                    '<div class="value">' + email + '</div></div><div class="field phone"><div class="title-2">' + phoneValue + '</div>' +
+                    '<div class="value">' + phone + '</div></div><div class="field banned-to-date"><div class="title-2">' + bannedToValue + '</div>' +
+                    '<div class="value">' + bannedToDate + '</div></div></div></div></div>';
+                $("#users .banned-users").prepend(bannedUser);
+
+                if ($("#users .navbar .selected").index() == 1) {
+                    $(currentElement).parents(".user").animate({
+                        "opacity": "0"
+                    }, 500, "linear", function () {
+                        $(this).remove();
+                    })
+                } else {
+                    $("#users .reported-users").find(query).remove();
+                    banListHidden = true;
+                    banListAnimate = false;
+                }
+            }
+        })
     })
 
     $(document).on("click", ".unban-button", function () {
-        let element = '<div class="button ban-button selectable"><div class="text">Ban</div><div class="selection">' +
-            '<div class="ban">1 Day</div><div class="ban">1 Week</div><div class="ban">1 Month</div>' +
-            '<div class="ban">1 Year</div><div class="ban">Forever</div></div></div>';
-        let query = ".user[identifier='" + $(this).parents(".user").first().attr("identifier") + "']";
-
-        if ($("#users .navbar .selected").index() == 0) {
-            $("#users .banned-users").find(query).remove();
-            $(this).parents(".user-left-side").first().append(element);
-            $(this).remove();
-        } else {
-            $(this).parents(".user").animate({
-                "opacity": "0"
-            }, 500, "linear", function () {
-                $(this).remove();
-            })
-            $("#users .all-users").find(query).find(".user-left-side").first().append(element);
-            $("#users .all-users").find(query).find(".unban-button").remove();
-        }
+        let currentElement = $(this);
+        $.ajax({
+            url: window.location.origin + '/admin/user/' + $(currentElement).parents(".user").first().attr("identifier") + '/unban',
+            method: 'POST'
+        }).done(function (data) {
+            if (data === 'success') {
+                let element = '<div class="button ban-button selectable"><div class="text">' + banValue + '</div><div class="selection">' +
+                    '<div identifier="1" class="ban">1 ' + dayValue + '</div><div identifier="7" class="ban">1 ' + weekValue + '</div>' +
+                    '<div identifier="30" class="ban">1 ' + monthValue + '</div><div identifier="365" class="ban">1 ' + yearValue + '</div>' +
+                    '<div identifier="forever" class="ban">' + foreverValue + '</div></div></div>';
+                let query = ".user[identifier='" + $(currentElement).parents(".user").first().attr("identifier") + "']";
+                if ($("#users .navbar .selected").index() === 0) {
+                    $("#users .banned-users").find(query).remove();
+                    $(currentElement).parents(".user-left-side").first().append(element);
+                    $(currentElement).remove();
+                } else {
+                    $(currentElement).parents(".user").animate({
+                        "opacity": "0"
+                    }, 500, "linear", function () {
+                        $(this).remove();
+                    })
+                    $("#users .all-users").find(query).find(".user-left-side").first().append(element);
+                    $("#users .all-users").find(query).find(".unban-button").remove();
+                }
+            }
+        })
     })
 
     function noScroll() {
         window.scrollTo(0, currentScrollPosition);
     }
 })
+
+function generateAllUsers(users) {
+    let allUsersElem = '';
+    for (let user in users) {
+        allUsersElem += '<div class="user" identifier="' + users[user].id + '"><div class="user-left-side"><img alt="" src="data:image/' + users[user].picture.format +
+            ';base64,' + users[user].picture.pictureString + '">';
+
+        if (users[user].banned) {
+            allUsersElem += '<div class="button unban-button selectable"><div class="text">' + unbanValue + '</div></div>';
+        } else {
+            allUsersElem += '<div class="ban-button selectable"><div class="text">' + banValue + '</div><div class="selection">' +
+                '<div identifier="1" class="ban">1 ' + dayValue + '</div><div identifier="7" class="ban">1 ' + weekValue + '</div><div identifier="30" class="ban">1 ' +
+                monthValue + '</div><div identifier="365" class="ban">1 ' + yearValue + '</div><div identifier="forever" class="ban">' + foreverValue + '</div></div></div>';
+        }
+        allUsersElem += '</div><div class="user-right-side"><div class="fields"><div class="field username"><div class="title-2">' + usernameValue + '</div>' +
+            '<div class="value">' + users[user].username + '</div></div><div class="field email"><div class="title-2">' + emailValue + '</div><div class="value">' +
+            users[user].email + '</div></div><div class="field first-name"><div class="title-2">' + firstNameValue + '</div><div class="value">' + users[user].firstName +
+            '</div></div><div class="field last-name"><div class="title-2">' + lastNameValue + '</div><div class="value">' + users[user].lastName + '</div></div>' +
+            '<div class="field role"><div class="title-2">' + roleValue + '</div><ul class="list"><li class="selected-role">';
+
+        if (users[user].role === 'ADMIN') {
+            allUsersElem += '<div identifier="ADMIN">' + adminValue + '</div>';
+        } else if (users[user].role === 'WORKER') {
+            allUsersElem += '<div identifier="WORKER">' + workerValue + '</div>';
+        } else {
+            allUsersElem += '<div identifier="USER">' + userValue + '</div>';
+        }
+
+        allUsersElem += '<div class="triangle"></div></li><li identifier="ADMIN">' + adminValue + '</li><li identifier="WORKER">' + workerValue + '</li>' +
+            '<li identifier="USER">' + userValue + '</li></ul></div><div class="field phone"><div class="title-2">' + phoneValue + '</div><div class="value">' +
+            users[user].phone + '</div></div></div></div></div>';
+    }
+    $(".users-container .all-users").html(allUsersElem);
+}
+
+function generateReportedUsers(users) {
+    let reportedUsersElem = '';
+    for (let user in users) {
+        reportedUsersElem += '<div class="user" identifier="' + users[user].user.id + '"><div class="user-left-side"><img alt="" src="data:image/' +
+            users[user].user.picture.format + ';base64,' + users[user].user.picture.pictureString + '"><div class="button ban-button selectable"><div class="text">' +
+            banValue + '</div><div class="selection"><div identifier="1" class="ban">1 ' + dayValue + '</div><div identifier="7" class="ban">1 ' + weekValue +
+            '</div><div identifier="30" class="ban">1 ' + monthValue + '</div><div identifier="365" class="ban">1 ' + yearValue + '</div><div identifier="forever"' +
+            ' class="ban">' + foreverValue + '</div></div></div><div class="button skip-button"><div class="text">' + skipValue + '</div></div></div>' +
+            '<div class="user-right-side"><div class="fields"><div class="field username"><div class="title-2">' + usernameValue + '</div><div class="value">' +
+            users[user].user.username + '</div></div><div class="field comment" identifier="' + users[user].id + '"><div class="title-2">' + commentValue +
+            '</div><div class="value">' + users[user].text + '</div></div></div></div></div>';
+    }
+    $(".users-container .reported-users").html(reportedUsersElem);
+}
+
+function generateBannedUsers(users) {
+    let bannedUsersElem = '';
+    for (let user in users) {
+        bannedUsersElem += '<div class="user" identifier="' + users[user].id + '"><div class="user-left-side"><img alt="" src="data:image/' +
+            users[user].picture.format + ';base64,' + users[user].picture.pictureString + '"><div class="button unban-button selectable"><div class="text">' +
+            unbanValue + '</div></div></div><div class="user-right-side"><div class="fields"><div class="field username"><div class="title-2">' + usernameValue +
+            '</div><div class="value">' + users[user].username + '</div></div><div class="field email"><div class="title-2">' + emailValue + '</div>' +
+            '<div class="value">' + users[user].email + '</div></div><div class="field phone"><div class="title-2">' + phoneValue + '</div><div class="value">' +
+            users[user].phone + '</div></div><div class="field banned-to-date"><div class="title-2">' + bannedToValue + '</div><div class="value">';
+
+        if (typeof users[user].bannedTo === 'undefined') {
+            bannedUsersElem += foreverValue;
+        } else {
+            bannedUsersElem += users[user].bannedTo;
+        }
+
+        bannedUsersElem += '</div></div></div></div></div>';
+    }
+    $(".users-container .banned-users").html(bannedUsersElem);
+}

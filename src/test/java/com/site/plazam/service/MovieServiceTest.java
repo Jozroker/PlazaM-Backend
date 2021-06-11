@@ -1,6 +1,7 @@
 package com.site.plazam.service;
 
 import com.site.plazam.domain.Genre;
+import com.site.plazam.domain.Lang;
 import com.site.plazam.domain.MPAA;
 import com.site.plazam.domain.Technology;
 import com.site.plazam.dto.*;
@@ -76,11 +77,7 @@ class MovieServiceTest {
             put("ukr", "China");
             put("pol", "China");
         }});
-        movieCreateDTO.setMovieLang(new HashMap<String, String>() {{
-            put("eng", "english");
-            put("ukr", "english");
-            put("pol", "english");
-        }});
+        movieCreateDTO.setMovieLang(Lang.ENG);
         movieCreateDTO.setMpaaRating(MPAA.G);
         movieCreateDTO.setName(new HashMap<String, String>() {{
             put("eng", "Full");

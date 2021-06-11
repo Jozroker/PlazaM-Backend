@@ -54,12 +54,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-//                .antMatchers("/movie/order/**").authenticated()
-//                .antMatchers("/resources/**", "/register", "/login",
-//                        "/schedule/**", "/", "/movies/**", "/movie/**",
-//                        "/home", "/authorization").permitAll()
-//                .antMatchers("/admin/**").hasAuthority("ADMIN")
-//                .anyRequest().authenticated()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/comment/{id}/*", "/ticket/{id}/remove",
+                        "/message/{id}/remove", "/seance/{id}",
+                        "/seance/{id}/tickets", "/movie/{id}/add/*",
+                        "/ticket/buy").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
@@ -73,26 +72,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             userRepository.findFirstByUsernameOrEmail(authentication.getName(), authentication.getName()).orElse(null);
                     if (user != null) {
                         String lang;
-                        if (user.getSelectedLang().name().equals("UKR")) {
-                            lang = "uk";
-                        } else if (user.getSelectedLang().name().equals("ENG")) {
+                        if (user.getSelectedLang() == null) {
                             lang = "en";
                         } else {
-                            lang = "pl";
+                            if (user.getSelectedLang().name().equals("UKR")) {
+                                lang = "uk";
+                            } else if (user.getSelectedLang().name().equals("ENG")) {
+                                lang = "en";
+                            } else {
+                                lang = "pl";
+                            }
                         }
                         httpServletResponse.sendRedirect("/home?language=" + lang);
                     }
 
                 })
-//                .defaultSuccessUrl("/home")
                 .failureUrl("/authorize")
                 .permitAll()
                 .and()
                 .logout()
                 .logoutSuccessUrl("/home")
-                .permitAll();
-//                .and()
-//                .exceptionHandling().accessDeniedPage("/access_denied");
+                .permitAll()
+                .and()
+                .exceptionHandling().accessDeniedPage("/access_denied");
     }
 
 

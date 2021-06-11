@@ -14,8 +14,7 @@ $(document).ready(function () {
 
     let nextClickedElement = $();
     let calendarDateClick = false;
-    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
-        "November", "December"];
+    let months = monthsList;
     // let stringDate = "";
     let currentScrollPosition;
     let priceLoop = false;
@@ -36,8 +35,18 @@ $(document).ready(function () {
             "rightAlign": false,
             "allowMinus": false
         });
-        $("#price").get(0).inputmask.setValue("0.00");
-        $("#date-from .value, #date-to .value").text(stringDate);
+        if (typeof selectedDays === 'undefined') {
+            $("#date-from .value, #date-to .value").text(stringDate);
+            $("#price").get(0).inputmask.setValue("0.00");
+        } else {
+            selectDays();
+            $("#price").get(0).inputmask;
+            stringDate = (dateFromDate < 10 ? '0' + dateFromDate : dateFromDate) + '.' + (dateFromMonth < 10 ? '0' + dateFromMonth : dateFromMonth) + '.' + dateFromYear;
+            $("#date-from .value").text(stringDate);
+            stringDate = (dateToDate < 10 ? '0' + dateToDate : dateToDate) + '.' + (dateToMonth < 10 ? '0' + dateToMonth : dateToMonth) + '.' + dateToYear;
+            $("#date-to .value").text(stringDate);
+            $("#timepicker").val((seanceTimeHour < 10 ? '0' + seanceTimeHour : seanceTimeHour) + ':' + (seanceTimeMinute < 10 ? '0' + seanceTimeMinute : seanceTimeMinute));
+        }
     }
 
     $("#schedule-creation .scroll").each(function (index) {
@@ -87,6 +96,7 @@ $(document).ready(function () {
             let parent = $($(this).parent()[0]);
             if (dateFromHidden) {
                 let selectedDate = new Date();
+                $(this).parent().css("z-index", "5");
                 selectedDate.setFullYear(parseInt($(parent).find(".value").text().trim().slice(-4)));
                 selectedDate.setMonth(parseInt($(parent).find(".value").text().trim().slice(3, 6)) - 1);
                 selectedDate.setDate(parseInt($(parent).find(".value").text().trim().slice(0, 2)));
@@ -127,6 +137,7 @@ $(document).ready(function () {
                     $(parent).animate({
                         "width": "172px"
                     }, 300, "easeInOutQuint", function () {
+                        $(this).parent().css("z-index", "");
                         dateFromHidden = true;
                         dateFromAnimate = false;
                         calendarDateClick = false;
@@ -149,6 +160,7 @@ $(document).ready(function () {
             let parent = $($(this).parent()[0]);
             if (dateToHidden) {
                 let selectedDate = new Date();
+                $(this).parent().css("z-index", "5");
                 selectedDate.setFullYear(parseInt($(parent).find(".value").text().trim().slice(-4)));
                 selectedDate.setMonth(parseInt($(parent).find(".value").text().trim().slice(3, 6)) - 1);
                 selectedDate.setDate(parseInt($(parent).find(".value").text().trim().slice(0, 2)));
@@ -189,6 +201,7 @@ $(document).ready(function () {
                     $(parent).animate({
                         "width": "172px"
                     }, 300, "easeInOutQuint", function () {
+                        $(this).parent().css("z-index", "");
                         dateToHidden = true;
                         dateToAnimate = false;
                         calendarDateClick = false;
@@ -384,7 +397,7 @@ $(document).ready(function () {
     $(document).on("click", ".hall, .cinema", function () {
         if ($(this).hasClass("cinema")) {
             $(".hall-select .selected > div").first().text($(".hall-select .halls-container > div").first().text());
-            if ($(this).attr("identifier") !== "") {
+            if ($(this).attr("identifier") !== "NULL") {
                 generateHalls($(this).attr("identifier"));
             } else {
                 generateHalls();
@@ -416,7 +429,7 @@ $(document).ready(function () {
                 90)) + "px, 0px)");
     })
 
-    $("#add-schedule").click(function () {
+    $(document).on("click", "#add-schedule", function () {
         if (!scheduleCreationAnimate) {
             scheduleCreationAnimate = true;
 
@@ -462,16 +475,13 @@ $(document).ready(function () {
 
     $(".button .create-btn").click(function () {
         let validation = true;
+        $("#schedule-creation .title").first().css("color", "");
         let dateFrom = new Date($("#date-from .value").text().slice(-4) + "-" + $("#date-from .value").text().slice(3, 5) +
             "-" + $("#date-from .value").text().slice(0, 3));
         let dateTo = new Date($("#date-to .value").text().slice(-4) + "-" + $("#date-to .value").text().slice(3, 5) +
             "-" + $("#date-to .value").text().slice(0, 3));
         let current = new Date();
         current.setDate(current.getDate() - 1);
-        if ($("#movie-search-line").val() == "") {
-            validation = false;
-            $("#movie-search-line").parents(".input").first().prev().css("color", "#AF2341");
-        }
         if ($("#timepicker").val() == "") {
             validation = false;
             $("#timepicker").parents(".input").first().prev().css("color", "#AF2341");
@@ -484,10 +494,10 @@ $(document).ready(function () {
             validation = false;
             $(".hall-select .selected").parents(".input").first().prev().css("color", "#AF2341");
         }
-        if ($(".cinema-select .selected").text().trim() == $(".cinema-select .cinema").first().text().trim()) {
-            validation = false;
-            $(".cinema-select .selected").parents(".input").first().prev().css("color", "#AF2341");
-        }
+        // if ($(".cinema-select .selected").text().trim() == $(".cinema-select .cinema").first().text().trim()) {
+        //     validation = false;
+        //     $(".cinema-select .selected").parents(".input").first().prev().css("color", "#AF2341");
+        // }
         if (dateFrom < current) {
             validation = false;
             $("#date-from").parent().prev().css("color", "#AF2341");
@@ -501,7 +511,39 @@ $(document).ready(function () {
             $(".days-select").find(".title-2").css("color", "#AF2341");
         }
         if (validation && !scheduleCreationHidden && !scheduleCreationAnimate) {
-            $("#add-schedule").click();
+            let seanceId = $("#schedule-creation").attr("identifier") === '' ? '' : '&seanceId=' + $("#schedule-creation").attr("identifier");
+            let movieId = ($("#movie-search-line")[0].hasAttribute("identifier") ? $("#movie-search-line").attr("identifier") : $("#movie").attr("identifier"));
+            let hallId = $(".hall-select .selected > div").first().attr("identifier");
+            let dateFrom = $("#date-from .title .value").text();
+            let dateTo = $("#date-to .title .value").text();
+            let time = $("#timepicker").val();
+            let price = $("#price").val();
+            let days = '';
+            $(".days-select .day.checked").each(function () {
+                days += $(this).attr("identifier") + ',';
+            });
+            days = days.slice(0, -1);
+
+            $.ajax({
+                url: window.location.origin + '/admin/schedule/create?movieId=' + movieId + '&hallId=' + hallId + '&dateFrom=' + dateFrom + '&dateTo=' + dateTo +
+                    '&startTime=' + time + '&price=' + price + '&days=' + days + seanceId,
+                method: 'POST'
+            }).done(function (status) {
+                if (status === 'failed') {
+                    $("#schedule-creation .title").first().css("color", "#AF2341");
+                } else if (status === 'success') {
+                    $("#schedule-creation").attr("identifier", "");
+                    $("#schedule-creation").find(".title-2").text(scheduleCreationTitle);
+                    $("#schedule-creation").find(".create-btn").text(createValue);
+                    $("#movie-search-line").removeAttr("identifier").val("");
+                    $(".hall-select .halls-container .hall").first().click();
+                    $(".cinema-select .cinema-list .cinema").first().click();
+                    $("#timepicker").val("");
+                    $("#price").val("");
+                    $(".days-select .day.selected").click();
+                    $("#add-schedule").click();
+                }
+            })
         }
     })
 
@@ -526,6 +568,7 @@ $(document).ready(function () {
     })
 
     $("#movie-search-line").keyup(function () {
+        $(this).removeAttr("identifier");
         let movieName = $(this).val();
         let resultList = "";
         if (movieName === "") {
@@ -537,7 +580,7 @@ $(document).ready(function () {
             }).done(function (movies) {
                 resultList += '<div class="scroll">';
                 if (typeof isAdmin !== 'undefined') {
-                    resultList += '<div class="movie-result"><a href="' + window.location.origin + '/admin/movie/create">' + createMovie + '</a></div>';
+                    resultList += '<div class="movie-result"><a href="' + window.location.origin + '/admin/movie/create">' + createValue + '</a></div>';
                 }
                 for (let movie in movies) {
                     resultList += '<div identifier="' + movies[movie].id + '" class="movie-result">' + movies[movie].fullName + '</div>';
@@ -571,7 +614,7 @@ $(document).ready(function () {
             url: window.location.origin + "/cinemas/schedule-creation",
             method: 'GET'
         }).done(function (cinemas) {
-            let cinemasList = '<div identifier="" class="cinema">' + notSelected + '</div>';
+            let cinemasList = '<div identifier="NULL" class="cinema">' + notSelected + '</div>';
             for (let cinema in cinemas) {
                 cinemasList += '<div class="underline"></div><div identifier="' + cinemas[cinema].id +
                     '" class="cinema">' + cinemas[cinema].city + ' (' + cinemas[cinema].name + ')' + '</div>';
@@ -600,12 +643,21 @@ $(document).ready(function () {
             url: url,
             method: 'GET'
         }).done(function (halls) {
-            let hallsList = '<div identifier="" class="hall">' + notSelected + '</div>';
+            let hallsList = '<div identifier="NULL" class="hall">' + notSelected + '</div>';
             for (let hall in halls) {
                 hallsList += '<div class="underline"></div><div identifier="' + halls[hall].id +
                     '" class="hall">' + halls[hall].technology.substr(1) + ' (' + halls[hall].number + ')' + '</div>';
             }
             $("#schedule-creation .hall-select .halls-container").html(hallsList);
         });
+    }
+
+    function selectDays() {
+        if (typeof selectedDays !== 'undefined') {
+            for (let day in selectedDays) {
+                let id = '#' + selectedDays[day];
+                $(id).addClass("checked");
+            }
+        }
     }
 })

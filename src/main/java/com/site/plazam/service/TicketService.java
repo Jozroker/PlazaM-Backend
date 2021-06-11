@@ -4,6 +4,7 @@ import com.site.plazam.dto.SeanceForTicketDTO;
 import com.site.plazam.dto.parents.TicketSimpleDTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TicketService {
@@ -18,7 +19,7 @@ public interface TicketService {
 
     List<TicketSimpleDTO> findByDate(LocalDate date);
 
-    void deleteByDateBefore(LocalDate date);
+    void deleteByDateBeforeAndTimeBefore(LocalDate date, LocalDateTime time);
 
     void delete(TicketSimpleDTO ticket);
 

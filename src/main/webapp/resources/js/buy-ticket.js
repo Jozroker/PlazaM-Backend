@@ -1,3 +1,5 @@
+let ticketsMap, availableDates;
+
 $(document).ready(function () {
     let columnIndex, rowIndex, columnEmpty = 0;
     let timeListHidden = true;
@@ -8,16 +10,14 @@ $(document).ready(function () {
     let dateListAnimate = false;
     let paymentMethodAnimate = false;
     let nextClickedElement = $();
-    let monthsFull = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    let monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    let currentScrollPosition;
+    let currentScrollPosition, dateString;
     let selectedDate, selectedMonth, selectedYear, seanceDate, seanceTime, seanceHall, price, row, column, id,
         attribute;
 
     {
         $(".tickets-price .scroll").css("height", calculateTicketsScrollHeight(false) + "px");
         $(".total-price .price").text(calculateTotalPrice());
-        hallLoad();
+        hallLoad(rowsCount, columnsCount);
         $("#card-number-field").inputmask({
             mask: "9999 9999 9999 9999",
             placeholder: "**** **** **** ****",
@@ -43,17 +43,43 @@ $(document).ready(function () {
             showMaskOnHover: false
         });
 
-        $("#footer-container").load("footer.html #footer", function () {
-            $.getScript("../js/footer.js");
-        });
-        $("#header-container").load("header.html #header", function () {
-            $.getScript("../js/header.js");
-        });
-        $.getScript("../js/calendar.js");
+        $.ajax({
+            url: window.location.origin + '/footer',
+            method: "GET"
+        }).done(function (page) {
+            $("#footer-container").html(page);
+            $.getScript("/resources/js/footer.js");
+        })
+
+        $.ajax({
+            url: window.location.origin + '/header?path=' + window.location.pathname,
+            method: "GET"
+        }).done(function (page) {
+            $("#header-container").html(page);
+            $.getScript("/resources/js/header.js");
+
+            $.ajax({
+                url: window.location.origin + '/movie/' + movieId + '/seances?cinemaId=' + $("#current-cinema a").attr("identifier"),
+                method: 'GET'
+            }).done(function (data) {
+                mapa = data;
+                availableDates = Object.keys(mapa[0][1]);
+                let currentDate = new Date();
+                // dateString = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1 < 10 ? '0' : '') + (currentDate.getMonth() + 1) + '-' +
+                //     (currentDate.getDate() < 10 ? '0' : '') + currentDate.getDate();
+                dateString = $(".selected-date").attr("year") + '-' + (monthsShortList.indexOf($(".selected-date .month").text()) + 1 < 10 ?
+                    '0' : '') + (monthsShortList.indexOf($(".selected-date .month").text()) + 1) + '-' + (parseInt($(".selected-date .date").text()) < 10 ?
+                    '0' : '') + $(".selected-date .date").text();
+                generateHallButton(mapa[0][1][dateString], null);
+            })
+        })
+
+        $.getScript("/resources/js/calendar.js");
+
     }
 
-    $(".scroll").each(function (index) {
-        new SimpleBar($(".scroll")[index], {
+    $(".buy-ticket .scroll").each(function (index) {
+        new SimpleBar($(".buy-ticket .scroll")[index], {
             autoHide: false
         });
     })
@@ -88,12 +114,16 @@ $(document).ready(function () {
     })
 
     $(document).on("click", "#calendar .date", function () {
+        clearTickets();
         selectedDate = $(this).text();
         let selectedMonthYear = $("#calendar .header-label").text();
         $(".choose-places .list .selected-date").attr("year", selectedMonthYear.slice(-4));
         $(".choose-places .list .selected-date .date").text(selectedDate);
-        $(".choose-places .list .selected-date .month").text(monthsShort[monthsFull.indexOf(selectedMonthYear.slice(0, -5))]);
+        $(".choose-places .list .selected-date .month").text(monthsShortList[monthsCalendarList.indexOf(selectedMonthYear.slice(0, -5))]);
         $(".choose-places .selected-date").click();
+        dateString = selectedMonthYear.slice(-4) + '-' + (monthsCalendarList.indexOf(selectedMonthYear.slice(0, -5)) + 1 < 10 ? '0' : '') +
+            (monthsCalendarList.indexOf(selectedMonthYear.slice(0, -5)) + 1) + '-' + (parseInt(selectedDate) < 10 ? '0' : '') + selectedDate;
+        generateHallButton(mapa[0][1][dateString], new Date(dateString));
     })
 
     $("#date-select").mouseleave(function () {
@@ -109,7 +139,7 @@ $(document).ready(function () {
             if (dateListHidden) {
                 $(this).addClass("select");
                 selectedDate = new Date();
-                selectedDate.setFullYear($(this).attr("year"), parseInt(monthsShort.indexOf($(this).find(".month").text())),
+                selectedDate.setFullYear($(this).attr("year"), parseInt(monthsShortList.indexOf($(this).find(".month").text())),
                     parseInt($(this).find(".date").text()));
                 $("#calendar").calendar(selectedDate);
                 $(this).parent().find(".selection").animate({
@@ -142,10 +172,15 @@ $(document).ready(function () {
         }
     })
 
-    $(".choose-places .list .hall").click(function () {
+    $(document).on("click", ".choose-places .list .hall", function () {
+        clearTickets();
         let selectedHall = $(this).text().trim();
         $(".choose-places .list .selected-hall").text(selectedHall);
-        $(".choose-places .selected-hall").click();
+        $(".choose-places .list .selected-hall").attr("identifier", $(this).attr("identifier"));
+        if (!hallListHidden) {
+            $(".choose-places .selected-hall").click();
+        }
+        generateTimeButton(mapa[0][1][dateString], new Date(dateString));
     })
 
     $("#hall-select").mouseleave(function () {
@@ -200,11 +235,22 @@ $(document).ready(function () {
         }
     })
 
-    $(".choose-places .list .time").click(function () {
+    $(document).on("click", ".choose-places .list .time", function () {
+        clearTickets();
         let selectedTime = $(this).text().trim();
         $(".choose-places .list .hour").text(selectedTime.slice(0, 2));
         $(".choose-places .list .min").text(selectedTime.slice(3));
+        $(".choose-places .list .selected-time").attr("identifier", $(this).attr("identifier"));
         $(".choose-places .selected-time").click();
+        for (let hall in mapa[0][1][dateString]) {
+            if (mapa[0][1][dateString][hall][0].hall.id === $("#hall-select .selected").attr("identifier")) {
+                for (let seance in mapa[0][1][dateString][hall]) {
+                    if (mapa[0][1][dateString][hall][seance].id === $(this).attr("identifier")) {
+                        hallLoad(mapa[0][1][dateString][hall][seance].hall.rows, mapa[0][1][dateString][hall][seance].hall.columns);
+                    }
+                }
+            }
+        }
     })
 
     $("#time-select").mouseleave(function () {
@@ -260,7 +306,12 @@ $(document).ready(function () {
     })
 
     $(".choose-payment .method .top").click(function () {
-        if (!$(this).hasClass("selected")) {
+        let seanceDate = $(".selected-date").attr("year") + '-' + (monthsShortList.indexOf($(".selected-date .month").text()) + 1 < 10 ? '0' : '') +
+            (monthsShortList.indexOf($(".selected-date .month").text()) + 1) + '-' + (parseInt($(".selected-date .date").text()) < 10 ? '0' : '') +
+            $(".selected-date .date").text();
+        seanceDate = new Date(seanceDate);
+        seanceDate.setDate(seanceDate.getDate() - 1);
+        if (!$(this).hasClass("selected") && (!($(this).parent().index() === 0 && new Date() >= seanceDate) || typeof isWorker !== 'undefined')) {
             if (!paymentMethodAnimate) {
                 paymentMethodAnimate = true;
 
@@ -363,26 +414,26 @@ $(document).ready(function () {
             }, 500, "easeInOutQuint");
 
             if ($(this).attr("id") == "choose-places") {
-                $("#next-tile").text("Next");
+                $("#next-tile").text(nextValue);
                 $("#prev-tile").css("display", "none");
                 if ($("#choose-payment-method").hasClass("disabled")) {
                     $("#next-tile").addClass("disabled");
                 }
             } else if ($(this).attr("id") == "choose-payment-method") {
-                $("#next-tile").text("Next");
+                $("#next-tile").text(nextValue);
                 $("#prev-tile").css("display", "block");
                 if ($("#confirm").hasClass("disabled")) {
                     $("#next-tile").addClass("disabled");
                 }
             } else {
-                $("#next-tile").text("Confirm");
+                $("#next-tile").text(confirmValue);
                 $("#prev-tile").css("display", "block");
             }
 
             if ($(this).attr("id") == "confirm") {
                 $(".tickets-price .ticket").each(function () {
                     selectedDate = "" + $("#date-select .selected-date .date").text().trim();
-                    selectedMonth = "" + monthsShort.indexOf($("#date-select .selected-date .month").text().trim()) + 1;
+                    selectedMonth = "" + monthsShortList.indexOf($("#date-select .selected-date .month").text().trim()) + 1;
                     selectedYear = "" + $("#date-select .selected-date").attr("year");
                     seanceDate = (selectedDate.length == 1 ? "0" + selectedDate : selectedDate) + "." +
                         (selectedMonth.length == 1 ? "0" + selectedMonth : selectedMonth) + "." + selectedYear;
@@ -391,27 +442,27 @@ $(document).ready(function () {
                     price = $(this).find(".price").text().trim().slice(0, -1);
                     row = $(this).find(".row").text().trim();
                     column = $(this).find(".column").text().trim();
-                    id = $(this).attr("identifier");
-                    let ticket = '<div class="ticket" identifier="' + id + '"><div class="ticket-info"><div class="info-items"><div class="info-item price-info">' +
-                        '<span class="title">Price:</span><span class="space">_</span><span class="value">' + price + '</span>' +
+                    let ticket = '<div class="ticket"><div class="ticket-info"><div class="info-items"><div class="info-item price-info">' +
+                        '<span class="title">' + priceValue + ':</span><span class="space">_</span><span class="value">' + price + '</span>' +
                         '<span class="space"></span><span class="value">$</span></div><div class="info-item date-info">' +
-                        '<span class="title">Date:</span><span class="space">_</span><span class="value">' + seanceDate +
-                        '</span></div><div class="info-item row-info"><span class="title">Row:</span><span class="space">_</span>' +
-                        '<span class="value">' + row + '</span></div><div class="info-item hall-info"><span class="title">Hall:</span>' +
+                        '<span class="title">' + dateValue + ':</span><span class="space">_</span><span class="value">' + seanceDate +
+                        '</span></div><div class="info-item row-info"><span class="title">' + rowTicketValue + ':</span><span class="space">_</span>' +
+                        '<span class="value">' + row + '</span></div><div class="info-item hall-info"><span class="title">' + hallValue + ':</span>' +
                         '<span class="space">_</span><span class="value">' + seanceHall + '</span></div><div class="info-item time-info">' +
-                        '<span class="title">Time:</span><span class="space">_</span><span class="value">' + seanceTime + '</span>' +
-                        '</div><div class="info-item seat-info"><span class="title">Seat:</span><span class="space">_</span>' +
+                        '<span class="title">' + timeValue + ':</span><span class="space">_</span><span class="value">' + seanceTime + '</span>' +
+                        '</div><div class="info-item seat-info"><span class="title">' + seatTicketValue + ':</span><span class="space">_</span>' +
                         '<span class="value">' + column + '</span></div></div><div class="barcode"><div class="barcode-container">' +
-                        '<svg class="barcode-value"></svg></div><div class="identifier"><span class="first-name">Avengers</span>' +
-                        '<span class="space">_</span><span class="last-name">The First Part</span></div></div><div class="copyright">' +
-                        'PlazaM</div></div><div class="picture"><img class="background-picture" src="' + $(".background img").attr("src") +
-                        '" alt=""><div class="movie-name"><div class="first-name">Avengers</div><div class="last-name">The First Part' +
-                        '</div></div><div class="blur"></div></div><div class="cross active"><div class="icon-cross"></div></div></div>';
+                        '<svg class="barcode-value"></svg></div><div class="identifier"><span class="first-name">' + $(".ticket-form .title .first-name").text() +
+                        '</span><span class="space">_</span><span class="last-name">' + $(".ticket-form .title .last-name").text() + '</span></div></div><div' +
+                        ' class="copyright">PlazaM</div></div><div class="picture"><img class="background-picture" src="' + $(".background img").attr("src") +
+                        '" alt=""><div class="movie-name"><div class="first-name">' + $(".ticket-form .title .first-name").text() + '</div><div class="last-name">' +
+                        $(".ticket-form .title .last-name").text() + '</div></div><div class="blur"></div></div><div class="cross active"><div class="icon-cross"></div>' +
+                        '</div></div>';
 
                     $(".tickets-confirm .scroll .simplebar-content").append(ticket);
                 })
 
-                JsBarcode(".barcode-value", "Avengers The First Part", {
+                JsBarcode(".barcode-value", $("#time-select .selected-time").attr("identifier") + ' ' + dateString, {
                     height: 40,
                     width: 2,
                     textMargin: 0,
@@ -429,7 +480,7 @@ $(document).ready(function () {
         }
     })
 
-    $(".column").click(function () {
+    $(document).on("click", ".column", function () {
         if (!$(this).hasClass("disabled")) {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass("selected");
@@ -478,7 +529,7 @@ $(document).ready(function () {
         }
     })
 
-    $(".row-number").click(function () {
+    $(document).on("click", ".row-number", function () {
         if (!$(this).hasClass("disabled")) {
             rowIndex = $(this).index();
             if ($(this).hasClass("selected")) {
@@ -522,6 +573,32 @@ $(document).ready(function () {
     })
 
     $("#next-tile").click(function () {
+        if ($(".ticket-form .nav-item.selected").index() === 2) {
+            let tickets = [], ticket;
+            $(".tickets-confirm .ticket").each(function () {
+                ticket = {};
+                ticket.row = $(this).find(".row-info .value").text();
+                ticket.seat = $(this).find(".seat-info .value").text();
+                ticket.seanceId = $("#time-select .selected-time").attr("identifier");
+                ticket.date = dateString;
+                ticket.paymentStatus = (typeof isWorker !== 'undefined' ||
+                    $(".choose-payment .method .top.selected").parent().index() === 1);
+                tickets.push(ticket);
+            })
+            $.ajax({
+                url: window.location.origin + '/ticket/buy',
+                method: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    tickets: tickets,
+                    movieId: movieId
+                })
+            }).done(function () {
+                let url = new URL(document.location);
+                window.location.href = window.location.origin + '/movie/' + movieId + (url.searchParams.get("language") == null ?
+                    '' : '?language=' + url.searchParams.get('language'));
+            });
+        }
         if (!$(this).hasClass("disabled")) {
             $(".ticket-form .nav-item.selected").next().click();
         }
@@ -533,54 +610,55 @@ $(document).ready(function () {
         }
     })
 
-    $(".seat").click(function () {
+    $(document).on("click", ".seat", function () {
         seatClickFunction($(this), false);
     })
 
-    $(".seat").hover(function () {
-            if (!$(this).hasClass("disabled")) {
-                columnIndex = $(this).index();
-                rowIndex = $(this).parent().index();
-                $($(this).parents(".scroll")[0]).find(".simplebar-content .row:not(:last-child) .seat.selected:not(.disabled)").each(function () {
-                    if ($(this).index() == columnIndex) {
-                        columnEmpty++;
-                    }
-                });
-                if ($(this).hasClass("selected")) {
-                    if ($(this).parent().find(".seat.selected:not(.disabled)").length <= 1) {
-                        $($(".table .rows .row-number")[rowIndex]).css("color", "#A3A3A3");
-                    }
-                    if (columnEmpty <= 1) {
-                        $($(".table .numbers .column")[columnIndex]).css("color", "#A3A3A3");
-                    }
-                } else {
-                    $($(".table .numbers .column")[columnIndex]).css("color", "#AF2341");
-                    $($(".table .rows .row-number")[rowIndex]).css("color", "#AF2341");
+    $(document).on("mouseleave", ".seat", function () {
+        if (!$(this).hasClass("disabled")) {
+            $($(this).parents(".scroll")[0]).find(".simplebar-content .row:not(:last-child) .seat.selected:not(.disabled)").each(function () {
+                if ($(this).index() == columnIndex) {
+                    columnEmpty++;
                 }
-                columnEmpty = 0;
-            }
-        },
-        function () {
-            if (!$(this).hasClass("disabled")) {
-                $($(this).parents(".scroll")[0]).find(".simplebar-content .row:not(:last-child) .seat.selected:not(.disabled)").each(function () {
-                    if ($(this).index() == columnIndex) {
-                        columnEmpty++;
-                    }
-                })
-                if ($(this).hasClass("selected")) {
-                    $($(".table .rows .row-number")[rowIndex]).css("color", "#AF2341");
-                    $($(".table .numbers .column")[columnIndex]).css("color", "#AF2341");
-                } else {
-                    if ($(this).parent().find(".seat.selected:not(.disabled)").length < 1) {
-                        $($(".table .rows .row-number")[rowIndex]).css("color", "#A3A3A3");
-                    }
-                    if (columnEmpty < 1) {
-                        $($(".table .numbers .column")[columnIndex]).css("color", "#A3A3A3");
-                    }
+            })
+            if ($(this).hasClass("selected")) {
+                $($(".table .rows .row-number")[rowIndex]).css("color", "#AF2341");
+                $($(".table .numbers .column")[columnIndex]).css("color", "#AF2341");
+            } else {
+                if ($(this).parent().find(".seat.selected:not(.disabled)").length < 1) {
+                    $($(".table .rows .row-number")[rowIndex]).css("color", "#A3A3A3");
                 }
-                columnEmpty = 0;
+                if (columnEmpty < 1) {
+                    $($(".table .numbers .column")[columnIndex]).css("color", "#A3A3A3");
+                }
             }
-        })
+            columnEmpty = 0;
+        }
+    })
+
+    $(document).on("mouseenter", ".seat", function () {
+        if (!$(this).hasClass("disabled")) {
+            columnIndex = $(this).index();
+            rowIndex = $(this).parent().index();
+            $($(this).parents(".scroll")[0]).find(".simplebar-content .row:not(:last-child) .seat.selected:not(.disabled)").each(function () {
+                if ($(this).index() == columnIndex) {
+                    columnEmpty++;
+                }
+            });
+            if ($(this).hasClass("selected")) {
+                if ($(this).parent().find(".seat.selected:not(.disabled)").length <= 1) {
+                    $($(".table .rows .row-number")[rowIndex]).css("color", "#A3A3A3");
+                }
+                if (columnEmpty <= 1) {
+                    $($(".table .numbers .column")[columnIndex]).css("color", "#A3A3A3");
+                }
+            } else {
+                $($(".table .numbers .column")[columnIndex]).css("color", "#AF2341");
+                $($(".table .rows .row-number")[rowIndex]).css("color", "#AF2341");
+            }
+            columnEmpty = 0;
+        }
+    })
 
     function calculateTotalPrice() {
         let value = 0;
@@ -603,60 +681,93 @@ $(document).ready(function () {
         return value > 620 ? 620 : value;
     }
 
-    function hallLoad() {
-        let width = parseFloat($(".table").css("width").slice(0, -2));
-        let countCellsInRow = $(".table .row").first().find(".seat").length;
-        let cellMargin = parseFloat($($(".table .seat")[1]).css("margin-left").slice(0, -2)) * countCellsInRow;
-        let seatWidthInPercent = (100 * ((width - cellMargin) / countCellsInRow)) / width;
-        // let seatWidthInVw = (100 * ((width - cellMargin) / countCellsInRow)) / 1920;
-        $(".table .seat, .table .column").css("width", seatWidthInPercent + "%");
-        if ($(".table .row").length - 1 >= 10) {
-            $($(".table .row")[Math.floor(($(".table .row").length - 2) / 2)])
+    function hallLoad(rowsCount, columnsCount) {
+        let table = '<div class="rows">';
+        let date = $("#date-select .selected-date").attr("year") + '-' + (monthsShortList.indexOf($("#date-select .selected-date .month").text()) + 1 < 10 ? '0' : '') +
+            (monthsShortList.indexOf($("#date-select .selected-date .month").text()) + 1) + '-' + (parseInt($("#date-select .selected-date .date").text()) < 10 ? '0' : '') +
+            $("#date-select .selected-date .date").text();
+        $.ajax({
+            url: window.location.origin + '/seance/' + seanceId + '/tickets?date=' + date,
+            method: 'GET'
+        }).done(function (data) {
+            ticketsMap = JSON.parse(data);
+            //todo set column/row numbers selected from ticketsMap
+            for (let i = 1; i <= rowsCount; i++) {
+                table += '<div class="row-number">' + i + '</div>';
+            }
+            table += '</div><div class="scroll">';
+            for (let i = 1; i <= rowsCount; i++) {
+                table += '<div class="row">';
+                for (let j = 1; j <= columnsCount; j++) {
+                    if (Object.keys(ticketsMap).includes('' + i)) {
+                        if (ticketsMap[i].includes(j)) {
+                            table += '<div class="seat disabled"></div>';
+                        } else {
+                            table += '<div class="seat"></div>';
+                        }
+                    } else {
+                        table += '<div class="seat"></div>';
+                    }
+                }
+                table += '</div>';
+            }
+            table += '<div class="numbers row">';
+            for (let i = 1; i <= columnsCount; i++) {
+                table += '<div class="column">' + i + '</div>';
+            }
+            table += '</div></div>';
+            $(".places-grid .table").html(table);
+            $(".places-grid .table .scroll").each(function (index) {
+                new SimpleBar($(".places-grid .table .scroll")[index], {
+                    autoHide: false
+                });
+            })
+            $(".places-grid .table").css("width", columnsCount * 25 + (columnsCount - 1) * 4 + 'px');
+            let width = parseFloat($(".table").css("width").slice(0, -2));
+            let cellMargin = parseFloat($($(".table .seat")[1]).css("margin-left").slice(0, -2)) * columnsCount;
+            let seatWidthInPercent = (100 * ((width - cellMargin) / columnsCount)) / width;
+            // let seatWidthInVw = (100 * ((width - cellMargin) / countCellsInRow)) / 1920;
+            $(".table .seat, .table .column").css("width", seatWidthInPercent + "%");
+            if ($(".table .row").length - 1 >= 10) {
+                $($(".table .row")[Math.floor(($(".table .row").length - 2) / 2)])
+                    .css("margin-top", "20px");
+                $($(".table .row-number")[Math.floor(($(".table .row").length - 2) / 2)])
+                    .css("margin-top", "20px");
+            }
+            $($(".table .row")[$(".table .row").length - 2])
                 .css("margin-top", "20px");
-            $($(".table .row-number")[Math.floor(($(".table .row").length - 2) / 2)])
+            $($(".table .row-number")[$(".table .row").length - 2])
                 .css("margin-top", "20px");
-        }
-        $($(".table .row")[$(".table .row").length - 2])
-            .css("margin-top", "20px");
-        $($(".table .row-number")[$(".table .row").length - 2])
-            .css("margin-top", "20px");
-        // $(".seat").css("height", seatWidthInVw + "vw");
+        })
     }
 
     function createTicket(row, column, price) {
-        {
-            id = "id";
-            for (let i = 0; i < 19; i++) {
-                id += Math.floor(Math.random() * 10);
+        let ticket = '<div class="ticket">' +
+            '<div class="ticket-container">' +
+            '<div><span class="row">' + row +
+            '</span>' + rowValue + '<span class="column">' +
+            column + '</span>' + seatValue + '</div>' +
+            '<div><div class="price">' + price +
+            '$</div><div class="icon-cross active"></div>' +
+            '</div></div></div>';
+        let parent = $(".tickets-price .simplebar-content").prepend(ticket);
+        $($(parent).find(".ticket")[0]).attr("row", row).attr("seat", column).css({
+            "top": "-44px",
+            "height": "0"
+        }).animate({
+            "top": "0",
+            "height": "44px"
+        }, 200, "linear", function () {
+            $(".total-price .price").text(calculateTotalPrice());
+            if ($(".tickets-price .ticket").length > 0) {
+                $(".tickets-price .scroll").animate({
+                    "margin-bottom": "24px"
+                }, 100, "linear");
             }
-
-            let ticket = '<div class="ticket" identifier="' + id + '">' +
-                '<div class="ticket-container">' +
-                '<div><span class="row">' + row +
-                '</span>row<span class="column">' +
-                column + '</span>th seat</div>' +
-                '<div><div class="price">' + price +
-                '$</div><div class="icon-cross active"></div>' +
-                '</div></div></div>';
-            let parent = $(".tickets-price .simplebar-content").prepend(ticket);
-            $($(parent).find(".ticket")[0]).attr("row", row).attr("seat", column).css({
-                "top": "-44px",
-                "height": "0"
-            }).animate({
-                "top": "0",
-                "height": "44px"
-            }, 200, "linear", function () {
-                $(".total-price .price").text(calculateTotalPrice());
-                if ($(".tickets-price .ticket").length > 0) {
-                    $(".tickets-price .scroll").animate({
-                        "margin-bottom": "24px"
-                    }, 100, "linear");
-                }
-            });
-            $(".tickets-price .scroll").animate({
-                "height": calculateTicketsScrollHeight(false) + "px"
-            }, 200, "linear");
-        }
+        });
+        $(".tickets-price .scroll").animate({
+            "height": calculateTicketsScrollHeight(false) + "px"
+        }, 200, "linear");
     }
 
     function ticketCrossClickFunction(crossElement) {
@@ -724,7 +835,7 @@ $(document).ready(function () {
                 $($(".table .rows .row-number")[rowIndex]).addClass("selected");
                 $($(".table .numbers .column")[columnIndex]).addClass("selected");
                 $("#next-tile").removeClass("disabled");
-                createTicket(rowIndex + 1, columnIndex + 1, 15);
+                createTicket(rowIndex + 1, columnIndex + 1, ticketPrice);
             }
             columnEmpty = 0;
             $(seatElement).mouseenter();
@@ -732,5 +843,81 @@ $(document).ready(function () {
                 $(seatElement).mouseleave();
             }
         }
+    }
+
+    function clearTickets() {
+        $(".tickets-price .ticket").remove();
+        $(".tickets-price .scroll").css({
+            "height": "0",
+            "margin-bottom": "0"
+        });
+        $(".tickets-price .total-price .price").text("0");
+    }
+
+    function generateHallButton(hallsMap, otherDate) {
+        let values = '<div class="scroll">';
+        for (let hall in hallsMap) {
+            let hallName = '';
+            if (hallsMap[hall][0].hall.technology === '_RM_PLUS') {
+                hallName += "RM+";
+            } else {
+                hallName += hallsMap[hall][0].hall.technology.slice(1).replace('_', '-');
+            }
+            hallName += ' (' + hallsMap[hall][0].hall.number + ')';
+            values += '<div class="hall" identifier="' + hallsMap[hall][0].hall.id + '">' + hallName + '</div>';
+        }
+        values += '</div>';
+        $("#hall-select .hall-selection").html(values);
+        $("#hall-select .scroll").each(function (index) {
+            new SimpleBar($("#hall-select .scroll")[index], {
+                autoHide: false
+            });
+        });
+        if (otherDate != null) {
+            $("#hall-select .hall-selection .hall").first().click();
+        }
+        generateTimeButton(hallsMap, otherDate);
+    }
+
+    function generateTimeButton(hallsMap, otherDate) {
+        if (otherDate != null) {
+            $(".places-grid .table").html("");
+            $("#time-select .selected").html('<span class="hour">--</span><span>:</span><span class="min">--</span>');
+            $("#time-select .selected").attr("identifier", "");
+        }
+        let values = '<div class="scroll">';
+        let currentDate = new Date();
+        if (otherDate !== null) {
+            otherDate.setHours(currentDate.getHours(), currentDate.getMinutes(), currentDate.getSeconds(), currentDate.getMilliseconds());
+        }
+        for (let hall in hallsMap) {
+            if (hallsMap[hall][0].hall.id === $("#hall-select .selected").attr("identifier")) {
+                for (let seance in hallsMap[hall]) {
+                    let hour = hallsMap[hall][seance].startSeance.slice(11, 13);
+                    let minute = hallsMap[hall][seance].startSeance.slice(14, 16);
+                    if (otherDate != null) {
+                        if (otherDate < currentDate || (currentDate.getTime() === otherDate.getTime() && parseInt(hour) < currentDate.getHours()) ||
+                            (currentDate.getTime() === otherDate.getTime() && parseInt(hour) === currentDate.getHours() && parseInt(minute) < currentDate.getMinutes())) {
+                            values += '<div class="time disabled"';
+                        } else {
+                            values += '<div class="time"';
+                        }
+                    } else {
+                        values += '<div class="time"';
+                    }
+                    values += ' identifier="' + hallsMap[hall][seance].id + '">' + hallsMap[hall][seance].startSeance.slice(11, 16) + '</div>';
+                }
+                // if (otherDate != null) {
+                //     hallLoad(hallsMap[hall][0].hall.rows, hallsMap[hall][0].hall.columns);
+                // }
+            }
+        }
+        values += '</div>';
+        $("#time-select .time-selection").html(values);
+        $("#time-select .scroll").each(function (index) {
+            new SimpleBar($("#time-select .scroll")[index], {
+                autoHide: false
+            });
+        });
     }
 })

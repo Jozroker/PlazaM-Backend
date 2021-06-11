@@ -71,6 +71,21 @@ public interface MovieService {
                                                                            LocalDate to,
                                                                            Pageable pageable);
 
+    Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateAfterAndGenresMatches(LocalDate date,
+                                                                                         List<Genre> genres,
+                                                                                         Pageable pageable);
+
+    Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateBeforeAndGenresMatches(LocalDate date,
+                                                                                          List<Genre> genres,
+                                                                                          Pageable pageable);
+
+    Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateBetweenAndGenresMatches(LocalDate from,
+                                                                                           LocalDate to,
+                                                                                           List<Genre> genres,
+                                                                                           Pageable pageable);
+
+    Page<MovieForMoviesListDTO> findAllByGenresMatches(List<Genre> genres,
+                                                       Pageable pageable);
 
     List<MovieForHomeSliderDTO> findMovieForHomeSlideByReleaseDateAfter(LocalDate date);
 

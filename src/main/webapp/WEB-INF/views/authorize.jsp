@@ -11,6 +11,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="springForm" uri="http://www.springframework.org/tags/form" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -159,6 +160,7 @@
     let ukraine = '<spring:message code="ukraine.default"/>';
     let unitedKingdom = '<spring:message code="united.kingdom.default"/>';
     let poland = '<spring:message code="poland.default"/>';
+    let createMovieValue = '<spring:message code="button.create.movie.title"/>';
 </script>
 <script crossorigin="anonymous"
         integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="

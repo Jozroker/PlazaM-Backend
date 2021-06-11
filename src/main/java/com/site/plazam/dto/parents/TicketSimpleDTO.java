@@ -30,21 +30,19 @@ public class TicketSimpleDTO {
     @NotNull
     private SeanceForTicketDTO seance;
 
+    @NotNull
+    private boolean paymentStatus;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TicketSimpleDTO that = (TicketSimpleDTO) o;
-        return placeRow == that.placeRow &&
-                placeSeat == that.placeSeat &&
-                Double.compare(that.placeAllowance, placeAllowance) == 0 &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(date, that.date) &&
-                Objects.equals(seance, that.seance);
+        return placeRow == that.placeRow && placeSeat == that.placeSeat && Double.compare(that.placeAllowance, placeAllowance) == 0 && paymentStatus == that.paymentStatus && Objects.equals(id, that.id) && Objects.equals(date, that.date) && Objects.equals(seance, that.seance);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, date, placeRow, placeSeat, placeAllowance, seance);
+        return Objects.hash(id, date, placeRow, placeSeat, placeAllowance, seance, paymentStatus);
     }
 }

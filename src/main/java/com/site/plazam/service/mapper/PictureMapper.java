@@ -43,10 +43,16 @@ public interface PictureMapper {
     PictureDTO toDTO(ActorPicture actorPicture);
 
     default Binary toBinary(byte[] picture) {
+        if (picture == null) {
+            return null;
+        }
         return new Binary(picture);
     }
 
     default String toStringPicture(Binary binary) {
+        if (binary == null) {
+            return "";
+        }
         return Base64.encodeBase64String(binary.getData());
     }
 

@@ -1,11 +1,12 @@
-$(document).ready(function () {
-    let selectedMovie = $("#movies-in-route .movie.selected").first();
-    let selectedCircle = $("#movies-in-route .circle.selected").first();
-    let index = $("#movies-in-route .circle").index($("#movies-in-route .circle.selected"));
+let selectedMovie = $("#movies-in-route .movie.selected").first();
+let selectedCircle = $("#movies-in-route .circle.selected").first();
+let index = $("#movies-in-route .circle").index($("#movies-in-route .circle.selected"));
 
-    let timer;
-    let movieRouteAnimate = false;
-    let nextClickedElement = $();
+let timer;
+let movieRouteAnimate = false;
+nextClickedElement = $();
+
+$(document).ready(function () {
 
     {
         generateComingSoon();
@@ -24,12 +25,11 @@ $(document).ready(function () {
             url: window.location.origin + '/header?path=' + window.location.pathname,
             method: "GET"
         }).done(function (page) {
-            // $("#header-container").html($(page).find("#header"));
             $("#header-container").html(page);
-            // $.getScript("../js/footer.js");
             $.getScript("/resources/js/header.js");
             $.getScript("/resources/js/pages.js");
             $.getScript("/resources/js/movie_schedule.js");
+            $.getScript("/resources/js/calendar.js");
         })
 
         $.ajax({

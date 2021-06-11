@@ -7,9 +7,11 @@ import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.dto.parents.PictureDTO;
 import com.site.plazam.dto.parents.TicketSimpleDTO;
 import com.site.plazam.service.*;
+import org.bson.internal.Base64;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -28,6 +30,7 @@ public abstract class UserMapper {
     MovieService ms;
 
     @Autowired
+    @Lazy
     TicketService ts;
 
     @Autowired
@@ -55,6 +58,7 @@ public abstract class UserMapper {
             "toPicture")
     public abstract UserForCommentDTO toUserForCommentDTO(User user);
 
+    @Mapping(source = "homeCountry", target = "country")
     @Mapping(source = "pictureId", target = "picture", qualifiedByName =
             "toPicture")
     public abstract UserForReportedListDTO toUserForReportedListDTO(User user);
@@ -83,8 +87,9 @@ public abstract class UserMapper {
             try {
                 BufferedImage bImage = ImageIO.read(new File("src/main/webapp/resources/img/jpg/default_avatar.jpg"));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "jpeg", bos);
-                pictureDTO.setPicture(bos.toByteArray());
+                ImageIO.write(bImage, "jpg", bos);
+                pictureDTO.setPictureString(Base64.encode(bos.toByteArray()));
+                pictureDTO.setFormat("jpg");
             } catch (Exception ignored) {
             }
         } else {

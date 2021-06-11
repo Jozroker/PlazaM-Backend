@@ -1,13 +1,17 @@
 package com.site.plazam.service.impl;
 
 import com.site.plazam.dto.SeanceForTicketDTO;
+import com.site.plazam.dto.UserForSelfInfoDTO;
 import com.site.plazam.dto.parents.TicketSimpleDTO;
 import com.site.plazam.repository.TicketRepository;
 import com.site.plazam.service.TicketService;
+import com.site.plazam.service.UserService;
 import com.site.plazam.service.mapper.TicketMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,10 +22,15 @@ public class TicketServiceImpl implements TicketService {
 
     private final TicketMapper tm;
 
+    @Lazy
+    private final UserService us;
+
     public TicketServiceImpl(TicketRepository ticketRepository,
-                             TicketMapper ticketMapper) {
+                             TicketMapper ticketMapper,
+                             UserService userService) {
         this.tr = ticketRepository;
         this.tm = ticketMapper;
+        this.us = userService;
     }
 
     @Override
@@ -53,8 +62,21 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void deleteByDateBefore(LocalDate date) {
-        tr.deleteByDateBefore(date);
+    public void deleteByDateBeforeAndTimeBefore(LocalDate date,
+                                                LocalDateTime time) {
+        List<TicketSimpleDTO> tickets = tr.findByDateBeforeOrDateEquals(date,
+                date).stream().map(tm::toDTO).filter(ticket -> (ticket.getSeance()
+                .getStartSeance().isBefore(time) && ticket.getDate().isEqual(date)) ||
+                ticket.getDate().isBefore(date)).collect(Collectors.toList());
+        UserForSelfInfoDTO user;
+        for (TicketSimpleDTO ticket : tickets) {
+            user = us.findByTicketsContains(ticket);
+            if (user != null) {
+                user.getTickets().remove(ticket);
+                user.getViewedMovieIds().add(ticket.getSeance().getMovie().getId());
+                us.updateLists(user);
+            }
+        }
     }
 
     @Override

@@ -47,19 +47,38 @@ $(document).ready(function () {
         //     showMeridian: false
         // });
 
-        $("#schedule-creation").load("schedule-creation.html #schedule-creation > div", function () {
-            $.getScript("../js/calendar.js");
-            $.getScript("../js/schedule-creation.js");
-        });
-        $("#footer-container").load("footer.html #footer", function () {
-            $.getScript("../js/footer.js");
-        });
-        $("#header-container").load("header.html #header", function () {
-            $.getScript("../js/header.js");
-        });
-        // $("#schedule").load("movie_schedule.html .movie-schedule", function () {
-        $.getScript("../js/movie_schedule.js");
-        // })
+        $.ajax({
+            url: window.location.origin + '/footer',
+            method: "GET"
+        }).done(function (page) {
+            $("#footer-container").html(page);
+            $.getScript("/resources/js/footer.js");
+        })
+
+        $.ajax({
+            url: window.location.origin + '/header?path=' + window.location.pathname,
+            method: "GET"
+        }).done(function (page) {
+            $("#header-container").html(page);
+            $.getScript("/resources/js/header.js");
+            $.getScript("/resources/js/movie_schedule.js");
+            genresChanger();
+        })
+
+        if (typeof isAdmin !== 'undefined') {
+            let url = window.location.origin + '/admin/movie/schedule-creation';
+            if (typeof seanceId !== 'undefined') {
+                url += '?seanceId=' + seanceId;
+            }
+            $.ajax({
+                url: url,
+                method: 'GET'
+            }).done(function (page) {
+                $("#schedule-creation").html(page);
+                $.getScript("/resources/js/schedule-creation.js");
+                $.getScript("/resources/js/calendar.js");
+            })
+        }
     }
 
     $("#movie .scroll").each(function (index) {
@@ -76,15 +95,29 @@ $(document).ready(function () {
     })
 
     $(".like").click(function () {
+        let id = $("#movie").attr("identifier");
         if ($(this).hasClass("selected")) {
             $(this).removeClass("selected");
+            addedFavMovies.splice(addedFavMovies.indexOf(id), 1);
+            removedFavMovies.push(id);
         } else {
             $(this).addClass("selected");
+            addedFavMovies.push(id);
+            removedFavMovies.splice(removedFavMovies.indexOf(id), 1);
         }
     })
 
     $("#info .star").click(function () {
-        $("#info .user-rating").addClass("selected");
+        if (!$("#info .user-rating").hasClass("selected")) {
+            $("#info .user-rating").addClass("selected");
+
+            $.ajax({
+                url: window.location.origin + '/movie/' + $("#movie").attr("identifier") + '/add/rating?rating=' + $("#info .user-rating .star.full").length,
+                method: 'POST'
+            }).done(function (id) {
+                $("#info .user-rating").attr("identifier", id);
+            })
+        }
     })
 
     $("#info .star").mouseover(function () {
@@ -118,48 +151,128 @@ $(document).ready(function () {
         }
     })
 
-    $(".button.time-button .change-schedule").click(function () {
-        if ($(this).attr("action") == "create") {
-            $("#schedule-creation .title").first().text("Schedule creation");
-        } else {
-            if ($(".button.time-button .title .value").text() == $(".button.time-button .time").first().text()) {
-                $(".button.time-button .title .value").css("color", "#AF2341");
+    $(".comment-btn").click(function () {
+        let url = window.location.origin + '/movie/' + $("#movie").attr("identifier") + '/add/comment?text=' + $(this).parents(".comment-form").first().find("textarea").val();
+        if ($(".user-rating")[0].hasAttribute("identifier")) {
+            url += '&ratingId=' + $(".user-rating").attr("identifier");
+        }
+        $.ajax({
+            url: url,
+            method: 'POST'
+        }).done(function (data) {
+            let comment = JSON.parse(data);
+            let commentElement = '<div class="comment" id="' + comment.id + '">\<div class="user-info"><div class="avatar"><img alt=""' +
+                'src="data:image/' + comment.user.picture.format + ';base64,' + comment.user.picture.pictureString + '></div><div class="info"><div class="user">' +
+                '<div><div class="flag"><img alt="" src="' + comment.user.country.flagPicture + '"></div><div class="username">' + comment.user.username + '</div>' +
+                '</div><div class="date">' + comment.date.slice(-2) + '.' + comment.date.slice(5, 7) + '.' + comment.date.slice(0, 4) + '</div></div>' +
+                '<div class="other"><div class="user-rating">';
+
+            if (comment.userRating == null) {
+                commentElement += '<div>' + notRatedValue + '</div>';
             } else {
-                if ($(".button.hall-button .title .value").text() == $(".button.hall-button .hall").first().text()) {
-                    $(".button.hall-button .title .value").css("color", "#AF2341");
-                } else {
-                    $("#schedule-creation .title").first().text("Schedule modification");
-                    let time = "" + $(".button.time-button .title .value").text().slice(0, 2) + ":" +
-                        $(".button.time-button .title .value").text().slice(-2);
-                    $("#timepicker").val(time);
-                    let hall = $(".button.hall-button .title .value").text();
-                    $(".hall-select .list").find(".selected > div").first().text(hall);
+                for (let i = 1; i < 6; i++) {
+                    if (comment.userRating.userRating >= i) {
+                        commentElement += '<div class="star full"></div>';
+                    } else {
+                        commentElement += '<div class="star"></div>';
+                    }
                 }
             }
-        }
-        if (scheduleCreationHidden) {
-            $("#add-schedule").click();
-        }
+
+            commentElement += '</div><div class="complain-btn">' + complainValue + '</div></div></div></div><div class="text">' + comment.text + '</div></div>';
+        })
+
     })
 
-    $(".seance .change").click(function () {
-        $("#schedule-creation .title").first().text("Schedule modification");
-        let seanceTime = $(this).parents(".seance").first().find(".value").text();
-        let time = seanceTime.slice(0, seanceTime.indexOf("h")) + ":" + seanceTime.slice(seanceTime.indexOf("h") + 2,
-            -1);
-        if (time[1] == ":") {
-            time = "0" + time;
-        }
-        if (time[time.indexOf(":") + 1] == "0") {
-            time += "0";
-        }
-        $("#timepicker").val(time);
-        let hall = $(this).parents(".hall").first().find(".name").text();
-        $(".hall-select .list").find(".selected > div").first().text(hall);
-        if (scheduleCreationHidden) {
-            $("#add-schedule").click();
-        }
-    })
+    // $(".button.time-button .change-schedule").click(function () {
+    //     if ($(this).attr("action") == "create") {
+    //         $("#schedule-creation .title").first().text("Schedule creation");
+    //     } else {
+    //         if ($(".button.time-button .title .value").text() == $(".button.time-button .time").first().text()) {
+    //             $(".button.time-button .title .value").css("color", "#AF2341");
+    //         } else {
+    //             if ($(".button.hall-button .title .value").text() == $(".button.hall-button .hall").first().text()) {
+    //                 $(".button.hall-button .title .value").css("color", "#AF2341");
+    //             } else {
+    //                 $("#schedule-creation .title").first().text("Schedule modification");
+    //                 let time = "" + $(".button.time-button .title .value").text().slice(0, 2) + ":" +
+    //                     $(".button.time-button .title .value").text().slice(-2);
+    //                 $("#timepicker").val(time);
+    //                 let hall = $(".button.hall-button .title .value").text();
+    //                 $(".hall-select .list").find(".selected > div").first().text(hall);
+    //             }
+    //         }
+    //     }
+    //     if (scheduleCreationHidden) {
+    //         $("#add-schedule").click();
+    //     }
+    // })
 
+    // $(".seance .change").click(function () {
+    //     $("#schedule-creation .title").first().text("Schedule modification");
+    //     let seanceTime = $(this).parents(".seance").first().find(".value").text();
+    //     let time = seanceTime.slice(0, seanceTime.indexOf("h")) + ":" + seanceTime.slice(seanceTime.indexOf("h") + 2,
+    //         -1);
+    //     if (time[1] == ":") {
+    //         time = "0" + time;
+    //     }
+    //     if (time[time.indexOf(":") + 1] == "0") {
+    //         time += "0";
+    //     }
+    //     $("#timepicker").val(time);
+    //     let hall = $(this).parents(".hall").first().find(".name").text();
+    //     $(".hall-select .list").find(".selected > div").first().text(hall);
+    //     if (scheduleCreationHidden) {
+    //         $("#add-schedule").click();
+    //     }
+    // })
 
+    function genresChanger() {
+        $(".genre").each(function () {
+            switch ($(this).text()) {
+                case 'ACTION':
+                    $(this).text(actionGenre);
+                    break;
+                case 'COMEDY':
+                    $(this).text(comedyGenre);
+                    break;
+                case 'CARTOON':
+                    $(this).text(cartoonGenre);
+                    break;
+                case 'ROMANCE':
+                    $(this).text(romanceGenre);
+                    break;
+                case 'CRIMINAL':
+                    $(this).text(criminalGenre);
+                    break;
+                case 'SCIENCE_FICTION':
+                    $(this).text(scienceFictionGenre);
+                    break;
+                case 'DOCUMENTARY':
+                    $(this).text(documentaryGenre);
+                    break;
+                case 'HORROR':
+                    $(this).text(horrorGenre);
+                    break;
+                case 'FANTASY':
+                    $(this).text(fantasyGenre);
+                    break;
+                case 'ADVENTURE':
+                    $(this).text(adventureGenre);
+                    break;
+                case 'DETECTIVE':
+                    $(this).text(detectiveGenre);
+                    break;
+                case 'THRILLER':
+                    $(this).text(thrillerGenre);
+                    break;
+                case 'HISTORICAL':
+                    $(this).text(historicalGenre);
+                    break;
+                case 'DRAMA':
+                    $(this).text(dramaGenre);
+                    break;
+            }
+        })
+    }
 })

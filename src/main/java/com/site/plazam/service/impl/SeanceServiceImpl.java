@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,6 +70,8 @@ public class SeanceServiceImpl implements SeanceService {
                                            CinemaDTO cinema,
                                            List<String> technologies,
                                            List<String> genres,
+                                           boolean singleDate,
+                                           MovieForSeanceDTO currentMovie,
                                            Pageable pageable) {
         List<HallForSeanceDTO> availableHalls =
                 hs.findHallForSeanceByCinema(cinema);
@@ -80,6 +84,16 @@ public class SeanceServiceImpl implements SeanceService {
         List<SeanceForSeancesListDTO> availableSeances =
                 findByDateFromBeforeEqualsAndDateToAfterEqualsAndHalls(currentDate,
                         currentDate, availableHalls);
+        if (currentMovie != null) {
+            availableSeances =
+                    availableSeances.stream().filter(seance -> seance.getMovie().equals(currentMovie)).collect(Collectors.toList());
+        }
+        if (singleDate) {
+            availableSeances =
+                    availableSeances.stream().filter(seance -> seance.getDays()
+                            .contains(Day.valueOf(currentDate.getDayOfWeek().toString())))
+                            .collect(Collectors.toList());
+        }
         if (genres != null) {
             List<MovieForSeanceDTO> moviesByGenre =
                     ms.findMovieForSeanceByGenresIsContaining(genres.stream().map(Genre::valueOf).collect(Collectors.toList()));
@@ -89,14 +103,28 @@ public class SeanceServiceImpl implements SeanceService {
         Map<MovieForSeanceDTO, Map<LocalDate, Map<HallForSeanceDTO,
                 List<SeanceForSeancesListDTO>>>> mapOfSchedule = new HashMap<>();
 
-        availableSeances.forEach(seance -> {
-            mapOfSchedule.put(seance.getMovie(), new HashMap<>());
-            for (int i = 0; i < 7; i++) {
+//        availableSeances.forEach(seance -> {
+//            mapOfSchedule.put(seance.getMovie(), new HashMap<>());
+//            for (int i = 0; i < (singleDate ? 1 : 7); i++) {
+//                mapOfSchedule.get(seance.getMovie()).put(currentDate.plusDays(i), new HashMap<>());
+//            }
+//        });
+
+        int max = 1;
+        for (SeanceForSeancesListDTO seance : availableSeances) {
+            if (!mapOfSchedule.containsKey(seance.getMovie())) {
+                mapOfSchedule.put(seance.getMovie(), new HashMap<>());
+            }
+            for (int i = 0; i < (singleDate ? 1 :
+                    ChronoUnit.DAYS.between(LocalDateTime.of(LocalDate.now(),
+                            LocalTime.of(0, 0)), LocalDateTime.of(seance.getDateTo(),
+                            LocalTime.of(0, 0))) + 1); i++) {
+                max = Math.max(max, i);
                 mapOfSchedule.get(seance.getMovie()).put(currentDate.plusDays(i), new HashMap<>());
             }
-        });
+        }
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < (singleDate ? 1 : max); i++) {
             LocalDate current = currentDate.plusDays(i);
             availableSeances.forEach(seance -> {
                 if ((seance.getDateFrom().isBefore(current) || seance.getDateFrom().isEqual(current))
@@ -116,18 +144,42 @@ public class SeanceServiceImpl implements SeanceService {
 //                mapOfSchedule.get(movie).remove(date);
 //            }
 //        }));
-        mapOfSchedule.keySet().forEach(movie -> {
-            Map<LocalDate, Map<HallForSeanceDTO,
-                    List<SeanceForSeancesListDTO>>> newDateMap =
-                    new HashMap<>();
-            mapOfSchedule.get(movie).keySet().forEach(date -> {
+        Iterator<MovieForSeanceDTO> iter = mapOfSchedule.keySet().iterator();
+        MovieForSeanceDTO movie;
+        Map<LocalDate, Map<HallForSeanceDTO,
+                List<SeanceForSeancesListDTO>>> newDateMap;
+        while (iter.hasNext()) {
+            movie = iter.next();
+            newDateMap = new HashMap<>();
+            Iterator<LocalDate> dateIter =
+                    mapOfSchedule.get(movie).keySet().iterator();
+            LocalDate date;
+            while (dateIter.hasNext()) {
+                date = dateIter.next();
                 if (!mapOfSchedule.get(movie).get(date).isEmpty()) {
                     newDateMap.put(date, mapOfSchedule.get(movie).get(date));
                 }
-            });
-            mapOfSchedule.put(movie, newDateMap);
-            //todo simplify from stream|iterator???
-        });
+            }
+            if (newDateMap.isEmpty()) {
+                mapOfSchedule.remove(movie);
+            } else {
+                mapOfSchedule.put(movie, newDateMap);
+            }
+        }
+//        mapOfSchedule.keySet().forEach(movie -> {
+//            Map<LocalDate, Map<HallForSeanceDTO,
+//                    List<SeanceForSeancesListDTO>>> newDateMap =
+//                    new HashMap<>();
+//            mapOfSchedule.get(movie).keySet().forEach(date -> {
+//                if (!mapOfSchedule.get(movie).get(date).isEmpty()) {
+//                    newDateMap.put(date, mapOfSchedule.get(movie).get(date));
+//                }
+//            });
+//            if (newDateMap.isEmpty()) {
+//                mapOfSchedule.remove(movie);
+//            }
+//            //todo simplify from stream|iterator???
+//        });
 
         return new PageImpl<>(new ArrayList<>(mapOfSchedule.entrySet()),
                 pageable, mapOfSchedule.entrySet().size());
@@ -245,6 +297,27 @@ public class SeanceServiceImpl implements SeanceService {
         return sr.findByDateFromBeforeEqualsAndDateToAfterEqualsAndHallIdIsIn(date,
                 date2, halls.stream().map(HallSimpleDTO::getId).collect(Collectors.toList()))
                 .stream().map(sm::toSeanceForSeancesListDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<SeanceForSeancesListDTO> findByDateFromBeforeEqualsAndDateToAfterEqualsAndHalls(LocalDate date, LocalDate date2, List<HallForSeanceDTO> halls, List<String> technologies,
+                                                                                                List<String> genres, Pageable pageable) {
+        List<SeanceForSeancesListDTO> seances = sr.findByDateFromBeforeEqualsAndDateToAfterEqualsAndHallIdIsIn(date,
+                date2,
+                halls.stream().map(HallSimpleDTO::getId).collect(Collectors.toList())).stream()
+                .map(sm::toSeanceForSeancesListDTO).filter(seance -> {
+                    if (technologies == null && genres == null) {
+                        return true;
+                    } else if (technologies == null) {
+                        return ms.findMovieFullById(seance.getMovie().getId()).getGenres().stream().map(Genre::name).anyMatch(genres::contains);
+                    } else if (genres == null) {
+                        return technologies.contains(seance.getHall().getTechnology().name());
+                    } else {
+                        return technologies.contains(seance.getHall().getTechnology().name()) &&
+                                ms.findMovieFullById(seance.getMovie().getId()).getGenres().stream().map(Genre::name).anyMatch(genres::contains);
+                    }
+                }).collect(Collectors.toList());
+        return new PageImpl<>(seances, pageable, seances.size());
     }
 
     @Override
