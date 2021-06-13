@@ -64,11 +64,6 @@ public class Movie {
 
     @NotNull
     @NotEmpty
-    @Field(name = "movie_language")
-    private Lang movieLang = Lang.ENG;
-
-    @NotNull
-    @NotEmpty
     @Field(name = "movie_country")
     private Map<String, String> movieCountry = new HashMap<>();
 

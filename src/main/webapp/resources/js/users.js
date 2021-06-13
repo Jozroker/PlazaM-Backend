@@ -44,6 +44,9 @@ $(document).ready(function () {
 
     $(".category, #user-search-icon").click(function () {
         if (!$(this).hasClass("selected") && typeof setPagesValues !== 'undefined') {
+            if (typeof startLoading !== 'undefined') {
+                startLoading();
+            }
             if ($(this).hasClass("category")) {
                 $(".categories").find(".selected").removeClass("selected");
                 $(this).addClass("selected");
@@ -76,6 +79,10 @@ $(document).ready(function () {
                 reportedUsersLastPage = JSON.parse(data)[2];
                 bannedUsersLastPage = JSON.parse(data)[4];
                 $("#pages").html("");
+                page = 1;
+                let newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('page', page);
+                window.history.replaceState('', '', newUrl);
                 if ($("#users .nav-item.selected").attr("identifier") === 'ALL') {
                     lastPage = allUsersLastPage;
                 } else if ($("#users .nav-item.selected").attr("identifier") === 'REPORTED') {
@@ -112,13 +119,20 @@ $(document).ready(function () {
     })
 
     $(document).on("click", ".user-right-side .role li:not(.selected-role)", function () {
+        let element = $(this);
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         $.ajax({
-            url: window.origin.origin + '/admin/user/' + $(this).parents(".user").first().attr("identifier") + '/' + $(this).attr("identifier"),
+            url: window.location.origin + '/admin/user/' + $(this).parents(".user").first().attr("identifier") + '/' + $(this).attr("identifier"),
             method: 'POST'
         }).done(function (data) {
             if (data === 'success') {
-                $(this).parent().find(".selected-role > div:first-child").text($(this).text().trim());
-                $(this).parent().find(".selected-role").click();
+                $(element).parent().find(".selected-role > div:first-child").text($(element).text().trim());
+                $(element).parent().find(".selected-role").click();
+            }
+            if (typeof stopLoading !== 'undefined') {
+                stopLoading();
             }
         })
     })
@@ -171,6 +185,9 @@ $(document).ready(function () {
     })
 
     $(".apply-btn").click(function () {
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         $(".arrow").click();
         $("#users .curtain").css("display", "block");
         let roles = '', countries = '', banStatuses = '', name = $("#user-search-line").val().trim();
@@ -196,6 +213,10 @@ $(document).ready(function () {
             reportedUsersLastPage = JSON.parse(data)[2];
             bannedUsersLastPage = JSON.parse(data)[4];
             $("#pages").html("");
+            page = 1;
+            let newUrl = new URL(window.location.href);
+            newUrl.searchParams.set('page', page);
+            window.history.replaceState('', '', newUrl);
             if ($("#users .nav-item.selected").attr("identifier") === 'ALL') {
                 lastPage = allUsersLastPage;
             } else if ($("#users .nav-item.selected").attr("identifier") === 'REPORTED') {
@@ -279,6 +300,9 @@ $(document).ready(function () {
     })
 
     $(document).on("click", ".skip-button", function () {
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         let currentElement = $(this);
         $.ajax({
             url: window.location.origin + '/admin/comment/' + $(currentElement).parents(".user").first().find(".comment").first().attr("identifier") + '/skip',
@@ -291,10 +315,16 @@ $(document).ready(function () {
                     $(currentElement).remove();
                 })
             }
+            if (typeof stopLoading !== 'undefined') {
+                stopLoading();
+            }
         })
     })
 
     $(document).on("click", ".ban", function () {
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         let currentElement = $(this);
         $(this).parents(".ban-button").find(".selection").animate({
             "height": "0"
@@ -363,10 +393,16 @@ $(document).ready(function () {
                     banListAnimate = false;
                 }
             }
+            if (typeof stopLoading !== 'undefined') {
+                stopLoading();
+            }
         })
     })
 
     $(document).on("click", ".unban-button", function () {
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         let currentElement = $(this);
         $.ajax({
             url: window.location.origin + '/admin/user/' + $(currentElement).parents(".user").first().attr("identifier") + '/unban',
@@ -391,6 +427,9 @@ $(document).ready(function () {
                     $("#users .all-users").find(query).find(".user-left-side").first().append(element);
                     $("#users .all-users").find(query).find(".unban-button").remove();
                 }
+            }
+            if (typeof stopLoading !== 'undefined') {
+                stopLoading();
             }
         })
     })
@@ -419,9 +458,9 @@ function generateAllUsers(users) {
             '</div></div><div class="field last-name"><div class="title-2">' + lastNameValue + '</div><div class="value">' + users[user].lastName + '</div></div>' +
             '<div class="field role"><div class="title-2">' + roleValue + '</div><ul class="list"><li class="selected-role">';
 
-        if (users[user].role === 'ADMIN') {
+        if (users[user].role.role === 'ADMIN') {
             allUsersElem += '<div identifier="ADMIN">' + adminValue + '</div>';
-        } else if (users[user].role === 'WORKER') {
+        } else if (users[user].role.role === 'WORKER') {
             allUsersElem += '<div identifier="WORKER">' + workerValue + '</div>';
         } else {
             allUsersElem += '<div identifier="USER">' + userValue + '</div>';
@@ -432,6 +471,9 @@ function generateAllUsers(users) {
             users[user].phone + '</div></div></div></div></div>';
     }
     $(".users-container .all-users").html(allUsersElem);
+    if (typeof stopLoading !== 'undefined') {
+        stopLoading();
+    }
 }
 
 function generateReportedUsers(users) {

@@ -211,6 +211,13 @@ public class UserServiceImpl implements UserService {
                 user.getTickets().stream().map(TicketSimpleDTO::getId).collect(Collectors.toList());
         List<String> messageIds =
                 user.getMessages().stream().map(MessageSimpleDTO::getId).collect(Collectors.toList());
+        findUserForSelfInfoById(user.getId()).getTickets().stream()
+                .filter(ticket -> !ticketIds.contains(ticket.getId()))
+                .forEach(ts::delete);
+        findUserForSelfInfoById(user.getId()).getMessages().stream()
+                .filter(message -> !messageIds.contains(message.getId()))
+                .forEach(ms::delete);
+
         Update update = new Update().set("ticketIds", ticketIds).set(
                 "messageIds", messageIds).set("favouriteMovieIds",
                 user.getFavouriteMovieIds()).set("viewedMovieIds",

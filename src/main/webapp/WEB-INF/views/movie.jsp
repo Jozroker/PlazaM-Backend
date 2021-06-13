@@ -115,13 +115,13 @@
                                     <div class="title"><spring:message code="country.title.default"/></div>
                                     <div class="country">${movie.movieCountry}</div>
                                 </div>
-                                <div>
-                                    <div class="title"><spring:message code="language.title.default"/></div>
-                                    <div class="language">${movie.movieLang.name()}</div>
-                                </div>
+                                <%--                                <div>--%>
+                                <%--                                    <div class="title"><spring:message code="language.title.default"/></div>--%>
+                                <%--                                    <div class="language">${movie.movieLang.name()}</div>--%>
+                                <%--                                </div>--%>
                                 <div>
                                     <div class="title"><spring:message code="duration.title.default"/></div>
-                                    <div class="duration">${movie.durationInMinutes} <spring:message code="minute.short.default"/></div>
+                                    <div class="duration">${movie.durationInMinutes} <spring:message code="minute.default"/></div>
                                 </div>
                                 <div>
                                     <div class="title"><spring:message code="movie.director.title"/></div>
@@ -169,17 +169,19 @@
                 <div class="gallery">
                     <div class="title"><spring:message code="gallery.title.default"/></div>
                     <div class="underline"></div>
-                    <div class="slider">
-                        <div class="left-arrow"></div>
-                        <div class="pictures" id="pictures">
-                            <c:forEach var="image" items="${movie.galleryPictures}">
-                                <div>
-                                    <img alt="" src="data:image/${image.format};base64,${image.pictureString}">
-                                </div>
-                            </c:forEach>
+                    <c:if test="${movie.galleryPictures.size() != 0}">
+                        <div class="slider">
+                            <div class="left-arrow"></div>
+                            <div class="pictures" id="pictures">
+                                <c:forEach var="image" items="${movie.galleryPictures}">
+                                    <div>
+                                        <img alt="" src="data:image/${image.format};base64,${image.pictureString}">
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <div class="right-arrow"></div>
                         </div>
-                        <div class="right-arrow"></div>
-                    </div>
+                    </c:if>
                 </div>
                 <div class="comments">
                     <div class="title"><spring:message code="comments.title.default"/></div>
@@ -196,9 +198,11 @@
                                         <div class="info">
                                             <div class="user">
                                                 <div>
-                                                    <div class="flag">
-                                                        <img alt="" src="${comment.user.country.flagPicture}">
-                                                    </div>
+                                                    <c:if test="${comment.user.country != null}">
+                                                        <div class="flag">
+                                                            <img alt="" src="${comment.user.country.flagPicture}">
+                                                        </div>
+                                                    </c:if>
                                                     <div class="username">${comment.user.username}</div>
                                                 </div>
                                                 <div class="date">
@@ -208,14 +212,19 @@
                                             </div>
                                             <div class="other">
                                                 <div class="user-rating">
-                                                    <c:forEach begin="1" end="5" var="i">
-                                                        <c:if test="${comment.userRating.userRating >= i}">
-                                                            <div class="star full"></div>
-                                                        </c:if>
-                                                        <c:if test="${comment.userRating.userRating < i}">
-                                                            <div class="star"></div>
-                                                        </c:if>
-                                                    </c:forEach>
+                                                    <c:if test="${comment.userRating == null}">
+                                                        <div><spring:message code="movie.user.not.rated"/></div>
+                                                    </c:if>
+                                                    <c:if test="${comment.userRating != null}">
+                                                        <c:forEach begin="1" end="5" var="i">
+                                                            <c:if test="${comment.userRating.userRating >= i}">
+                                                                <div class="star full"></div>
+                                                            </c:if>
+                                                            <c:if test="${comment.userRating.userRating < i}">
+                                                                <div class="star empty"></div>
+                                                            </c:if>
+                                                        </c:forEach>
+                                                    </c:if>
                                                 </div>
                                                 <div class="complain-btn"><spring:message code="button.complain"/></div>
                                             </div>
@@ -265,6 +274,54 @@
     let historicalGenre = '<spring:message code="genre.historical"/>'
     let thrillerGenre = '<spring:message code="genre.thriller"/>'
     let dramaGenre = '<spring:message code="genre.drama"/>'
+
+    let monthsCalendarList = [
+        '<spring:message code="month.january"/>',
+        '<spring:message code="month.february"/>',
+        '<spring:message code="month.march"/>',
+        '<spring:message code="month.april"/>',
+        '<spring:message code="month.may"/>',
+        '<spring:message code="month.june"/>',
+        '<spring:message code="month.july"/>',
+        '<spring:message code="month.august"/>',
+        '<spring:message code="month.september"/>',
+        '<spring:message code="month.october"/>',
+        '<spring:message code="month.november"/>',
+        '<spring:message code="month.december"/>'
+    ];
+    let monthsList = [
+        '<spring:message code="month.january.coming.soon"/>',
+        '<spring:message code="month.february.coming.soon"/>',
+        '<spring:message code="month.march.coming.soon"/>',
+        '<spring:message code="month.april.coming.soon"/>',
+        '<spring:message code="month.may.coming.soon"/>',
+        '<spring:message code="month.june.coming.soon"/>',
+        '<spring:message code="month.july.coming.soon"/>',
+        '<spring:message code="month.august.coming.soon"/>',
+        '<spring:message code="month.september.coming.soon"/>',
+        '<spring:message code="month.october.coming.soon"/>',
+        '<spring:message code="month.november.coming.soon"/>',
+        '<spring:message code="month.december.coming.soon"/>'
+    ];
+    let daysCalendarList = [
+        '<spring:message code="day.friday.short"/>',
+        '<spring:message code="day.monday.short"/>',
+        '<spring:message code="day.tuesday.short"/>',
+        '<spring:message code="day.wednesday.short"/>',
+        '<spring:message code="day.thursday.short"/>',
+        "<spring:message code="day.friday.short"/>",
+        '<spring:message code="day.saturday.short"/>'
+    ];
+    let daysList = [
+        '<spring:message code="day.sunday"/>',
+        '<spring:message code="day.monday"/>',
+        '<spring:message code="day.tuesday"/>',
+        '<spring:message code="day.wednesday"/>',
+        '<spring:message code="day.thursday"/>',
+        "<spring:message code="day.friday"/>",
+        '<spring:message code="day.saturday"/>'
+    ];
+    let createValue = '<spring:message code="button.create.title"/>';
 
     let ukraine = '<spring:message code="ukraine.default"/>';
     let unitedKingdom = '<spring:message code="united.kingdom.default"/>';

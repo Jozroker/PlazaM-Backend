@@ -135,11 +135,15 @@
     let ukraine = '<spring:message code="ukraine.default"/>';
     let unitedKingdom = '<spring:message code="united.kingdom.default"/>';
     let poland = '<spring:message code="poland.default"/>';
+    let ukrainianValue = '<spring:message code="ukrainian.lang.title.default"/>';
+    let englishValue = '<spring:message code="english.lang.title.default"/>';
+    let polishValue = '<spring:message code="polish.lang.title.default"/>';
     let createMovieValue = '<spring:message code="button.create.movie.title"/>';
     let minuteValue = '<spring:message code="minute.default"/>';
     let minuteShortValue = '<spring:message code="minute.short.default"/>';
     let hourShortValue = '<spring:message code="hour.short.default"/>';
     let changeValue = '<spring:message code="button.change"/>';
+    let buyValue = '<spring:message code="button.buy.title"/>';
 </script>
 <script crossorigin="anonymous"
         integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="

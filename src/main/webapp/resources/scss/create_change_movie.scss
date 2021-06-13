@@ -261,52 +261,52 @@
               }
             }
 
-            &:first-child .title {
-
-              @include triangle(5px, $white-dark, 90deg, 0.1s);
-
-              .triangle {
-                vertical-align: middle;
-                margin-left: 3px;
-              }
-
-              &:hover {
-                cursor: pointer;
-
-                .triangle {
-                  border-bottom: 5px solid $maroon;
-                  transition: all 0.1s linear;
-                }
-              }
-            }
-
-            &:nth-child(2) .title {
-
-              @include triangle(5px, $white-dark, -90deg, 0.1s);
-
-              .triangle {
-                vertical-align: middle;
-                margin-right: 3px;
-              }
-
-              &:hover {
-                cursor: pointer;
-
-                .triangle {
-                  border-bottom: 5px solid $maroon;
-                  transition: all 0.1s linear;
-                }
-              }
-            }
+            //&:first-child .title {
+            //
+            //  @include triangle(5px, $white-dark, 90deg, 0.1s);
+            //
+            //  .triangle {
+            //    vertical-align: middle;
+            //    margin-left: 3px;
+            //  }
+            //
+            //  &:hover {
+            //    cursor: pointer;
+            //
+            //    .triangle {
+            //      border-bottom: 5px solid $maroon;
+            //      transition: all 0.1s linear;
+            //    }
+            //  }
+            //}
+            //
+            //&:nth-child(2) .title {
+            //
+            //  @include triangle(5px, $white-dark, -90deg, 0.1s);
+            //
+            //  .triangle {
+            //    vertical-align: middle;
+            //    margin-right: 3px;
+            //  }
+            //
+            //  &:hover {
+            //    cursor: pointer;
+            //
+            //    .triangle {
+            //      border-bottom: 5px solid $maroon;
+            //      transition: all 0.1s linear;
+            //    }
+            //  }
+            //}
           }
         }
       }
 
-      .movie-language {
-        .list {
-          z-index: 2;
-        }
-      }
+      //.movie-language {
+      //  .list {
+      //    z-index: 2;
+      //  }
+      //}
 
       .mpaa-rating {
         .list {
@@ -314,7 +314,8 @@
         }
       }
 
-      .movie-language, .mpaa-rating {
+      .mpaa-rating {
+        //.movie-language, .mpaa-rating {
         .top {
           margin-bottom: 10px;
         }
@@ -1221,7 +1222,7 @@
   }
 }
 
-#create-button {
+#create-button, #change-button {
   width: 13.85vw;
   height: 35px;
   margin: 90px auto 115px auto;

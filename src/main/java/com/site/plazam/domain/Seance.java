@@ -55,6 +55,11 @@ public class Seance {
 
     @NotNull
     @NotEmpty
+    @Field(name = "seance_language")
+    private Lang seanceLang = Lang.ENG;
+
+    @NotNull
+    @NotEmpty
     private List<Day> days = new ArrayList<>();
 
     public Seance(@NotNull LocalDateTime startSeance,

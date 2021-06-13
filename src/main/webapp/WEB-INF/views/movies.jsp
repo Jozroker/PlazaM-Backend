@@ -180,27 +180,27 @@
         '<spring:message code="month.december"/>'
     ];
 
-    let actionGenre = '<spring:message code="genre.action"/>'
-    let comedyGenre = '<spring:message code="genre.comedy"/>'
-    let cartoonGenre = '<spring:message code="genre.cartoon"/>'
-    let romanceGenre = '<spring:message code="genre.romance"/>'
-    let criminalGenre = '<spring:message code="genre.criminal"/>'
-    let scienceFictionGenre = '<spring:message code="genre.science.fiction"/>'
-    let documentaryGenre = '<spring:message code="genre.documentary"/>'
-    let horrorGenre = '<spring:message code="genre.horror"/>'
-    let fantasyGenre = '<spring:message code="genre.fantasy"/>'
-    let adventureGenre = '<spring:message code="genre.adventure"/>'
-    let detectiveGenre = '<spring:message code="genre.detective"/>'
-    let historicalGenre = '<spring:message code="genre.historical"/>'
-    let thrillerGenre = '<spring:message code="genre.thriller"/>'
-    let dramaGenre = '<spring:message code="genre.drama"/>'
+    let actionGenre = '<spring:message code="genre.action"/>';
+    let comedyGenre = '<spring:message code="genre.comedy"/>';
+    let cartoonGenre = '<spring:message code="genre.cartoon"/>';
+    let romanceGenre = '<spring:message code="genre.romance"/>';
+    let criminalGenre = '<spring:message code="genre.criminal"/>';
+    let scienceFictionGenre = '<spring:message code="genre.science.fiction"/>';
+    let documentaryGenre = '<spring:message code="genre.documentary"/>';
+    let horrorGenre = '<spring:message code="genre.horror"/>';
+    let fantasyGenre = '<spring:message code="genre.fantasy"/>';
+    let adventureGenre = '<spring:message code="genre.adventure"/>';
+    let detectiveGenre = '<spring:message code="genre.detective"/>';
+    let historicalGenre = '<spring:message code="genre.historical"/>';
+    let thrillerGenre = '<spring:message code="genre.thriller"/>';
+    let dramaGenre = '<spring:message code="genre.drama"/>';
 
     let lastPage = parseInt(${pagesCount});
     let ukraine = '<spring:message code="ukraine.default"/>';
     let unitedKingdom = '<spring:message code="united.kingdom.default"/>';
     let poland = '<spring:message code="poland.default"/>';
     let createMovieValue = '<spring:message code="button.create.movie.title"/>';
-    let minuteValue = '<spring:message code="minute.short.default"/>';
+    let minuteValue = '<spring:message code="minute.default"/>';
     let inRentalValue = '<spring:message code="movies.in.rental"/>';
     let fromValue = '<spring:message code="movie.from.default"/>';
     let notSelectedValue = '<spring:message code="list.not.selected.default"/>';
@@ -211,8 +211,8 @@
     <c:forEach var="movie" items="${movies}">
     movie = {};
     movie.id = '${movie.id}';
-    movie.name = '${movie.name}';
-    movie.surname = '${movie.surname}';
+    movie.name = "${movie.name}";
+    movie.surname = "${movie.surname}";
     movie.releaseDate = '${movie.releaseDate.year}-${movie.releaseDate.monthValue}-${movie.releaseDate.dayOfMonth}';
     movie.genres = [];
     <c:forEach var="genre" items="${movie.genres}">

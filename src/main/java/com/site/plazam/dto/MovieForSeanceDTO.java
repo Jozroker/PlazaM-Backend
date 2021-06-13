@@ -6,6 +6,7 @@ import com.site.plazam.dto.parents.PictureDTO;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @NoArgsConstructor
@@ -19,6 +20,15 @@ public class MovieForSeanceDTO extends MovieSimpleDTO {
     private String name;
 
     private String surname;
+
+    @NotNull
+    private String movieCountry;
+
+    @NotNull
+    private String directedBy;
+
+    @NotNull
+    private LocalDate releaseDate;
 
     @NotNull
     private PictureDTO posterPicture;

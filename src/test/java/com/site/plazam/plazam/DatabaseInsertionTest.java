@@ -352,7 +352,7 @@ public class DatabaseInsertionTest {
         movie1.setUsersRating(8.9);
         movie1.setMpaaRating(MPAA.PG_13);
         movie1.setImdbRating((double) 9);
-        movie1.setMovieLang(Lang.ENG);
+//        movie1.setMovieLang(Lang.ENG);
         movie1.setMovieCountry(new HashMap<String, String>() {{
             put("eng",
                     "Country1");
@@ -406,7 +406,7 @@ public class DatabaseInsertionTest {
         movie2.setUsersRating(7.9);
         movie2.setMpaaRating(MPAA.PG_13);
         movie2.setImdbRating((double) 8);
-        movie2.setMovieLang(Lang.ENG);
+//        movie2.setMovieLang(Lang.ENG);
         movie2.setMovieCountry(new HashMap<String, String>() {{
             put("eng",
                     "Country2");
@@ -460,7 +460,7 @@ public class DatabaseInsertionTest {
         movie3.setUsersRating(6.9);
         movie3.setMpaaRating(MPAA.NC_17);
         movie3.setImdbRating((double) 7);
-        movie3.setMovieLang(Lang.UKR);
+//        movie3.setMovieLang(Lang.UKR);
         movie3.setMovieCountry(new HashMap<String, String>() {{
             put("eng",
                     "Country3");
@@ -513,7 +513,7 @@ public class DatabaseInsertionTest {
         movie4.setUsersRating(5.9);
         movie4.setMpaaRating(MPAA.R);
         movie4.setImdbRating((double) 6);
-        movie4.setMovieLang(Lang.POL);
+//        movie4.setMovieLang(Lang.POL);
         movie4.setMovieCountry(new HashMap<String, String>() {{
             put("eng",
                     "Country4");
@@ -566,7 +566,7 @@ public class DatabaseInsertionTest {
         movie5.setUsersRating(4.9);
         movie5.setMpaaRating(MPAA.R);
         movie5.setImdbRating((double) 5);
-        movie5.setMovieLang(Lang.ENG);
+//        movie5.setMovieLang(Lang.ENG);
         movie5.setMovieCountry(new HashMap<String, String>() {{
             put("eng",
                     "Country5");

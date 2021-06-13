@@ -78,7 +78,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: block;
 }
-
 @font-face {
     font-family: "BauhausC";
     src: local("BauhausC Light Bold"), local("BauhausC-Demibold"), url("../fonts/BauhausC-Demibold.woff2") format("woff2"), url("../fonts/BauhausC-Demibold.woff") format("woff"), url("../fonts/BauhausC-Demibold.ttf") format("truetype");
@@ -86,7 +85,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: swap;
 }
-
 @font-face {
     font-family: "BauhausC";
     src: local("BauhausC Light"), local("BauhausC-Light"), url("../fonts/BauhausC-Light.woff2") format("woff2"), url("../fonts/BauhausC-Light.woff") format("woff"), url("../fonts/BauhausC-Light.ttf") format("truetype");
@@ -94,7 +92,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: swap;
 }
-
 @font-face {
     font-family: "BauhausC";
     src: local("BauhausC Medium Bold"), local("BauhausC-Bold"), url("../fonts/BauhausC-Bold.woff2") format("woff2"), url("../fonts/BauhausC-Bold.woff") format("woff"), url("../fonts/BauhausC-Bold.ttf") format("truetype");
@@ -102,7 +99,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: swap;
 }
-
 @font-face {
     font-family: "BauhausC";
     src: local("BauhausC Medium"), local("BauhausC-Medium"), url("../fonts/BauhausC-Medium.woff2") format("woff2"), url("../fonts/BauhausC-Medium.woff") format("woff"), url("../fonts/BauhausC-Medium.ttf") format("truetype");
@@ -110,7 +106,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: swap;
 }
-
 [class^=icon-], [class*=" icon-"] {
     /* use !important to prevent issues with browser extensions that change fonts */
     font-family: "icomoon" !important;
@@ -282,30 +277,24 @@ a, a:hover, a:visited, a:active {
     background-color: #0A0B0B;
     overflow-y: hidden;
 }
-
 #schedule-creation > div {
     width: 100%;
 }
-
 #schedule-creation .simplebar-scrollbar:hover {
     cursor: pointer;
 }
-
 #schedule-creation .simplebar-scrollbar::before {
     background-color: #AF2341;
     width: 6px;
 }
-
 #schedule-creation .simplebar-content-wrapper {
     overflow: auto;
 }
-
 #schedule-creation .simplebar-vertical {
     position: absolute;
     right: 4px;
     width: 8px;
 }
-
 #schedule-creation .title {
     width: 100%;
     height: 28px;
@@ -316,45 +305,37 @@ a, a:hover, a:visited, a:active {
     color: #D7D7D7;
     margin-top: 6px;
 }
-
 #schedule-creation .underline {
     width: 100%;
     height: 1px;
     background-color: #AF2341;
 }
-
 #schedule-creation .form {
     width: 100%;
     position: relative;
     height: 246px;
     padding-bottom: 10px;
 }
-
 #schedule-creation .form .simplebar-horizontal {
     height: 10px;
 }
-
 #schedule-creation .form .simplebar-horizontal .simplebar-scrollbar::before {
     width: 100%;
 }
-
 #schedule-creation .form .simplebar-vertical .simplebar-scrollbar::before {
     right: 0;
     left: auto;
 }
-
 #schedule-creation .form .form-content {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     flex-wrap: nowrap;
 }
-
 #schedule-creation .form .form-content > div {
     padding: 3px 5px;
     height: 236px;
 }
-
 #schedule-creation .form .form-content > div .title-2 {
     width: 100%;
     height: 26px;
@@ -374,17 +355,17 @@ a, a:hover, a:visited, a:active {
     padding: 0 5px;
 }
 
-#schedule-creation .form .form-content .hall-select .scroll {
+#schedule-creation .form .form-content .hall-select .scroll, #schedule-creation .form .form-content .language-select .scroll {
     height: 170px;
     padding-right: 10px;
 }
 
-#schedule-creation .form .form-content .hall-select .scroll .simplebar-vertical {
+#schedule-creation .form .form-content .hall-select .scroll .simplebar-vertical, #schedule-creation .form .form-content .language-select .scroll .simplebar-vertical {
     width: 8px;
     z-index: 5;
 }
 
-#schedule-creation .form .form-content .hall-select .list {
+#schedule-creation .form .form-content .hall-select .list, #schedule-creation .form .form-content .language-select .list {
     height: 25px;
     line-height: 25px;
     top: 92px;
@@ -394,45 +375,37 @@ a, a:hover, a:visited, a:active {
     width: 25%;
     min-width: 210px;
 }
-
 #schedule-creation .form .form-content .movie-name .input {
     flex-direction: column;
 }
-
 #schedule-creation .form .form-content .movie-name .movie-result {
     color: #A3A3A3;
     transition: color 0.2s ease-in-out;
+    white-space: nowrap;
 }
-
 #schedule-creation .form .form-content .movie-name .movie-result:hover {
     cursor: pointer;
     color: #AF2341;
     transition: color 0.2s ease-in-out;
 }
-
 #schedule-creation .form .form-content .movie-name input::placeholder {
     color: #A3A3A3;
     transition: color 0.1s linear;
 }
-
 #schedule-creation .form .form-content .movie-name input:hover::placeholder {
     color: #D7D7D7;
     transition: color 0.1s linear;
 }
-
 #schedule-creation .form .form-content .price-select {
     width: 10%;
     min-width: 160px;
 }
-
 #schedule-creation .form .form-content .price-select .input {
     width: 100%;
 }
-
 #schedule-creation .form .form-content .price-select .input > div {
     display: inline-block;
 }
-
 #schedule-creation .form .form-content .price-select .input .sign {
     width: 20px;
     height: 20px;
@@ -443,16 +416,14 @@ a, a:hover, a:visited, a:active {
     color: #D7D7D7;
     transition: all 0.1s linear;
 }
-
 #schedule-creation .form .form-content .price-select .input .sign:hover {
     cursor: pointer;
     color: #0D0E0D;
     background-color: rgba(175, 35, 65, 0.7);
     transition: all 0.1s linear;
 }
-
 #schedule-creation .form .form-content .price-select .input input {
-    width: 76px;
+    width: 60px;
     height: 20px;
     font-size: 18px;
     line-height: 20px;
@@ -462,30 +433,24 @@ a, a:hover, a:visited, a:active {
     background-color: transparent;
     border: 0;
 }
-
 #schedule-creation .form .form-content .price-select .input input::placeholder {
     color: #A3A3A3;
     transition: color 0.1s linear;
 }
-
 #schedule-creation .form .form-content .price-select .input input:hover::placeholder {
     color: #D7D7D7;
     transition: color 0.1s linear;
 }
-
 #schedule-creation .form .form-content .price-select .input input:focus {
     outline: none;
 }
-
 #schedule-creation .form .form-content .price-select .input input::-webkit-outer-spin-button, #schedule-creation .form .form-content .price-select .input input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
-
 #schedule-creation .form .form-content .price-select .input input[type=number] {
     -moz-appearance: textfield;
 }
-
 #schedule-creation .form .form-content .price-select .input .currency {
     width: 15px;
     height: 20px;
@@ -493,19 +458,16 @@ a, a:hover, a:visited, a:active {
     line-height: 20px;
     text-align: center;
 }
-
 #schedule-creation .form .form-content .price-select .input .currency::before {
     font-family: "icomoon" !important;
     content: "";
     color: #AF2341;
     font-weight: 500;
 }
-
 #schedule-creation .form .form-content .seance-time {
     width: 7%;
     min-width: 97px;
 }
-
 #schedule-creation .form .form-content .seance-time input {
     width: 100%;
     padding: 0 3px;
@@ -517,23 +479,19 @@ a, a:hover, a:visited, a:active {
     border: 0;
     text-align: center;
 }
-
 #schedule-creation .form .form-content .seance-time input::-webkit-calendar-picker-indicator {
     background: none;
     width: 0 !important;
     flex-shrink: 1;
     flex-grow: 0;
 }
-
 #schedule-creation .form .form-content .seance-time input::placeholder {
     color: #A3A3A3;
     transition: color 0.1s linear;
 }
-
 #schedule-creation .form .form-content .seance-time input:hover {
     cursor: pointer;
 }
-
 #schedule-creation .form .form-content .seance-time input:hover::placeholder {
     color: #D7D7D7;
     transition: color 0.1s linear;
@@ -543,12 +501,12 @@ a, a:hover, a:visited, a:active {
     outline: none;
 }
 
-#schedule-creation .form .form-content .hall-select, #schedule-creation .form .form-content .date-from, #schedule-creation .form .form-content .date-to {
+#schedule-creation .form .form-content .hall-select, #schedule-creation .form .form-content .date-from, #schedule-creation .form .form-content .date-to, #schedule-creation .form .form-content .language-select {
     width: 12%;
     min-width: 125px;
 }
 
-#schedule-creation .form .form-content .hall-select .title, #schedule-creation .form .form-content .date-from .title, #schedule-creation .form .form-content .date-to .title {
+#schedule-creation .form .form-content .hall-select .title, #schedule-creation .form .form-content .date-from .title, #schedule-creation .form .form-content .date-to .title, #schedule-creation .form .form-content .language-select .title {
     margin-top: 0;
 }
 
@@ -557,13 +515,11 @@ a, a:hover, a:visited, a:active {
     max-width: 140px;
     min-width: 120px;
 }
-
 #schedule-creation .form .form-content .days-select .input {
     display: flex;
     flex-wrap: wrap;
     padding: 10px 0;
 }
-
 #schedule-creation .form .form-content .days-select .day {
     width: 100%;
     text-align: left;
@@ -572,52 +528,42 @@ a, a:hover, a:visited, a:active {
     color: #A3A3A3;
     transition: color 0.1s linear;
 }
-
 #schedule-creation .form .form-content .days-select .checkbox {
     display: flex;
 }
-
 #schedule-creation .form .form-content .days-select .checkbox::before {
     font-family: "icomoon" !important;
     font-size: 16px;
     margin-right: 5px;
     color: #D7D7D7;
 }
-
 #schedule-creation .form .form-content .days-select .checkbox:hover {
     cursor: pointer;
     color: #D7D7D7;
     transition: color 0.1s linear;
 }
-
 #schedule-creation .form .form-content .days-select .checkbox::before {
     content: "";
 }
-
 #schedule-creation .form .form-content .days-select .checked {
     color: #D7D7D7;
 }
-
 #schedule-creation .form .form-content .days-select .checked .checkbox::before {
     content: "" !important;
     color: #AF2341 !important;
 }
-
 #schedule-creation .form .form-content .cinema-select {
     width: 13%;
     min-width: 140px;
 }
-
 #schedule-creation .form .form-content .cinema-select .scroll {
     height: 145px;
     padding-right: 10px;
 }
-
 #schedule-creation .form .form-content .cinema-select .scroll .simplebar-vertical {
     width: 8px;
     z-index: 5;
 }
-
 #schedule-creation .form .form-content .cinema-select .list {
     height: 50px;
     top: 79px;
@@ -629,11 +575,11 @@ a, a:hover, a:visited, a:active {
     text-align: center;
 }
 
-#schedule-creation .form .form-content .hall-select .selected > div:first-child, #schedule-creation .form .form-content .cinema-select .selected > div:first-child {
+#schedule-creation .form .form-content .hall-select .selected > div:first-child, #schedule-creation .form .form-content .cinema-select .selected > div:first-child, #schedule-creation .form .form-content .language-select .selected > div:first-child {
     font-size: 16px;
 }
 
-#schedule-creation .form .form-content .hall-select .scroll .underline, #schedule-creation .form .form-content .cinema-select .scroll .underline {
+#schedule-creation .form .form-content .hall-select .scroll .underline, #schedule-creation .form .form-content .cinema-select .scroll .underline, #schedule-creation .form .form-content .language-select .scroll .underline {
     width: 80%;
     height: 1px;
     background-image: linear-gradient(to right, rgba(175, 35, 65, 0) 0, #AF2341 20%, #AF2341 80%, rgba(175, 35, 65, 0) 100%);
@@ -641,7 +587,7 @@ a, a:hover, a:visited, a:active {
     margin: 0 auto;
 }
 
-#schedule-creation .form .form-content .hall-select .list, #schedule-creation .form .form-content .cinema-select .list {
+#schedule-creation .form .form-content .hall-select .list, #schedule-creation .form .form-content .cinema-select .list, #schedule-creation .form .form-content .language-select .list {
     width: 100%;
     position: absolute;
     overflow: hidden;
@@ -652,28 +598,28 @@ a, a:hover, a:visited, a:active {
     background-image: linear-gradient(to right, rgba(13, 14, 13, 0), rgba(13, 14, 13, 0) 50%, rgba(13, 14, 13, 0.95) 50%, rgba(13, 14, 13, 0.95) 100%);
 }
 
-#schedule-creation .form .form-content .hall-select .list li, #schedule-creation .form .form-content .cinema-select .list li {
+#schedule-creation .form .form-content .hall-select .list li, #schedule-creation .form .form-content .cinema-select .list li, #schedule-creation .form .form-content .language-select .list li {
     display: flex;
     justify-content: center;
     align-items: center;
     white-space: nowrap;
 }
 
-#schedule-creation .form .form-content .hall-select .list li:not(.selected), #schedule-creation .form .form-content .cinema-select .list li:not(.selected) {
+#schedule-creation .form .form-content .hall-select .list li:not(.selected), #schedule-creation .form .form-content .cinema-select .list li:not(.selected), #schedule-creation .form .form-content .language-select .list li:not(.selected) {
     font-weight: 300;
 }
 
-#schedule-creation .form .form-content .hall-select .list .selected, #schedule-creation .form .form-content .cinema-select .list .selected {
+#schedule-creation .form .form-content .hall-select .list .selected, #schedule-creation .form .form-content .cinema-select .list .selected, #schedule-creation .form .form-content .language-select .list .selected {
     margin-bottom: 10px;
     color: #A3A3A3;
     transition: color 0.1s linear;
 }
 
-#schedule-creation .form .form-content .hall-select .list .selected > div, #schedule-creation .form .form-content .cinema-select .list .selected > div {
+#schedule-creation .form .form-content .hall-select .list .selected > div, #schedule-creation .form .form-content .cinema-select .list .selected > div, #schedule-creation .form .form-content .language-select .list .selected > div {
     display: inline-block;
 }
 
-#schedule-creation .form .form-content .hall-select .list .selected .triangle, #schedule-creation .form .form-content .cinema-select .list .selected .triangle {
+#schedule-creation .form .form-content .hall-select .list .selected .triangle, #schedule-creation .form .form-content .cinema-select .list .selected .triangle, #schedule-creation .form .form-content .language-select .list .selected .triangle {
     width: 0;
     height: 0;
     border-left: 5px solid transparent;
@@ -687,48 +633,48 @@ a, a:hover, a:visited, a:active {
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
 
-#schedule-creation .form .form-content .hall-select .list .selected .triangle-0, #schedule-creation .form .form-content .cinema-select .list .selected .triangle-0 {
+#schedule-creation .form .form-content .hall-select .list .selected .triangle-0, #schedule-creation .form .form-content .cinema-select .list .selected .triangle-0, #schedule-creation .form .form-content .language-select .list .selected .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
 
-#schedule-creation .form .form-content .hall-select .list .selected .triangle-wide, #schedule-creation .form .form-content .cinema-select .list .selected .triangle-wide {
+#schedule-creation .form .form-content .hall-select .list .selected .triangle-wide, #schedule-creation .form .form-content .cinema-select .list .selected .triangle-wide, #schedule-creation .form .form-content .language-select .list .selected .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
 
-#schedule-creation .form .form-content .hall-select .list .selected .triangle, #schedule-creation .form .form-content .cinema-select .list .selected .triangle {
+#schedule-creation .form .form-content .hall-select .list .selected .triangle, #schedule-creation .form .form-content .cinema-select .list .selected .triangle, #schedule-creation .form .form-content .language-select .list .selected .triangle {
     vertical-align: middle;
     margin-left: 3px;
 }
 
-#schedule-creation .form .form-content .hall-select .list .selected:hover, #schedule-creation .form .form-content .cinema-select .list .selected:hover {
+#schedule-creation .form .form-content .hall-select .list .selected:hover, #schedule-creation .form .form-content .cinema-select .list .selected:hover, #schedule-creation .form .form-content .language-select .list .selected:hover {
     cursor: pointer;
     color: #D7D7D7;
     transition: color 0.1s linear;
 }
 
-#schedule-creation .form .form-content .hall-select .list .selected:hover .triangle, #schedule-creation .form .form-content .cinema-select .list .selected:hover .triangle {
+#schedule-creation .form .form-content .hall-select .list .selected:hover .triangle, #schedule-creation .form .form-content .cinema-select .list .selected:hover .triangle, #schedule-creation .form .form-content .language-select .list .selected:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: all 0.1s linear;
 }
 
-#schedule-creation .form .form-content .hall-select .triangle, #schedule-creation .form .form-content .cinema-select .triangle {
+#schedule-creation .form .form-content .hall-select .triangle, #schedule-creation .form .form-content .cinema-select .triangle, #schedule-creation .form .form-content .language-select .triangle {
     margin-left: 5px;
 }
 
-#schedule-creation .form .form-content .hall-select .hall, #schedule-creation .form .form-content .hall-select .cinema, #schedule-creation .form .form-content .cinema-select .hall, #schedule-creation .form .form-content .cinema-select .cinema {
+#schedule-creation .form .form-content .hall-select .hall, #schedule-creation .form .form-content .hall-select .cinema, #schedule-creation .form .form-content .hall-select .lang, #schedule-creation .form .form-content .cinema-select .hall, #schedule-creation .form .form-content .cinema-select .cinema, #schedule-creation .form .form-content .cinema-select .lang, #schedule-creation .form .form-content .language-select .hall, #schedule-creation .form .form-content .language-select .cinema, #schedule-creation .form .form-content .language-select .lang {
     text-align: center;
     white-space: normal;
     font-size: 16px;
 }
 
-#schedule-creation .form .form-content .hall-select .hall:not(:first-child), #schedule-creation .form .form-content .hall-select .cinema:not(:first-child), #schedule-creation .form .form-content .cinema-select .hall:not(:first-child), #schedule-creation .form .form-content .cinema-select .cinema:not(:first-child) {
+#schedule-creation .form .form-content .hall-select .hall:not(:first-child), #schedule-creation .form .form-content .hall-select .cinema:not(:first-child), #schedule-creation .form .form-content .hall-select .lang:not(:first-child), #schedule-creation .form .form-content .cinema-select .hall:not(:first-child), #schedule-creation .form .form-content .cinema-select .cinema:not(:first-child), #schedule-creation .form .form-content .cinema-select .lang:not(:first-child), #schedule-creation .form .form-content .language-select .hall:not(:first-child), #schedule-creation .form .form-content .language-select .cinema:not(:first-child), #schedule-creation .form .form-content .language-select .lang:not(:first-child) {
     margin-top: 4px;
 }
 
-#schedule-creation .form .form-content .hall-select .hall:hover, #schedule-creation .form .form-content .hall-select .cinema:hover, #schedule-creation .form .form-content .cinema-select .hall:hover, #schedule-creation .form .form-content .cinema-select .cinema:hover {
+#schedule-creation .form .form-content .hall-select .hall:hover, #schedule-creation .form .form-content .hall-select .cinema:hover, #schedule-creation .form .form-content .hall-select .lang:hover, #schedule-creation .form .form-content .cinema-select .hall:hover, #schedule-creation .form .form-content .cinema-select .cinema:hover, #schedule-creation .form .form-content .cinema-select .lang:hover, #schedule-creation .form .form-content .language-select .hall:hover, #schedule-creation .form .form-content .language-select .cinema:hover, #schedule-creation .form .form-content .language-select .lang:hover {
     cursor: pointer;
     color: #AF2341;
 }
@@ -738,7 +684,6 @@ a, a:hover, a:visited, a:active {
     height: 26px;
     margin-bottom: 14px;
 }
-
 #schedule-creation .button .create-btn {
     width: 150px;
     height: 100%;
@@ -752,7 +697,6 @@ a, a:hover, a:visited, a:active {
     background-image: linear-gradient(to right, #AF2341 0, #AF2341 50%, rgba(175, 35, 65, 0) 50%, rgba(175, 35, 65, 0) 100%);
     transition: all 0.3s ease-in-out;
 }
-
 #schedule-creation .button .create-btn:hover {
     cursor: pointer;
     background-position: 0 0;
@@ -778,11 +722,9 @@ a, a:hover, a:visited, a:active {
         height: 30px;
     }
 }
-
 #search-movie input {
     padding-left: 5px;
 }
-
 #search-movie .underline {
     width: 100%;
     height: 1px;
@@ -790,11 +732,9 @@ a, a:hover, a:visited, a:active {
     position: absolute;
     right: 0;
 }
-
 #search-movie > div {
     display: inline-block;
 }
-
 #search-movie > div:first-child {
     width: 100%;
     position: relative;
@@ -809,14 +749,12 @@ a, a:hover, a:visited, a:active {
     background-color: rgba(10, 11, 11, 0.2);
     overflow: hidden;
 }
-
 #movie-search-result .scroll {
     width: 100%;
     height: 100%;
     max-height: 100px;
     padding-right: 10px;
 }
-
 #movie-search-result .scroll .movie-result {
     height: 20px;
     padding: 0 20px;
@@ -831,12 +769,10 @@ a, a:hover, a:visited, a:active {
     height: 25px;
     top: 92px;
 }
-
 #date-from .content, #date-to .content {
     height: 186px;
     padding: 0 !important;
 }
-
 #date-from .title, #date-to .title {
     display: flex;
     justify-content: center;
@@ -844,23 +780,19 @@ a, a:hover, a:visited, a:active {
     color: #A3A3A3;
     transition: color 0.1s ease-in-out;
 }
-
 #date-from .title:hover, #date-to .title:hover {
     cursor: pointer;
     color: #D7D7D7;
     transition: color 0.1s ease-in-out;
 }
-
 #date-from .title:hover .triangle, #date-to .title:hover .triangle {
     border-bottom-color: #AF2341;
     transition: border-bottom-color 0.1s ease-in-out;
 }
-
 #date-from .title .value, #date-to .title .value {
     font-size: 16px;
     font-weight: 500;
 }
-
 #date-from .title .triangle, #date-to .title .triangle {
     width: 0;
     height: 0;
@@ -874,18 +806,15 @@ a, a:hover, a:visited, a:active {
     transform: rotate(180deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0.1s ease-in-out !important;
 }
-
 #date-from .title .triangle-0, #date-to .title .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0.1s ease-in-out !important;
 }
-
 #date-from .title .triangle-wide, #date-to .title .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0.1s ease-in-out !important;
 }
-
 #date-from .title .triangle, #date-to .title .triangle {
     margin-left: 5px;
 }
@@ -897,7 +826,6 @@ a, a:hover, a:visited, a:active {
     right: 0;
     margin: 0 7px;
 }
-
 #movie-search-icon::after {
     font-family: "icomoon";
     content: "";
@@ -920,11 +848,9 @@ a, a:hover, a:visited, a:active {
         line-height: 30px;
     }
 }
-
 #movie-search-icon:hover {
     cursor: pointer;
 }
-
 #movie-search-icon:hover:after {
     color: #AF2341;
     cursor: pointer;
@@ -940,11 +866,9 @@ a, a:hover, a:visited, a:active {
     width: 100%;
     color: #D7D7D7;
 }
-
 #movie-search-line:focus {
     outline: none;
 }
-
 #movie-search-line:focus::placeholder {
     color: transparent;
 }

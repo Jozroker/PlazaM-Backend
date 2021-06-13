@@ -1,7 +1,6 @@
 package com.site.plazam.dto;
 
 import com.site.plazam.domain.Genre;
-import com.site.plazam.domain.Lang;
 import com.site.plazam.domain.MPAA;
 import com.site.plazam.dto.parents.MovieSimpleDTO;
 import com.site.plazam.dto.parents.PictureDTO;
@@ -54,9 +53,6 @@ public class MovieFullDTO extends MovieSimpleDTO {
     private String directedBy;
 
     @NotNull
-    private Lang movieLang;
-
-    @NotNull
     private String movieCountry;
 
     private List<PictureDTO> galleryPictures = new ArrayList<>();
@@ -73,26 +69,11 @@ public class MovieFullDTO extends MovieSimpleDTO {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         MovieFullDTO that = (MovieFullDTO) o;
-        return durationInMinutes == that.durationInMinutes &&
-                Double.compare(that.usersRating, usersRating) == 0 &&
-                Double.compare(that.imdbRating, imdbRating) == 0 &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(surname, that.surname) &&
-                Objects.equals(posterPicture, that.posterPicture) &&
-                Objects.equals(widePicture, that.widePicture) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(releaseDate, that.releaseDate) &&
-                mpaaRating == that.mpaaRating &&
-                Objects.equals(directedBy, that.directedBy) &&
-                Objects.equals(movieLang, that.movieLang) &&
-                Objects.equals(movieCountry, that.movieCountry) &&
-                Objects.equals(galleryPictures, that.galleryPictures) &&
-                Objects.equals(actors, that.actors) &&
-                Objects.equals(genres, that.genres);
+        return durationInMinutes == that.durationInMinutes && Double.compare(that.usersRating, usersRating) == 0 && Double.compare(that.imdbRating, imdbRating) == 0 && Objects.equals(name, that.name) && Objects.equals(surname, that.surname) && Objects.equals(posterPicture, that.posterPicture) && Objects.equals(widePicture, that.widePicture) && Objects.equals(description, that.description) && Objects.equals(releaseDate, that.releaseDate) && mpaaRating == that.mpaaRating && Objects.equals(directedBy, that.directedBy) && Objects.equals(movieCountry, that.movieCountry) && Objects.equals(galleryPictures, that.galleryPictures) && Objects.equals(actors, that.actors) && Objects.equals(genres, that.genres);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, surname, posterPicture, widePicture, description, durationInMinutes, releaseDate, usersRating, mpaaRating, imdbRating, directedBy, movieLang, movieCountry, galleryPictures, actors, genres);
+        return Objects.hash(super.hashCode(), name, surname, posterPicture, widePicture, description, durationInMinutes, releaseDate, usersRating, mpaaRating, imdbRating, directedBy, movieCountry, galleryPictures, actors, genres);
     }
 }

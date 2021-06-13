@@ -127,7 +127,11 @@ $(document).ready(function () {
     })
 
     $(".comment-btn").click(function () {
-        let url = window.location.origin + '/movie/' + $("#movie").attr("identifier") + '/add/comment?text=' + $(this).parents(".comment-form").first().find("textarea").val();
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
+        let commentButton = $(this);
+        let url = window.location.origin + '/movie/' + $("#movie").attr("identifier") + '/add/comment?text=' + $(commentButton).parents(".comment-form").first().find("textarea").val();
         if ($(".user-rating")[0].hasAttribute("identifier")) {
             url += '&ratingId=' + $(".user-rating").attr("identifier");
         }
@@ -136,9 +140,15 @@ $(document).ready(function () {
             method: 'POST'
         }).done(function (data) {
             let comment = JSON.parse(data);
-            let commentElement = '<div class="comment" identifier="' + comment.id + '">\<div class="user-info"><div class="avatar"><img alt=""' +
-                'src="data:image/' + comment.user.picture.format + ';base64,' + comment.user.picture.pictureString + '></div><div class="info"><div class="user">' +
-                '<div><div class="flag"><img alt="" src="' + comment.user.country.flagPicture + '"></div><div class="username">' + comment.user.username + '</div>' +
+            let commentElement = '<div class="comment" id="' + comment.id + '">\<div class="user-info"><div class="avatar"><img alt=""' +
+                ' src="data:image/' + comment.user.picture.format + ';base64,' + comment.user.picture.pictureString + '"></div><div class="info"><div class="user">' +
+                '<div>';
+
+            if (Object.keys(comment.user).includes("country")) {
+                commentElement += '<div class="flag"><img alt="" src="' + comment.user.country.flagPicture + '"></div>';
+            }
+
+            commentElement += '<div class="username">' + comment.user.username + '</div>' +
                 '</div><div class="date">' + comment.date.slice(-2) + '.' + comment.date.slice(5, 7) + '.' + comment.date.slice(0, 4) + '</div></div>' +
                 '<div class="other"><div class="user-rating">';
 
@@ -149,12 +159,18 @@ $(document).ready(function () {
                     if (comment.userRating.userRating >= i) {
                         commentElement += '<div class="star full"></div>';
                     } else {
-                        commentElement += '<div class="star"></div>';
+                        commentElement += '<div class="star empty"></div>';
                     }
                 }
             }
 
             commentElement += '</div><div class="complain-btn">' + complainValue + '</div></div></div></div><div class="text">' + comment.text + '</div></div>';
+            $("#comments").append(commentElement);
+            $(commentButton).parents(".comment-form").first().find("textarea").val("");
+            $(".add-comment").click();
+            if (typeof stopLoading !== 'undefined') {
+                stopLoading();
+            }
         })
 
     })

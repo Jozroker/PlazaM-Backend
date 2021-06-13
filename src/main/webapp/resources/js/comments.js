@@ -31,6 +31,9 @@ $(document).ready(function () {
 
     $(".category").click(function () {
         if (!$(this).hasClass("selected")) {
+            if (typeof startLoading !== 'undefined') {
+                startLoading();
+            }
             $(".categories").find(".selected").removeClass("selected");
             $(this).addClass("selected");
             $(".sort .underline").animate({
@@ -38,6 +41,7 @@ $(document).ready(function () {
                 width: $(this).width() + 14 + "px"
             }, 300, "easeInOutQuint")
 
+            let currentPage = new URLSearchParams(window.location.search).get("page") == null ? 1 : new URLSearchParams(window.location.search).get("page");
             $.ajax({
                 url: window.location.origin + '/user/comments/1?sort=' + $(this).attr("identifier"),
                 method: 'GET'
@@ -45,8 +49,10 @@ $(document).ready(function () {
                 let comments = JSON.parse(data);
                 $("#pages").html("");
                 lastPage = comments[0];
-                page = parseInt(new URLSearchParams(window.location.search).get("page"));
-                page = isNaN(page) ? 1 : page;
+                page = 1;
+                let newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('page', page);
+                window.history.replaceState('', '', newUrl);
                 if (lastPage < 1) {
                     $("#pages").html("");
                 } else {
@@ -99,6 +105,10 @@ $(document).ready(function () {
         $(this).parents(".comment").first().find(".simplebar-content .value").replaceWith('<textarea spellcheck="false"></textarea>');
         $(this).parents(".comment").first().find("textarea").focus().val(text);
     })
+
+    $(document).on("click", ".comment .info .title", function () {
+        window.location.href = '/movie/' + $(this).attr("identifier") + '?cinemaId=' + cinemaId;
+    })
 })
 
 function generateComments(comments) {
@@ -106,8 +116,8 @@ function generateComments(comments) {
     for (let comment in comments) {
         commentsElem += '<div class="comment" identifier="' + comments[comment].id + '"><div class="comment-left-side"><div class="picture">' +
             '<img alt="" src="data:image/' + comments[comment].movie.widePicture.format + ';base64,' + comments[comment].movie.widePicture.pictureString + '">' +
-            '</div><div class="info"><div class="title"><a href="/movie/' + comments[comment].movie.id + '"><div class="first-name">' + comments[comment].movie.name +
-            '</div><div class="last-name">' + comments[comment].movie.surname + '</div></a></div><div class="date"><div class="title-2">' + dateValue + ':</div>' +
+            '</div><div class="info"><div class="title" identifier="' + comments[comment].movie.id + '"><div class="first-name">' + comments[comment].movie.name +
+            '</div><div class="last-name">' + comments[comment].movie.surname + '</div></div><div class="date"><div class="title-2">' + dateValue + ':</div>' +
             '<div class="space">-</div><div class="value">' + comments[comment].date.slice(-2) + '.' + comments[comment].date.slice(5, 7) + '.' +
             comments[comment].date.slice(0, 4) + '</div></div><div class="time"><div class="title-2">' + timeValue + ':</div><div class="space">-</div><div class="value">' +
             comments[comment].time.slice(11, 13) + ':' + comments[comment].time.slice(14, 16) + '</div></div></div></div><div class="comment-right-side">' +
@@ -118,4 +128,7 @@ function generateComments(comments) {
     }
     commentsElem += '<div class="curtain"></div>';
     $("#comments").html(commentsElem);
+    if (typeof stopLoading !== 'undefined') {
+        stopLoading();
+    }
 }

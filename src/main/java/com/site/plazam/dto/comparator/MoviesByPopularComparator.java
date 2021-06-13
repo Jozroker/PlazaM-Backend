@@ -9,6 +9,6 @@ public class MoviesByPopularComparator implements Comparator<MovieForMoviesListD
     @Override
     public int compare(MovieForMoviesListDTO movie1,
                        MovieForMoviesListDTO movie2) {
-        return Double.compare(movie1.getUsersRating(), movie2.getUsersRating());
+        return Double.compare(movie2.getUsersRating(), movie1.getUsersRating());
     }
 }

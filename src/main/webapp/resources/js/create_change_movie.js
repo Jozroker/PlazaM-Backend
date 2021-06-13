@@ -321,6 +321,7 @@ $(document).ready(function () {
         } else if (parseFloat($(this).val()) <= 0) {
             $(this).val(0.1);
         }
+        $(this).val(parseFloat($(this).val().replace(',', '.')));
     })
 
     $("#year").focusout(function () {
@@ -361,22 +362,24 @@ $(document).ready(function () {
             $(this).addClass("selected").animate({
                 "background-position-x": "0%"
             }, 300, "easeInOutQuint", function () {
-                selectedGenres.push($(this).attr("id"));
+                if (!selectedGenres.includes($(this).attr("id"))) {
+                    selectedGenres.push($(this).attr("id"));
+                }
             });
         }
     })
 
-    $(".name .title").click(function () {
-        $("#movie .name, #movie .surname").animate({
-            "left": "-100%"
-        }, 600, "easeInOutQuint");
-    })
+    // $(".name .title").click(function () {
+    //     $("#movie .name, #movie .surname").animate({
+    //         "left": "-100%"
+    //     }, 600, "easeInOutQuint");
+    // })
 
-    $(".surname .title").click(function () {
-        $("#movie .name, #movie .surname").animate({
-            "left": "0"
-        }, 600, "easeInOutQuint");
-    })
+    // $(".surname .title").click(function () {
+    //     $("#movie .name, #movie .surname").animate({
+    //         "left": "0"
+    //     }, 600, "easeInOutQuint");
+    // })
 
     $(document).on("click", ".actor", function () {
         if ($(this).hasClass("selected")) {
@@ -394,7 +397,9 @@ $(document).ready(function () {
             $(this).addClass("selected").animate({
                 "background-position-x": "0%"
             }, 300, "easeInOutQuint", function () {
-                selectedActors.push($(this).attr("identifier"));
+                if (!selectedActors.includes($(this).attr("identifier"))) {
+                    selectedActors.push($(this).attr("identifier"));
+                }
                 if ($(".actor.selected").length > 1) {
                     $($(".actor.selected").first()).before($(this));
                 } else {
@@ -496,11 +501,14 @@ $(document).ready(function () {
                         }
                     })
                     if (fieldsIsFilled) {
+                        if (typeof startLoading !== 'undefined') {
+                            startLoading();
+                        }
                         let firstNameEng = $($(".actor-form input")[1]).val().trim();
-                        let lastNameEng = $($(".actor-form input")[2]).val().trim();
-                        let firstNameUkr = $($(".actor-form input")[3]).val().trim();
-                        let lastNameUkr = $($(".actor-form input")[4]).val().trim();
-                        let firstNamePol = $($(".actor-form input")[5]).val().trim();
+                        let lastNameEng = $($(".actor-form input")[4]).val().trim();
+                        let firstNameUkr = $($(".actor-form input")[2]).val().trim();
+                        let lastNameUkr = $($(".actor-form input")[5]).val().trim();
+                        let firstNamePol = $($(".actor-form input")[3]).val().trim();
                         let lastNamePol = $($(".actor-form input")[6]).val().trim();
                         $.ajax({
                             url: window.location.origin + '/admin/create/actor',
@@ -519,10 +527,16 @@ $(document).ready(function () {
                         }).done(function (actor) {
                             let actorResponse = JSON.parse(actor);
                             let newActor = '<div identifier="' + actorResponse.id + '" class="actor"><div class="icon-tick"></div><img alt="" class="actor-avatar" ' +
-                                'src="data:image/' + actorResponse.picture.format + ';base64,' + actorResponse.picture.picture + '"><div class="actor-name">' +
+                                'src="data:image/' + actorResponse.picture.format + ';base64,' + actorResponse.picture.pictureString + '"><div class="actor-name">' +
                                 actorResponse.firstName + ' ' + actorResponse.lastName + '</div></div>';
                             $(".actors-container").append(newActor);
                             $(".actor-form input").val("");
+                            $("#actor-avatar").attr("src", "/resources/img/jpg/default_avatar.jpg");
+                            actorPicture = null;
+                            actorPictureFormat = null;
+                            if (typeof stopLoading !== 'undefined') {
+                                stopLoading();
+                            }
                         })
                     }
                 } else {
@@ -542,12 +556,12 @@ $(document).ready(function () {
         }
     })
 
-    $(".actor-form").mouseleave(function () {
-        if ((!actorCreationHidden && !actorCreationAnimate) || (actorCreationHidden && actorCreationAnimate)) {
-            userClick = false;
-            $(this).find(".button").first().click();
-        }
-    })
+    // $(".actor-form").mouseleave(function () {
+    //     if ((!actorCreationHidden && !actorCreationAnimate) || (actorCreationHidden && actorCreationAnimate)) {
+    //         userClick = false;
+    //         $(this).find(".button").first().click();
+    //     }
+    // })
 
     $(".gallery .add-button").click(function () {
         $("#add-movie-picture").trigger("click");
@@ -587,15 +601,17 @@ $(document).ready(function () {
         let countryPol = $(".country .pl-field input").val().trim();
         let movieLang = $(".movie-language .selected").attr("identifier");
         let mpaa = $(".mpaa-rating .selected").attr("identifier");
-        let imdb = $("#imdb-rating").val().trim();
+        let imdb = $("#imdb-rating").val().trim().replace(',', '.');
         let descEng = $(".description .en-field textarea").val().trim();
         let descUkr = $(".description .ua-field textarea").val().trim();
         let descPol = $(".description .pl-field textarea").val().trim();
 
         if (nameEng !== '' && nameUkr !== '' && namePol !== '' && duration !== '' && directedByEng !== '' && directedByUkr !== '' && directedByPol !== '' &&
-            !isNaN(releaseDate) && countryEng !== '' && countryUkr !== '' && countryPol !== '' && movieLang !== 'NULL' && mpaa !== 'NULL' && imdb !== '' &&
-            descEng !== '' && descUkr !== '' && descPol !== '' && selectedActors.length > 0 && selectedGenres.length > 0) {
-
+            !isNaN(releaseDate) && countryEng !== '' && countryUkr !== '' && countryPol !== '' && movieLang !== 'NULL' && mpaa !== 'NULL' && descEng !== '' &&
+            descUkr !== '' && descPol !== '' && selectedActors.length > 0 && selectedGenres.length > 0) {
+            if (typeof startLoading !== 'undefined') {
+                startLoading();
+            }
             $.ajax({
                 url: window.location.origin + '/admin/movie' + (typeof movieId === 'undefined' ? '/create' : '/change/' + movieId),
                 method: 'POST',
@@ -631,8 +647,8 @@ $(document).ready(function () {
                     selectedGenres: selectedGenres,
                     selectedActors: selectedActors
                 })
-            }).done(function (state) {
-                console.log(state);
+            }).done(function (url) {
+                window.location.href = url;
             })
         }
     })
@@ -713,18 +729,29 @@ $(document).ready(function () {
     //todo create validators for fields by creation event
 
     function generateActors() {
+        let currentActor = '';
         let actorsList = '';
+        let selectedActorsList = '';
+        let selected = false;
         for (let actor in actors) {
-            actorsList += '<div identifier="' + actors[actor][0] + '" class="actor';
+            currentActor += '<div identifier="' + actors[actor][0] + '" class="actor';
             if (typeof selectedActors !== 'undefined') {
                 if (selectedActors.includes(actors[actor][0])) {
-                    actorsList += ' selected';
+                    currentActor += ' selected';
+                    selected = true;
                 }
             }
-            actorsList += '"><div class="icon-tick"></div><img alt="" class="actor-avatar" src="data:image/' + actors[actor][3] + ';base64,' + actors[actor][4] + '">' +
+            currentActor += '"><div class="icon-tick"></div><img alt="" class="actor-avatar" src="data:image/' + actors[actor][3] + ';base64,' + actors[actor][4] + '">' +
                 '<div class="actor-name">' + actors[actor][1] + ' ' + actors[actor][2] + '</div></div>';
+            if (selected) {
+                selected = false;
+                selectedActorsList += currentActor;
+            } else {
+                actorsList += currentActor;
+            }
+            currentActor = '';
         }
-        $(".actors-container").html(actorsList);
+        $(".actors-container").html(selectedActorsList + actorsList);
         setTimeout(function () {
             selectActors();
         }, 100);

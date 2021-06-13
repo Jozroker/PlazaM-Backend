@@ -15,19 +15,24 @@ $(document).ready(function () {
             setPagesValues(lastPage);
             pagesAnimation();
         }
+
+        if (window.location.pathname === '/home' || window.location.pathname === '/schedule') {
+            $.getScript("/resources/js/movie_schedule.js");
+        }
     }
 
-    $("#pages .page").not(".selected").click(function () {
-        url.searchParams.set("page", parseInt($(this).text()));
-        page = parseInt($(this).text());
-        window.history.replaceState("", "", url);
-        pagesAnimation();
+    $(document).on("click", "#pages .page", function () {
+        if (!$(this).hasClass("selected")) {
+            url.searchParams.set("page", parseInt($(this).text()));
+            page = parseInt($(this).text());
+            window.history.replaceState("", "", url);
+            pagesAnimation();
 
-        replaceContent(page);
-
+            replaceContent(page);
+        }
     })
 
-    $("#pages .first").click(function () {
+    $(document).on("click", "#pages .first", function () {
         url.searchParams.set("page", 1);
         page = 1;
         window.history.replaceState("", "", url);
@@ -36,7 +41,7 @@ $(document).ready(function () {
         replaceContent(1);
     })
 
-    $("#pages .last").click(function () {
+    $(document).on("click", "#pages .last", function () {
         url.searchParams.set("page", lastPage);
         page = lastPage;
         window.history.replaceState("", "", url);
@@ -45,7 +50,7 @@ $(document).ready(function () {
         replaceContent(lastPage);
     })
 
-    $("#pages-arrow-left").click(function () {
+    $(document).on("click", "#pages-arrow-left", function () {
         if (page !== 1) {
             page--;
             url.searchParams.set("page", page);
@@ -56,7 +61,7 @@ $(document).ready(function () {
         }
     })
 
-    $("#pages-arrow-right").click(function () {
+    $(document).on("click", "#pages-arrow-right", function () {
         if (page !== lastPage) {
             page++;
             url.searchParams.set("page", page);
@@ -67,12 +72,12 @@ $(document).ready(function () {
         }
     })
 
-    $("#pages .page, #pages .first, #pages .last").mouseover(function () {
+    $(document).on("mouseover", "#pages .page, #pages .first, #pages .last", function () {
         let newPos = parseInt($("#pages .pages").find("div:visible").index($(this))) - 1;
         $("#pages .line").find(".underline").css("left", newPos * 32 + "px");
     })
 
-    $("#pages .pages").mouseleave(function () {
+    $(document).on("mouseleave", "#pages .pages", function () {
         $("#pages .line").find(".underline").css("left", position * 32 + "px");
     })
 
@@ -161,6 +166,9 @@ function replaceContent(page) {
             url += "&date=" + selectedDate;
         }
         if (!isNaN(page)) {
+            if (typeof startLoading !== 'undefined') {
+                startLoading();
+            }
             $.ajax({
                 url: url,
                 method: 'GET'
@@ -206,6 +214,9 @@ function replaceContent(page) {
             url += '&userId=' + searchParams.get("userId") + "&type=" + searchParams.get("type");
         }
         if (!isNaN(page)) {
+            if (typeof startLoading !== 'undefined') {
+                startLoading();
+            }
             $.ajax({
                 url: url,
                 method: 'GET'
@@ -229,6 +240,9 @@ function replaceContent(page) {
         $("#comments .curtain").css("display", "block");
         let url = window.location.origin + '/user/comments/' + page + '?sort=' + $(".category.selected").attr("identifier");
         if (!isNaN(page)) {
+            if (typeof startLoading !== 'undefined') {
+                startLoading();
+            }
             $.ajax({
                 url: url,
                 method: 'GET'
@@ -249,6 +263,9 @@ function replaceContent(page) {
             })
         }
     } else if (window.location.pathname === '/admin/users') {
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         $("#users .curtain").css("display", "block");
         let roles = '', countries = '', banStatuses = '', name = $("#user-search-line").val().trim();
         $("#filter .role.selected").each(function () {

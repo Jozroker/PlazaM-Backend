@@ -23,7 +23,6 @@ $(document).ready(function () {
             // $.getScript("../js/footer.js");
             $.getScript("/resources/js/header.js");
             $.getScript("/resources/js/pages.js");
-            $.getScript("/resources/js/movie_schedule.js");
             $.getScript("/resources/js/calendar.js");
         })
 
@@ -63,6 +62,9 @@ $(document).ready(function () {
             $(".calendar-section .selected-date").text(stringDate);
             $(".date-top").click();
             if (!isNaN(page)) {
+                if (typeof startLoading !== 'undefined') {
+                    startLoading();
+                }
                 $.ajax({
                     url: window.location.origin + '/schedule/page/' + page + '?cinemaId=' + cinemaId + (genres === '' ? '' : '&genres=' + genres) +
                         (techs === '' ? '' : '&technologies=' + techs) + '&date=' + stringDate,

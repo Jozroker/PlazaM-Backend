@@ -10,10 +10,7 @@ import com.site.plazam.dto.parents.HallSimpleDTO;
 import com.site.plazam.dto.parents.SeanceSimpleDTO;
 import com.site.plazam.error.TimeAlreadyScheduledException;
 import com.site.plazam.repository.SeanceRepository;
-import com.site.plazam.service.HallService;
-import com.site.plazam.service.MovieService;
-import com.site.plazam.service.SeanceService;
-import com.site.plazam.service.TicketService;
+import com.site.plazam.service.*;
 import com.site.plazam.service.mapper.SeanceMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -42,6 +39,12 @@ public class SeanceServiceImpl implements SeanceService {
     private final MongoTemplate mt;
 
     @Lazy
+    private final UserService us;
+
+    @Lazy
+    private final MessageService mss;
+
+    @Lazy
     private final HallService hs;
 
     @Lazy
@@ -55,6 +58,8 @@ public class SeanceServiceImpl implements SeanceService {
                              @Lazy HallService hallService,
                              @Lazy TicketService ticketService,
                              @Lazy MovieService movieService,
+                             @Lazy UserService userService,
+                             @Lazy MessageService messageService,
                              MongoTemplate mongoTemplate) {
         this.sr = seanceRepository;
         this.sm = seanceMapper;
@@ -62,6 +67,8 @@ public class SeanceServiceImpl implements SeanceService {
         this.ts = ticketService;
         this.ms = movieService;
         this.mt = mongoTemplate;
+        this.us = userService;
+        this.mss = messageService;
     }
 
     @Override
@@ -77,7 +84,7 @@ public class SeanceServiceImpl implements SeanceService {
                 hs.findHallForSeanceByCinema(cinema);
         if (technologies != null) {
             List<Technology> techsList =
-                    technologies.stream().map(tech -> Technology.valueOf("_" + tech)).collect(Collectors.toList());
+                    technologies.stream().map(Technology::valueOf).collect(Collectors.toList());
             availableHalls =
                     availableHalls.stream().filter(hall -> techsList.contains(hall.getTechnology())).collect(Collectors.toList());
         }
@@ -236,6 +243,35 @@ public class SeanceServiceImpl implements SeanceService {
         }
         if (!movie.getAvailableTechnologies().contains(seanceCreateDTO.getHall().getTechnology())) {
             ms.addAvailableTechnology(movie, seanceCreateDTO.getHall().getTechnology());
+        }
+        if (seanceCreateDTO.getId() != null) {
+            ts.findBySeance(findSeanceForTicketById(seanceCreateDTO.getId()))
+                    .forEach(ticket -> {
+                        MessageCreateDTO message = new MessageCreateDTO();
+                        message.setText(new HashMap<String, String>() {{
+                            put("eng", "Seance on movie " +
+                                    ticket.getSeance().getMovie().getName() + " " +
+                                    ticket.getSeance().getMovie().getSurname() +
+                                    " has been changed. If you have already paid" +
+                                    " for the ticket, your money will be " +
+                                    "refunded.");
+                            put("ukr", "Сеанс на фільм " +
+                                    ticket.getSeance().getMovie().getName() + " " +
+                                    ticket.getSeance().getMovie().getSurname() +
+                                    " було змінено. Якщо ви уже оплатили квиток, " +
+                                    "ваші гроші будуть повернуті.");
+                            put("pol", "Projekcja filmu " +
+                                    ticket.getSeance().getMovie().getName() + " " +
+                                    ticket.getSeance().getMovie().getSurname() +
+                                    " została zmieniona. Jeśli już zapłaciłeś za " +
+                                    "bilet, Twoje pieniądze zostaną zwrócone.");
+                        }});
+                        MessageForUserDTO userMessage = mss.save(message);
+                        UserForSelfInfoDTO user =
+                                us.findByTicketsContains(ticket);
+                        user.getMessages().add(userMessage);
+                        us.updateLists(user);
+                    });
         }
         return sm.toSeanceForSeancesListDTO(sr.save(sm.toEntity(seanceCreateDTO)));
     }

@@ -1,6 +1,7 @@
 package com.site.plazam.dto.parents;
 
 import com.site.plazam.domain.Day;
+import com.site.plazam.domain.Lang;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -30,6 +31,9 @@ public class SeanceSimpleDTO {
 
     @NotNull
     private LocalDate dateTo;
+
+    @NotNull
+    private Lang seanceLang = Lang.ENG;
 
     @NotNull
     @NotEmpty

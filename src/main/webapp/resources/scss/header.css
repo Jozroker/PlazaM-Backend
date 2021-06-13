@@ -78,7 +78,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: block;
 }
-
 @font-face {
     font-family: "BauhausC";
     src: local("BauhausC Light Bold"), local("BauhausC-Demibold"), url("../fonts/BauhausC-Demibold.woff2") format("woff2"), url("../fonts/BauhausC-Demibold.woff") format("woff"), url("../fonts/BauhausC-Demibold.ttf") format("truetype");
@@ -86,7 +85,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: swap;
 }
-
 @font-face {
     font-family: "BauhausC";
     src: local("BauhausC Light"), local("BauhausC-Light"), url("../fonts/BauhausC-Light.woff2") format("woff2"), url("../fonts/BauhausC-Light.woff") format("woff"), url("../fonts/BauhausC-Light.ttf") format("truetype");
@@ -94,7 +92,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: swap;
 }
-
 @font-face {
     font-family: "BauhausC";
     src: local("BauhausC Medium Bold"), local("BauhausC-Bold"), url("../fonts/BauhausC-Bold.woff2") format("woff2"), url("../fonts/BauhausC-Bold.woff") format("woff"), url("../fonts/BauhausC-Bold.ttf") format("truetype");
@@ -102,7 +99,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: swap;
 }
-
 @font-face {
     font-family: "BauhausC";
     src: local("BauhausC Medium"), local("BauhausC-Medium"), url("../fonts/BauhausC-Medium.woff2") format("woff2"), url("../fonts/BauhausC-Medium.woff") format("woff"), url("../fonts/BauhausC-Medium.ttf") format("truetype");
@@ -110,7 +106,6 @@ a, a:hover, a:visited, a:active {
     font-style: normal;
     font-display: swap;
 }
-
 [class^=icon-], [class*=" icon-"] {
     /* use !important to prevent issues with browser extensions that change fonts */
     font-family: "icomoon" !important;
@@ -279,44 +274,35 @@ a, a:hover, a:visited, a:active {
     transform-box: fill-box;
     transition: 1s;
 }
-
 #logo svg .logo-middle rect:first-child {
     transform-origin: bottom left;
     transform: translate(13px, 0) rotate(-26deg);
 }
-
 #logo svg .logo-middle rect:nth-child(2) {
     transform-origin: bottom right;
     transform: translate(-1.5px, 0) rotate(26deg);
 }
-
 #logo svg .logo-top {
     transform-origin: center;
     transform: scale(1) rotate(0deg);
     transition: 1s;
 }
-
 #logo svg .logo-bottom {
     transform: translate(0, 0);
 }
-
 #logo svg:hover {
     cursor: pointer;
 }
-
 #logo svg:hover .logo-top {
     transform: scale(1.15) rotate(180deg);
     transition: 1s;
 }
-
 #logo svg:hover .logo-bottom {
     transform: translate(0, -2px);
 }
-
 #logo svg:hover .logo-middle rect:first-child {
     transform: translate(13px, -3px) rotate(-40deg);
 }
-
 #logo svg:hover .logo-middle rect:nth-child(2) {
     transform: translate(-1.5px, -3px) rotate(40deg);
 }
@@ -331,51 +317,43 @@ header {
     display: flex;
     color: #D7D7D7;
 }
-
 header .nav {
     display: flex;
 }
-
 header .simplebar-scrollbar:hover {
     cursor: pointer;
 }
-
 header .simplebar-scrollbar::before {
     background-color: #AF2341;
     width: 6px;
 }
-
 header .simplebar-content-wrapper {
     padding-right: 7px;
     overflow: auto;
 }
-
 header .simplebar-vertical {
     position: absolute;
     right: -3px !important;
     left: auto !important;
 }
-
 header .selected-line {
     background-image: linear-gradient(to right, rgba(203, 63, 93, 0), #CB3F5D 25%, #CB3F5D 75%, rgba(203, 63, 93, 0)) !important;
     transition: all 0.1s ease-in-out;
 }
-
 header .scroll a:hover {
     cursor: pointer;
     text-shadow: #D7D7D7 0 0 2px;
 }
-
 header .selected {
     color: #AF2341;
 }
-
 header .flag {
     width: 1.25vw;
     min-width: 20px;
     max-width: 24px;
     vertical-align: text-top;
     background-size: cover;
+    background-position: center;
     border: 0;
     border-radius: 4px;
 }
@@ -409,45 +387,36 @@ header .flag {
     line-height: 24px;
     color: #D7D7D7;
 }
-
 #settings-bar .settings-page, #settings-bar .page, #tickets .settings-page, #tickets .page {
     width: 100%;
     height: 100vh;
 }
-
 #settings-bar .settings-page, #settings-bar .page, #tickets .settings-page, #tickets .page {
     z-index: 9;
 }
-
 #settings-bar .page, #tickets .page {
     padding: 200px 0 19vh 7.5vw;
     width: 100%;
     height: 100vh;
 }
-
 #settings-bar .page .scroll, #tickets .page .scroll {
     width: 100%;
     height: 100%;
     padding-right: 30px;
 }
-
 #settings-bar .page .scroll .simplebar-content-wrapper, #tickets .page .scroll .simplebar-content-wrapper {
     padding-right: 0;
 }
-
 #settings-bar .page .scroll .simplebar-vertical, #tickets .page .scroll .simplebar-vertical {
     width: 10px;
     right: 20px;
 }
-
 #settings-bar .page .scroll .simplebar-vertical .simplebar-scrollbar::before, #tickets .page .scroll .simplebar-vertical .simplebar-scrollbar::before {
     background-color: #AF2341;
 }
-
 #settings-bar .page .scroll .ticket + .ticket, #tickets .page .scroll .ticket + .ticket {
     margin-top: 15px;
 }
-
 #settings-bar .page .scroll .ticket, #tickets .page .scroll .ticket {
     width: 100%;
     min-width: 344px;
@@ -462,16 +431,13 @@ header .flag {
     overflow: hidden;
     font-weight: 500;
 }
-
 #settings-bar .page .scroll .ticket:hover .cross.active, #tickets .page .scroll .ticket:hover .cross.active {
     right: 0;
     transition: right 0.1s ease-in-out, background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
-
 #settings-bar .page .scroll .ticket > div, #tickets .page .scroll .ticket > div {
     height: 100%;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info, #tickets .page .scroll .ticket .ticket-info {
     min-width: 344px;
     max-width: 344px;
@@ -484,11 +450,9 @@ header .flag {
     padding: 15px 18px 3px 18px;
     background-color: white;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info > div, #tickets .page .scroll .ticket .ticket-info > div {
     flex-shrink: 0;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .movie-name, #tickets .page .scroll .ticket .ticket-info .movie-name {
     height: 20px;
     margin: 0 auto 6px auto;
@@ -505,20 +469,16 @@ header .flag {
         display: block;
     }
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .movie-name span, #tickets .page .scroll .ticket .ticket-info .movie-name span {
     font-size: 20px;
     line-height: 20px;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .movie-name .first-name, #tickets .page .scroll .ticket .ticket-info .movie-name .first-name {
     font-weight: 400;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .movie-name .space, #tickets .page .scroll .ticket .ticket-info .movie-name .space {
     color: transparent;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .info-items, #tickets .page .scroll .ticket .ticket-info .info-items {
     height: 40px;
     display: grid;
@@ -527,29 +487,23 @@ header .flag {
     row-gap: 4px;
     margin-bottom: 8px;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .info-items .info-item, #tickets .page .scroll .ticket .ticket-info .info-items .info-item {
     white-space: nowrap;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .info-items .title, #tickets .page .scroll .ticket .ticket-info .info-items .title {
     color: #0D0E0D;
     margin-bottom: 0;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .info-items span, #tickets .page .scroll .ticket .ticket-info .info-items span {
     font-size: 18px;
     line-height: 18px;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .info-items .space, #tickets .page .scroll .ticket .ticket-info .info-items .space {
     color: transparent;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .info-items .value, #tickets .page .scroll .ticket .ticket-info .info-items .value {
     font-weight: 300;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .barcode, #tickets .page .scroll .ticket .ticket-info .barcode {
     flex-grow: 1;
     min-height: 40px;
@@ -572,7 +526,6 @@ header .flag {
         flex-shrink: 1;
     }
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .barcode .barcode-container, #tickets .page .scroll .ticket .ticket-info .barcode .barcode-container {
     width: 100%;
     overflow: hidden;
@@ -584,25 +537,21 @@ header .flag {
         height: 65%;
     }
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .barcode .identifier, #tickets .page .scroll .ticket .ticket-info .barcode .identifier {
     font-weight: 300;
     white-space: nowrap;
     font-size: 14px;
     line-height: 14px;
 }
-
 #settings-bar .page .scroll .ticket .ticket-info .copyright, #tickets .page .scroll .ticket .ticket-info .copyright {
     font-size: 20px;
     line-height: 20px;
     font-weight: 400;
 }
-
 #settings-bar .page .scroll .ticket .picture, #tickets .page .scroll .ticket .picture {
     flex-grow: 1;
     position: relative;
 }
-
 #settings-bar .page .scroll .ticket .picture img, #tickets .page .scroll .ticket .picture img {
     position: absolute;
     top: 0;
@@ -611,30 +560,25 @@ header .flag {
     height: 100%;
     object-fit: cover;
 }
-
 #settings-bar .page .scroll .ticket .picture .movie-name, #tickets .page .scroll .ticket .picture .movie-name {
     position: absolute;
     bottom: 43px;
     left: 75px;
 }
-
 #settings-bar .page .scroll .ticket .picture .movie-name > div, #tickets .page .scroll .ticket .picture .movie-name > div {
     color: white;
     text-shadow: black 0 0 4px;
     white-space: nowrap;
 }
-
 #settings-bar .page .scroll .ticket .picture .movie-name .first-name, #tickets .page .scroll .ticket .picture .movie-name .first-name {
     font-size: 28px;
     line-height: 28px;
     font-weight: 400;
 }
-
 #settings-bar .page .scroll .ticket .picture .movie-name .last-name, #tickets .page .scroll .ticket .picture .movie-name .last-name {
     font-size: 22px;
     line-height: 22px;
 }
-
 #settings-bar .page .scroll .ticket .picture .blur, #tickets .page .scroll .ticket .picture .blur {
     position: absolute;
     top: 0;
@@ -643,7 +587,6 @@ header .flag {
     width: 75px;
     background-image: linear-gradient(to right, white 0%, transparent 100%);
 }
-
 #settings-bar .page .scroll .ticket .cross, #tickets .page .scroll .ticket .cross {
     position: absolute;
     display: flex;
@@ -655,18 +598,15 @@ header .flag {
     background-color: rgba(13, 14, 13, 0.7);
     transition: right 0.1s ease-in-out, background-color 0.2s ease-in-out;
 }
-
 #settings-bar .page .scroll .ticket .cross:hover, #tickets .page .scroll .ticket .cross:hover {
     cursor: pointer;
     background-color: rgba(175, 35, 65, 0.7);
     transition: background-color 0.2s ease-in-out;
 }
-
 #settings-bar .page .scroll .ticket .cross:hover .icon-cross::before, #tickets .page .scroll .ticket .cross:hover .icon-cross::before {
     color: #0D0E0D;
     transition: color 0.2s ease-in-out;
 }
-
 #settings-bar .page .scroll .ticket .cross .icon-cross::before, #tickets .page .scroll .ticket .cross .icon-cross::before {
     font-size: 20px;
     line-height: 20px;
@@ -701,7 +641,6 @@ header .flag {
         padding-left: 35px;
     }
 }
-
 #left-side .underline {
     width: 0;
     height: 2px;
@@ -714,16 +653,13 @@ header .flag {
         height: 1px;
     }
 }
-
 #left-side .links {
     white-space: nowrap;
 }
-
 #left-side .links > div {
     display: inline-block;
     vertical-align: top;
 }
-
 #left-side .links > div > div {
     display: inline-block;
 }
@@ -735,7 +671,6 @@ header .flag {
         width: max-content;
     }
 }
-
 #left-side .links > div > div + div {
     margin-left: 3.13vw;
 }
@@ -746,46 +681,37 @@ header .flag {
         margin-top: 2px;
     }
 }
-
 #left-side .links > div + div {
     margin-left: 3.13vw;
 }
-
 #left-side .links .link:not(.select) {
     color: #D7D7D7;
     transition: color 0.2s ease-in-out;
 }
-
 #left-side .links .link:not(.select) .underline {
     width: 0;
     transition: width 0.3s ease-in-out;
 }
-
 #left-side .links .link:not(.select):hover {
     cursor: pointer;
 }
-
 #left-side .links .link:not(.select):hover .underline {
     width: 100% !important;
     transition: width 0.3s ease-in-out;
 }
-
 #left-side .links .link.select {
     color: #AF2341;
     transition: color 0.2s ease-in-out;
 }
-
 #left-side .links .link.select .underline {
     width: 100%;
     transition: width 0.3s ease-in-out;
 }
-
 #left-side .links .link.select:hover {
     cursor: pointer;
     color: #D7D7D7 !important;
     transition: color 0.2s ease-in-out;
 }
-
 #left-side svg {
     min-width: 50px;
     max-width: 59px;
@@ -794,7 +720,6 @@ header .flag {
     width: 3.07vw;
     height: 4.01vw;
 }
-
 #left-side .link {
     vertical-align: top;
     margin-top: 15px;
@@ -818,7 +743,6 @@ header .flag {
         left: 100%;
     }
 }
-
 #loader .bar {
     position: relative;
     display: none;
@@ -859,7 +783,6 @@ header .flag {
         padding-right: 35px;
     }
 }
-
 #right-side .background {
     position: absolute;
     top: 0;
@@ -869,7 +792,6 @@ header .flag {
     background-color: rgba(13, 14, 13, 0.2);
     z-index: -1;
 }
-
 #right-side .line-between {
     margin: auto;
     width: 75%;
@@ -878,13 +800,11 @@ header .flag {
     transition: opacity 0.5s linear;
     background-image: linear-gradient(to right, rgba(175, 35, 65, 0), #AF2341 25%, #AF2341 75%, rgba(175, 35, 65, 0));
 }
-
 #right-side .link {
     display: inline-block;
     position: relative;
     flex-shrink: 0;
 }
-
 #right-side .link:first-child {
     flex-shrink: 1;
     width: 0;
@@ -912,7 +832,6 @@ header .flag {
         height: 30px;
     }
 }
-
 #right-side .link:first-child .underline {
     width: 0;
     height: 1px;
@@ -921,7 +840,6 @@ header .flag {
     right: 0;
     left: auto;
 }
-
 #right-side .link:nth-child(2) {
     margin-left: 2.14vw;
     flex-shrink: 0;
@@ -955,7 +873,6 @@ header .flag {
         height: 32px;
     }
 }
-
 #right-side .link:nth-child(3) {
     text-align: center;
     color: #D7D7D7;
@@ -990,15 +907,12 @@ header .flag {
         height: 32px;
     }
 }
-
 #right-side .link:nth-child(3) .line-between {
     width: 100%;
 }
-
 #right-side .link:nth-child(3) a {
     margin: 0 5px;
 }
-
 #right-side .link:nth-child(4) {
     text-align: center;
     color: #D7D7D7;
@@ -1025,18 +939,15 @@ header .flag {
         height: 32px;
     }
 }
-
 #right-side .link:nth-child(4) > div {
     z-index: 11;
     top: 0;
     margin-top: 8px;
 }
-
 #right-side .link:nth-child(4) > div > div {
     display: inline-block;
     position: static;
 }
-
 #right-side .link:nth-child(4) > div .triangle {
     width: 0;
     height: 0;
@@ -1050,38 +961,31 @@ header .flag {
     transform: rotate(-90deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #right-side .link:nth-child(4) > div .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #right-side .link:nth-child(4) > div .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #right-side .link:nth-child(4) > div .triangle {
     vertical-align: middle;
     margin-left: 3px;
 }
-
 #right-side .link:nth-child(4) > div:hover {
     cursor: pointer;
 }
-
 #right-side .link:nth-child(4) > div:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: all 0.1s linear;
 }
-
 #right-side .links {
     justify-content: flex-end;
     display: flex;
     width: 100%;
 }
-
 #right-side .links > div + div {
     margin-left: 1.77vw;
 }
@@ -1092,42 +996,34 @@ header .flag {
     text-align: left;
     font-size: 20px;
 }
-
 #user img {
     width: 59px;
     height: 59px;
     border-radius: 100%;
     position: absolute;
 }
-
 #user:hover {
     cursor: pointer;
 }
-
 #user > div {
     display: inline-block;
     vertical-align: middle;
     position: relative;
     white-space: nowrap;
 }
-
 #user > div:first-child {
     height: 59px;
 }
-
 #user > div:nth-child(2) {
     margin-left: 77px;
     height: 28px;
 }
-
 #user > div:nth-child(2) > div {
     position: absolute;
 }
-
 #user > div:nth-child(2) > div > div {
     display: inline-block;
 }
-
 #user > div:nth-child(2) > div .triangle {
     width: 0;
     height: 0;
@@ -1141,27 +1037,22 @@ header .flag {
     transform: rotate(90deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #user > div:nth-child(2) > div .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #user > div:nth-child(2) > div .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #user > div:nth-child(2) > div .triangle {
     vertical-align: middle;
     margin-left: 3px;
 }
-
 #user > div:nth-child(2) > div:hover {
     cursor: pointer;
 }
-
 #user > div:nth-child(2) > div:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: all 0.1s linear;
@@ -1170,53 +1061,45 @@ header .flag {
 #menu-top {
     position: relative;
 }
-
 #menu-top .messages-btn {
     width: 100%;
 }
-
 #menu-top .messages-btn::before {
     font-family: "icomoon" !important;
     font-size: 18px;
     content: "";
     color: #D7D7D7;
 }
-
 #menu-top .users-btn::before {
     font-family: "icomoon" !important;
     font-size: 18px;
     content: "";
     color: #D7D7D7;
 }
-
 #menu-top .favour-btn::before {
     font-family: "icomoon" !important;
     font-size: 18px;
     content: "";
     color: #D7D7D7;
 }
-
 #menu-top .tickets-btn::before {
     font-family: "icomoon" !important;
     font-size: 18px;
     content: "";
     color: #D7D7D7;
 }
-
 #menu-top .comments-btn::before {
     font-family: "icomoon" !important;
     font-size: 18px;
     content: "";
     color: #D7D7D7;
 }
-
 #menu-top .viewed-btn::before {
     font-family: "icomoon" !important;
     font-size: 18px;
     content: "";
     color: #D7D7D7;
 }
-
 #menu-top .waitlist-btn::before {
     font-family: "icomoon" !important;
     font-size: 18px;
@@ -1229,18 +1112,15 @@ header .flag {
     overflow: initial;
     margin-bottom: 52px;
 }
-
 #menu-bottom .settings-btn {
     width: 100%;
 }
-
 #menu-bottom .settings-btn::before {
     font-family: "icomoon" !important;
     font-size: 18px;
     content: "";
     color: #D7D7D7;
 }
-
 #menu-bottom .sign-out::before {
     font-family: "icomoon" !important;
     font-size: 16px;
@@ -1268,7 +1148,6 @@ header .flag {
         line-height: 20px;
     }
 }
-
 #menu-bottom .menu-item:not(.selected):hover {
     cursor: pointer;
     text-shadow: #D7D7D7 0 0 2px;
@@ -1283,11 +1162,10 @@ header .flag {
     top: 0;
     right: -320px;
 }
-
 #settings .title {
-    margin-top: 35px;
+    margin-top: 30px;
     margin-bottom: 48px;
-    height: 28px;
+    height: 32px;
     width: 100%;
     display: flex;
     justify-content: flex-end;
@@ -1296,28 +1174,27 @@ header .flag {
 
 @media screen and (min-width: 1820px) {
     #settings .title {
-        padding-right: 24%;
+        padding-right: 7%;
     }
 }
 
 @media screen and (min-width: 1440px) and (max-width: 1820px) {
     #settings .title {
-        padding-right: 21%;
+        padding-right: 4%;
     }
 }
 
 @media screen and (min-width: 960px) and (max-width: 1440px) {
     #settings .title {
-        padding-right: 22%;
+        padding-right: 5%;
     }
 }
 
 @media screen and (max-width: 960px) {
     #settings .title {
-        padding-right: 23%;
+        padding-right: 6%;
     }
 }
-
 #settings .title .triangle {
     width: 0;
     height: 0;
@@ -1331,26 +1208,21 @@ header .flag {
     transform: rotate(90deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #settings .title .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #settings .title .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #settings .title .triangle {
     margin-left: 10px;
 }
-
 #settings .title:hover {
     cursor: pointer;
 }
-
 #settings .title:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: all 0.1s linear;
@@ -1365,7 +1237,6 @@ header .flag {
     top: 0;
     right: -320px;
 }
-
 #messages .title {
     margin-top: 35px;
     margin-bottom: 48px;
@@ -1378,28 +1249,27 @@ header .flag {
 
 @media screen and (min-width: 1820px) {
     #messages .title {
-        padding-right: 19%;
+        padding-right: 6%;
     }
 }
 
 @media screen and (min-width: 1440px) and (max-width: 1820px) {
     #messages .title {
-        padding-right: 15%;
+        padding-right: 4%;
     }
 }
 
 @media screen and (min-width: 960px) and (max-width: 1440px) {
     #messages .title {
-        padding-right: 17%;
+        padding-right: 5%;
     }
 }
 
 @media screen and (max-width: 960px) {
     #messages .title {
-        padding-right: 19%;
+        padding-right: 6%;
     }
 }
-
 #messages .title .triangle {
     width: 0;
     height: 0;
@@ -1413,31 +1283,25 @@ header .flag {
     transform: rotate(90deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #messages .title .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #messages .title .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #messages .title .triangle {
     margin-left: 10px;
 }
-
 #messages .title:hover {
     cursor: pointer;
 }
-
 #messages .title:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: all 0.1s linear;
 }
-
 #messages .messages {
     height: inherit;
     position: relative;
@@ -1457,7 +1321,6 @@ header .flag {
         line-height: 18px;
     }
 }
-
 #messages .messages .message {
     display: flex;
     justify-content: left;
@@ -1467,17 +1330,14 @@ header .flag {
     height: auto;
     white-space: nowrap;
 }
-
 #messages .messages .message > div {
     display: inline-block;
 }
-
 #messages .messages .message .message-content {
     width: 90%;
     white-space: normal;
     text-align: left;
 }
-
 #messages .messages .message .cross {
     width: 18px;
     height: 18px;
@@ -1485,7 +1345,6 @@ header .flag {
     right: 0;
     margin-right: 5px;
 }
-
 #messages .messages .message .cross::after {
     font-family: "icomoon" !important;
     content: "";
@@ -1495,11 +1354,9 @@ header .flag {
     right: 0;
     transition: color 0.2s linear;
 }
-
 #messages .messages .message .cross:hover {
     cursor: pointer;
 }
-
 #messages .messages .message .cross:hover::after {
     color: #AF2341;
     transition: color 0.2s linear;
@@ -1517,11 +1374,9 @@ header .flag {
     z-index: 10;
     transition: background-color 0.3s linear;
 }
-
 #menu .simplebar-vertical {
     margin-right: 5px;
 }
-
 #menu .line-between {
     width: 81.25%;
     margin: auto;
@@ -1530,12 +1385,10 @@ header .flag {
     background-image: linear-gradient(to right, rgba(175, 35, 65, 0), #AF2341 25%, #AF2341 75%, rgba(175, 35, 65, 0));
     transition: all 0.1s ease-in-out;
 }
-
 #menu .menu-item {
     margin: 10px 0;
     opacity: 0;
 }
-
 #menu .menu-item:not(.selected):hover {
     cursor: pointer;
     text-shadow: #D7D7D7 0 0 2px;
@@ -1566,21 +1419,17 @@ header .flag {
     position: relative;
     padding: 200px 0 19vh 7.5vw;
 }
-
 #personal-settings .scroll, #site-settings .scroll, #security .scroll {
     height: 100%;
     padding-right: 20px;
 }
-
 #personal-settings .scroll .simplebar-content-wrapper, #site-settings .scroll .simplebar-content-wrapper, #security .scroll .simplebar-content-wrapper {
     padding-right: 0;
 }
-
 #personal-settings .scroll .simplebar-vertical, #site-settings .scroll .simplebar-vertical, #security .scroll .simplebar-vertical {
     width: 10px;
     right: 20px;
 }
-
 #personal-settings .list, #site-settings .list, #security .list {
     width: 100%;
     position: absolute;
@@ -1595,32 +1444,26 @@ header .flag {
     background-position: 199% 0;
     background-image: linear-gradient(to right, rgba(10, 11, 11, 0), rgba(10, 11, 11, 0) 50%, rgba(10, 11, 11, 0.95) 50%, rgba(10, 11, 11, 0.95) 100%);
 }
-
 #personal-settings .list li, #site-settings .list li, #security .list li {
     display: flex;
     justify-content: center;
     align-items: center;
     white-space: nowrap;
 }
-
 #personal-settings .list li:not(.selected), #site-settings .list li:not(.selected), #security .list li:not(.selected) {
     font-weight: 300;
 }
-
 #personal-settings .list li:not(.selected):hover, #site-settings .list li:not(.selected):hover, #security .list li:not(.selected):hover {
     cursor: pointer;
     color: #AF2341;
 }
-
 #personal-settings .list .selected, #site-settings .list .selected, #security .list .selected {
     margin-bottom: 10px;
     color: #A3A3A3;
 }
-
 #personal-settings .list .selected > div, #site-settings .list .selected > div, #security .list .selected > div {
     display: inline-block;
 }
-
 #personal-settings .list .selected .triangle, #site-settings .list .selected .triangle, #security .list .selected .triangle {
     width: 0;
     height: 0;
@@ -1634,27 +1477,22 @@ header .flag {
     transform: rotate(180deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #personal-settings .list .selected .triangle-0, #site-settings .list .selected .triangle-0, #security .list .selected .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #personal-settings .list .selected .triangle-wide, #site-settings .list .selected .triangle-wide, #security .list .selected .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #personal-settings .list .selected .triangle, #site-settings .list .selected .triangle, #security .list .selected .triangle {
     vertical-align: middle;
     margin-left: 3px;
 }
-
 #personal-settings .list .selected:hover, #site-settings .list .selected:hover, #security .list .selected:hover {
     cursor: pointer;
 }
-
 #personal-settings .list .selected:hover .triangle, #site-settings .list .selected:hover .triangle, #security .list .selected:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: all 0.1s linear;
@@ -1663,24 +1501,20 @@ header .flag {
 #security .scroll .simplebar-horizontal {
     display: none;
 }
-
 #security .content {
     font-size: 16px;
     line-height: 16px;
     font-weight: 300;
     color: #A3A3A3;
 }
-
 #security .content > div {
     width: 20.4vw;
     min-width: 255px;
     margin-bottom: 28px;
 }
-
 #security .content > div .title {
     width: 100%;
 }
-
 #security .content > div .title .error {
     font-size: 15px;
     line-height: 15px;
@@ -1688,7 +1522,6 @@ header .flag {
     color: #AF2341;
     display: none;
 }
-
 #security .content > div .title span:first-child {
     font-size: 24px;
     line-height: 27px;
@@ -1697,7 +1530,6 @@ header .flag {
     display: inline;
     margin-right: 5px;
 }
-
 #security .content > div .fields {
     width: 100%;
     position: relative;
@@ -1705,33 +1537,26 @@ header .flag {
     background-color: #0A0B0B;
     padding: 0.64vw 0.68vw;
 }
-
 #security .content > div .fields .title-2 {
     font-weight: 400;
     color: #D7D7D7;
 }
-
 #security .content > div .fields .space {
     color: transparent;
 }
-
 #security .content > div .fields .current-phone {
     display: none;
 }
-
 #security .content > div .fields > div {
     margin-bottom: 5px;
 }
-
 #security .content > div .fields .field {
     border-bottom: 1px solid #AF2341;
     min-width: 100px;
 }
-
 #security .content > div .fields .field > div + div {
     margin-bottom: 5px;
 }
-
 #security .content > div .fields .field input {
     width: 100%;
     padding-left: 3px;
@@ -1740,7 +1565,6 @@ header .flag {
     color: #A3A3A3;
     outline: none;
 }
-
 #security .content > div .fields .button {
     width: 100%;
     position: absolute;
@@ -1749,7 +1573,6 @@ header .flag {
     left: 0;
     margin-bottom: 0;
 }
-
 #security .content > div .fields .button > div {
     display: flex;
     justify-content: center;
@@ -1766,47 +1589,38 @@ header .flag {
     background-image: linear-gradient(to right, #AF2341, #AF2341 50%, rgba(175, 35, 65, 0) 50%, rgba(175, 35, 65, 0));
     transition: all 0.3s ease-in-out;
 }
-
 #security .content > div .fields .button > div:hover {
     cursor: pointer;
     background-position: 0 0;
     color: #0D0E0D;
 }
-
 #security .content .email .field, #security .content .password .field {
     width: 68.45%;
 }
-
 #security .content .phone .field {
     width: 50.64%;
 }
-
 #security .content .phone .phone-field {
     position: relative;
 }
-
 #security .content .phone .phone-field > div {
     display: inline-block;
     vertical-align: top;
 }
-
 #security .content .phone .phone-field .phone-code {
     position: relative;
     width: 50px;
     z-index: 5;
 }
-
 #security .content .phone .phone-field .phone-code .list {
     top: 0;
     background-image: linear-gradient(to right, rgba(13, 14, 13, 0), rgba(13, 14, 13, 0) 50%, #0D0E0D 50%, #0D0E0D 100%);
 }
-
 #security .content .phone .phone-field .phone-code .list li {
     font-size: 16px;
     font-weight: 300;
     line-height: 21px;
 }
-
 #security .content .phone .phone-field .selected {
     color: #D7D7D7;
 }
@@ -1817,50 +1631,40 @@ header .flag {
     font-weight: 300;
     color: #A3A3A3;
 }
-
 #site-settings .content .checkbox, #site-settings .content .radiobox {
     display: flex;
 }
-
 #site-settings .content .checkbox::before, #site-settings .content .radiobox::before {
     font-family: "icomoon" !important;
     font-size: 16px;
     margin-right: 5px;
     color: #D7D7D7;
 }
-
 #site-settings .content .checkbox:hover, #site-settings .content .radiobox:hover {
     cursor: pointer;
 }
-
 #site-settings .content .checkbox::before {
     content: "";
 }
-
 #site-settings .content .radiobox::before {
     content: "";
 }
-
 #site-settings .content .checked .checkbox::before {
     content: "" !important;
     color: #AF2341 !important;
 }
-
 #site-settings .content .checked .radiobox::before {
     content: "" !important;
     color: #AF2341 !important;
 }
-
 #site-settings .content > div {
     width: 14.58vw;
     min-width: 165px;
     margin-bottom: 45px;
 }
-
 #site-settings .content > div > div {
     height: 25px;
 }
-
 #site-settings .content .title {
     font-size: 24px;
     line-height: 24px;
@@ -1870,11 +1674,9 @@ header .flag {
     padding-left: 5px;
     margin-bottom: 6px;
 }
-
 #site-settings .content .field {
     padding-left: 5px;
 }
-
 #site-settings .content .list {
     position: relative !important;
     top: 0 !important;
@@ -1894,39 +1696,32 @@ header .flag {
     border: 0;
     outline: none;
 }
-
 #personal-settings .content > div:first-child > div {
     display: inline-flex;
     flex-wrap: wrap;
 }
-
 #personal-settings .content > div:first-child .avatar {
     width: 141px;
     margin-right: 4.17vw;
     margin-bottom: 24px;
 }
-
 #personal-settings .content > div:first-child .avatar .title {
     width: 100%;
     text-align: center;
 }
-
 #personal-settings .content > div:first-child .avatar .image {
     width: 141px;
     height: 141px;
     overflow: hidden;
     position: relative;
 }
-
 #personal-settings .content > div:first-child .avatar .image:hover .change {
     bottom: 0;
 }
-
 #personal-settings .content > div:first-child .avatar .image img {
     width: 100%;
     height: 100%;
 }
-
 #personal-settings .content > div:first-child .avatar .image .change {
     height: 23px;
     width: 100%;
@@ -1940,37 +1735,29 @@ header .flag {
     background-color: rgba(175, 35, 65, 0.7);
     transition: bottom 0.2s linear;
 }
-
 #personal-settings .content > div:first-child .avatar .image .change:hover {
     cursor: pointer;
     color: #D7D7D7;
 }
-
 #personal-settings .content > div:first-child .fields > div {
     display: inline-block;
 }
-
 #personal-settings .content > div:first-child .fields > div > div {
     margin-bottom: 24px;
     position: relative;
 }
-
 #personal-settings .content > div:first-child .fields .sex, #personal-settings .content > div:first-child .fields .country {
     height: 49px;
 }
-
 #personal-settings .content > div:first-child .fields .sex {
     z-index: 2;
 }
-
 #personal-settings .content > div:first-child .fields .country {
     z-index: 1;
 }
-
 #personal-settings .content > div:first-child .fields .first-column {
     margin-right: 3.65vw;
 }
-
 #personal-settings .content > div:first-child .fields .field {
     width: 14.58vw;
     min-width: 130px;
@@ -1978,7 +1765,6 @@ header .flag {
     padding-left: 4px;
     border-bottom: 1px solid #AF2341;
 }
-
 #personal-settings .content > div:first-child .fields .field input {
     width: 100%;
     font-size: 20px;
@@ -1988,15 +1774,12 @@ header .flag {
     background: none;
     color: #A3A3A3;
 }
-
 #personal-settings .content > div:first-child .fields .field input::placeholder {
     color: #A3A3A3;
 }
-
 #personal-settings .content > div:first-child .fields .field input:focus {
     outline: none;
 }
-
 #personal-settings .content > div:first-child .fields .field input:focus::placeholder {
     color: transparent;
 }
@@ -2017,7 +1800,6 @@ header .flag {
     z-index: 9;
     padding-right: 320px;
 }
-
 #save-btn .button {
     display: flex;
     justify-content: center;
@@ -2035,7 +1817,6 @@ header .flag {
     background-image: linear-gradient(to right, #AF2341, #AF2341 50%, rgba(175, 35, 65, 0) 50%, rgba(175, 35, 65, 0));
     transition: all 0.3s ease-in-out;
 }
-
 #save-btn .button:hover {
     cursor: pointer;
     background-position: 0 0;
@@ -2060,11 +1841,9 @@ header .flag {
         height: 30px;
     }
 }
-
 #search > div {
     display: inline-block;
 }
-
 #search > div:first-child {
     width: 100%;
     position: relative;
@@ -2080,29 +1859,27 @@ header .flag {
     left: 0;
     background-color: rgba(10, 11, 11, 0.2);
     overflow: hidden;
+    max-height: 252px;
 }
-
 #search-result .scroll {
     width: 100%;
     max-height: 252px;
     padding-right: 10px;
 }
-
 #search-result .scroll .movie-result {
     height: 36px;
     padding: 0 20px;
     font-size: 22px;
     line-height: 36px;
+    white-space: nowrap;
 }
 
 #locals li {
     margin: 2px 0;
 }
-
 #locals li div {
     display: inline-block;
 }
-
 #locals li:hover {
     cursor: pointer;
     text-shadow: #D7D7D7 0 0 2px;
@@ -2115,7 +1892,6 @@ header .flag {
     right: 0;
     margin: 0 7px;
 }
-
 #search-icon::after {
     font-family: "icomoon";
     content: "";
@@ -2138,11 +1914,9 @@ header .flag {
         line-height: 30px;
     }
 }
-
 #search-icon:hover {
     cursor: pointer;
 }
-
 #search-icon:hover:after {
     color: #AF2341;
     cursor: pointer;
@@ -2160,11 +1934,9 @@ header .flag {
     opacity: 0;
     pointer-events: none;
 }
-
 #search-line:focus {
     outline: none;
 }
-
 #search-line:focus::placeholder {
     color: transparent;
 }
@@ -2175,11 +1947,9 @@ header .flag {
     margin-right: auto;
     margin-bottom: 20px;
 }
-
 #current-local > div {
     display: inline-block;
 }
-
 #current-local .triangle {
     width: 0;
     height: 0;
@@ -2193,22 +1963,18 @@ header .flag {
     transform: rotate(180deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #current-local .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #current-local .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #current-local:hover {
     cursor: pointer;
 }
-
 #current-local:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: all 0.1s linear;
@@ -2223,20 +1989,16 @@ header .flag {
     justify-content: center;
     align-items: center;
 }
-
 #current-cinema > div {
     display: inline-block;
 }
-
 #current-cinema > div:first-child {
     width: auto;
     text-align: center;
 }
-
 #current-cinema > div + div {
     margin-left: 5px;
 }
-
 #current-cinema .triangle {
     width: 0;
     height: 0;
@@ -2250,22 +2012,18 @@ header .flag {
     transform: rotate(180deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #current-cinema .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #current-cinema .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #current-cinema:hover {
     cursor: pointer;
 }
-
 #current-cinema:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: border-bottom-color 0.1s linear;
@@ -2275,7 +2033,6 @@ header .flag {
     position: relative;
     overflow: hidden;
 }
-
 #countries .cinema-list {
     position: absolute;
     top: 0;
@@ -2283,23 +2040,19 @@ header .flag {
     height: 100%;
     display: flex;
 }
-
 #countries .cinema-list > div {
     display: inline-block;
     height: 100%;
 }
-
 #countries .cinema-list ul, #countries .cinema-list li, #countries .cinema-list a {
     display: block;
     width: 100%;
 }
-
 #countries .cinema-list > div:first-child {
     width: 10%;
     display: flex;
     align-items: center;
 }
-
 #countries .cinema-list > div:first-child .triangle {
     width: 0;
     height: 0;
@@ -2313,48 +2066,39 @@ header .flag {
     transform: rotate(90deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #countries .cinema-list > div:first-child .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #countries .cinema-list > div:first-child .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #countries .cinema-list > div:first-child .triangle {
     position: relative;
     left: 0;
     display: flex;
 }
-
 #countries .cinema-list > div:first-child:hover {
     cursor: pointer;
 }
-
 #countries .cinema-list > div:first-child:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: all 0.1s linear;
 }
-
 #countries .cinema-list :nth-child(2) {
     width: 90%;
     display: flex;
 }
-
 #countries li {
     margin: 2px 0;
 }
-
 #countries li > div {
     text-align: center;
     position: relative;
     width: 100%;
 }
-
 #countries li > div .triangle {
     width: 0;
     height: 0;
@@ -2368,25 +2112,21 @@ header .flag {
     transform: rotate(-90deg);
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #countries li > div .triangle-0 {
     transform: rotate(0deg) !important;
     transition: transform 0.5s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #countries li > div .triangle-wide {
     border-left: 10px solid transparent !important;
     border-right: 10px solid transparent !important;
     transition: transform 0s ease-in-out, border-bottom-color 0s ease-in-out !important;
 }
-
 #countries li > div .triangle {
     position: absolute;
     top: 0;
     right: 0;
     height: 100%;
 }
-
 #countries li .city {
     display: flex;
     align-items: center;
@@ -2396,34 +2136,27 @@ header .flag {
     overflow: hidden;
     white-space: nowrap;
 }
-
 #countries li .city > div {
     display: flex;
     align-items: center;
 }
-
 #countries li .city > div:first-child {
     width: inherit;
     flex-grow: 1;
 }
-
 #countries li .city > div:first-child a {
     width: 100%;
 }
-
 #countries li .city > div:nth-child(2) {
     height: 100%;
 }
-
 #countries li .city > div .triangle {
     display: flex;
     position: relative;
 }
-
 #countries li .city:hover {
     cursor: pointer;
 }
-
 #countries li .city:hover .triangle {
     border-bottom: 5px solid #AF2341;
     transition: all 0.1s linear;

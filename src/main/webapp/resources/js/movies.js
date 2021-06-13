@@ -82,6 +82,9 @@ $(document).ready(function () {
 
     $(".category").click(function () {
         if (!$(this).hasClass("selected")) {
+            if (typeof startLoading !== 'undefined') {
+                startLoading();
+            }
             $("#movies .curtain").css("display", "block");
             let genres = '';
             $(".genre.selected").each(function () {
@@ -103,8 +106,10 @@ $(document).ready(function () {
                 moviesList = data.slice(1);
                 $("#pages").html("");
                 lastPage = data[0];
-                page = parseInt(new URLSearchParams(window.location.search).get("page"));
-                page = isNaN(page) ? 1 : page;
+                page = 1;
+                let newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('page', page);
+                window.history.replaceState('', '', newUrl);
                 if (lastPage < 1) {
                     $("#pages").html("");
                 } else {
@@ -268,7 +273,14 @@ $(document).ready(function () {
         }
     })
 
+    $(document).on("click", ".movie .name", function () {
+        window.location.href = '/movie/' + $(this).parents(".movie").first().attr("identifier") + '?cinemaId=' + cinemaId;
+    })
+
     $(".apply-btn").click(function () {
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         $("#movies .curtain").css("display", "block");
         let genres = '';
         $(".genre.selected").each(function () {
@@ -290,8 +302,10 @@ $(document).ready(function () {
             moviesList = data.slice(1);
             $("#pages").html("");
             lastPage = data[0];
-            page = parseInt(new URLSearchParams(window.location.search).get("page"));
-            page = isNaN(page) ? 1 : page;
+            page = 1;
+            let newUrl = new URL(window.location.href);
+            newUrl.searchParams.set('page', page);
+            window.history.replaceState('', '', newUrl);
             if (lastPage < 1) {
                 $("#pages").html("");
             } else {
@@ -318,10 +332,12 @@ function yearsGenerator(minYear, maxYear) {
 }
 
 function compareYears() {
-    if ($(".year-from .selected > div").first().text() > $(".year-to .selected > div").first().text()) {
-        let temp = $(".year-from .selected > div").first().text();
-        $(".year-from .selected > div").first().text($(".year-to .selected > div").first().text());
-        $(".year-to .selected > div").first().text(temp);
+    if (!isNaN($(".year-from .selected > div").first().text()) && !isNaN($(".year-to .selected > div").first().text())) {
+        if (parseInt($(".year-from .selected > div").first().text()) > parseInt($(".year-to .selected > div").first().text())) {
+            let temp = $(".year-from .selected > div").first().text();
+            $(".year-from .selected > div").first().text($(".year-to .selected > div").first().text());
+            $(".year-to .selected > div").first().text(temp);
+        }
     }
 }
 
@@ -371,7 +387,7 @@ function genresChanger() {
                 $(this).text(dramaGenre);
                 break;
         }
-    })
+    });
 }
 
 function moviesGenerator() {
@@ -383,8 +399,8 @@ function moviesGenerator() {
     for (let movie of moviesList) {
         date = new Date(movie.releaseDate);
         movies += '<div class="movie" identifier="' + movie.id + '"><div><img alt="" src="data:image/' + movie.posterPicture.format + ';base64,' + movie.posterPicture.pictureString + '">' +
-            '</div><div class="card"><div class="name"><a href="/movie/' + movie.id + '"><div class="first-name">' + movie.name + '</div>' +
-            '<div class="second-name">' + movie.surname + '</div></a></div><div class="info"><div class="info-left">';
+            '</div><div class="card"><div class="name"><div class="first-name">' + movie.name + '</div>' +
+            '<div class="second-name">' + movie.surname + '</div></div><div class="info"><div class="info-left">';
 
         for (let tech in movie.availableTechnologies) {
             if (movie.availableTechnologies[tech] === '_RM_PLUS') {
@@ -394,7 +410,7 @@ function moviesGenerator() {
             }
         }
 
-        movies += '</div><div class="info-right"><div>' + movie.durationInMinutes + minuteValue + '</div><div>IMDb ' + movie.imdbRating + '</div></div>' +
+        movies += '</div><div class="info-right"><div>' + movie.durationInMinutes + ' ' + minuteValue + '</div><div>IMDb ' + movie.imdbRating + '</div></div>' +
             '</div><div class="bottom"><div class="genres">';
 
         let counter = 0;
@@ -432,5 +448,8 @@ function moviesGenerator() {
     }
 
     $("#movies").html(movies);
+    if (typeof stopLoading !== 'undefined') {
+        stopLoading();
+    }
     genresChanger();
 }

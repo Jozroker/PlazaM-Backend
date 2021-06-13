@@ -12,6 +12,9 @@ $(document).ready(function () {
     })
 
     $(document).on("click", ".genre, .tech", function () {
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         if ($(this).is(".selected")) {
             $(this).removeClass("selected");
         } else {
@@ -24,7 +27,7 @@ $(document).ready(function () {
             genres += $(this).attr("identifier") + ",";
         })
         $(".tech.selected").each(function () {
-            techs += $(this).text().trim() + ",";
+            techs += $(this).attr("identifier") + ",";
         })
         genres = genres.slice(0, -1);
         techs = techs.slice(0, -1);
@@ -88,7 +91,11 @@ $(document).ready(function () {
             method: "GET"
         }).done(function (techs) {
             for (let tech in techs) {
-                techsList += ' <div><div class="tech">' + techs[tech] + '</div></div>';
+                if (techs[tech] === '_RM_PLUS') {
+                    techsList += ' <div><div identifier="' + techs[tech] + '" class="tech">RM+</div></div>';
+                } else {
+                    techsList += ' <div><div identifier="' + techs[tech] + '" class="tech">' + techs[tech].slice(1).replace('_', '-') + '</div></div>';
+                }
             }
             $("#filter .right-side .content").html(techsList);
         })

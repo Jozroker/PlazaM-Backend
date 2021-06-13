@@ -83,6 +83,10 @@ public abstract class MovieMapper {
     //
     @Mapping(source = "name", target = "name", qualifiedByName = "toString")
     @Mapping(source = "surname", target = "surname", qualifiedByName = "toString")
+    @Mapping(source = "movieCountry", target = "movieCountry", qualifiedByName =
+            "toString")
+    @Mapping(source = "directedBy", target = "directedBy", qualifiedByName =
+            "toString")
     @Mapping(source = "posterPictureId", target = "posterPicture",
             qualifiedByName = "toPosterPicture")
     @Mapping(source = "duration", target = "durationInMinutes")
@@ -127,7 +131,7 @@ public abstract class MovieMapper {
             locale =
                     Lang.ENG;
         }
-        return map.get(locale.name().toLowerCase());
+        return map.get(locale.name().toLowerCase()).replace("\n", "</p><p>");
     }
 
     String toPictureId(PictureDTO pictureDTO) {

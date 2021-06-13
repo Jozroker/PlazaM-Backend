@@ -29,6 +29,9 @@ $(document).ready(function () {
     parseStringDate += "-" + (currentDate.getDate() / 10 >= 1 ? currentDate.getDate() : "0" + currentDate.getDate());
 
     {
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         if (window.location.pathname === '/home' || window.location.pathname === '/schedule') {
             let pagesUrl = window.location.origin + '/page/' + (isNaN(page) ? 1 : page) + '?cinemaId=' + $("#current-cinema a").attr("identifier");
             if (window.location.pathname === '/schedule') {
@@ -53,13 +56,7 @@ $(document).ready(function () {
                 generateSchedule();
             })
         } else {
-            $.ajax({
-                url: window.location.origin + '/movie/' + $("#movie").attr("identifier") + '/seances?cinemaId=' + $("#current-cinema a").attr("identifier"),
-                method: 'GET'
-            }).done(function (data) {
-                mapa = data;
-                generateSchedule();
-            })
+            getSchedule();
         }
     }
 
@@ -97,7 +94,7 @@ $(document).ready(function () {
         });
     })
 
-    $(document).on("click", ".hall, .time", function () {
+    $(document).on("click", ".hall-button .hall, .time-button .time", function () {
         if (!$(this).hasClass("disabled")) {
             if ($(this).text() == $(".hall").first().text()) {
                 $($(this).parents(".button")[0]).find(".change-schedule").text("create").attr("action", "create");
@@ -330,6 +327,26 @@ $(document).ready(function () {
         }
     })
 
+    $(document).on("mouseenter", ".seance, .time-button .time", function () {
+        let seanceLang = $(this).attr("lang");
+        if (seanceLang !== cinemaLanguage) {
+            if (seanceLang === 'ENG') {
+                $(this).parents(".schedule-container").first().find(".language-line").text(englishValue.toUpperCase())
+                    .css("display", "block");
+            } else if (seanceLang === 'UKR') {
+                $(this).parents(".schedule-container").first().find(".language-line").text(ukrainianValue.toUpperCase())
+                    .css("display", "block");
+            } else if (seanceLang === 'POL') {
+                $(this).parents(".schedule-container").first().find(".language-line").text(polishValue.toUpperCase())
+                    .css("display", "block");
+            }
+        }
+    })
+
+    $(document).on("mouseleave", ".seance, .time-button .time", function () {
+        $(this).parents(".schedule-container").first().find(".language-line").css("display", "none");
+    })
+
     // $(document).on("mouseenter", ".seance", function () {
     //     $(this).find(".change").animate({
     //         "right": "-74px"
@@ -386,6 +403,9 @@ function calculateSeancesPosition(parent) {
             $(this).css("left", leftPosition + "px");
         }
         $(this).css("width", seanceWidth + "px");
+        if (typeof stopLoading !== 'undefined') {
+            stopLoading();
+        }
     })
 }
 
@@ -587,14 +607,14 @@ function generateSeances(hallsMap, movieId, otherDate, parent) {
                         }
                         seanceDate.setHours(hallsMap[Object.keys(hallsMap)[i]][seance].startSeance.substr(11, 2));
                         seanceDate.setMinutes(hallsMap[Object.keys(hallsMap)[i]][seance].startSeance.substr(14, 2));
-                        currentHall += ' <div class="seance"><div class="value ' + ((seanceDate > current) ? 'hovered select' : '') +
+                        currentHall += ' <div class="seance" lang="' + hallsMap[Object.keys(hallsMap)[i]][seance].seanceLang + '"><div class="value ' + ((seanceDate > current) ? 'hovered select' : '') +
                             '"><a' + ((seanceDate > current) ? ' href="' + window.location.origin + '/seance/' + hallsMap[Object.keys(hallsMap)[i]][seance].id +
                                 '?date=' + selectedDate + '"' : '') + '>' + parseInt(hallsMap[Object.keys(hallsMap)[i]][seance].startSeance.substr(11, 2)) +
                             hourShortValue + ' ' + parseInt(hallsMap[Object.keys(hallsMap)[i]][seance].startSeance.substr(14, 2)) + minuteShortValue +
                             '</a></div>';
                         if (typeof isAdmin !== 'undefined') {
                             currentHall += '<div class="change"><a href="' + window.location.origin + '/movie/' + movieId + '?seanceId=' +
-                                hallsMap[Object.keys(hallsMap)[i]][seance].id + '">' + changeValue + '</a></div>';
+                                hallsMap[Object.keys(hallsMap)[i]][seance].id + '&cinemaId=' + cinemaId + '">' + changeValue + '</a></div>';
                         }
                         currentHall += '</div>';
                         //todo change a to click event and when page is movie - create ajax to /seance/id
@@ -603,14 +623,15 @@ function generateSeances(hallsMap, movieId, otherDate, parent) {
                         otherDate.setMinutes(hallsMap[Object.keys(hallsMap)[i]][seance].startSeance.substr(14, 2));
                         let selectedDate = otherDate.getFullYear() + '-' + (otherDate.getMonth() + 1 < 10 ? '0' : '') + (otherDate.getMonth() + 1) + '-' +
                             (otherDate.getDate() < 10 ? '0' : '') + otherDate.getDate();
-                        currentHall += ' <div class="seance" style="left: 100vw;"><div class="value ' + ((otherDate > current) ? 'hovered select' : '') +
+                        currentHall += ' <div class="seance" style="left: 100vw;" lang="' + hallsMap[Object.keys(hallsMap)[i]][seance].seanceLang + '"><div' +
+                            ' class="value ' + ((otherDate > current) ? 'hovered select' : '') +
                             '"><a' + ((otherDate > current) ? ' href="' + window.location.origin + '/seance/' + hallsMap[Object.keys(hallsMap)[i]][seance].id +
                                 '?date=' + selectedDate + '"' : '') + '>' + parseInt(hallsMap[Object.keys(hallsMap)[i]][seance].startSeance.substr(11, 2)) +
                             hourShortValue + ' ' + parseInt(hallsMap[Object.keys(hallsMap)[i]][seance].startSeance.substr(14, 2)) + minuteShortValue +
                             '</a></div>';
                         if (typeof isAdmin !== 'undefined') {
                             currentHall += '<div class="change"><a href="' + window.location.origin + '/movie/' + movieId + '?seanceId=' +
-                                hallsMap[Object.keys(hallsMap)[i]][seance].id + '">' + changeValue + '</a></div>';
+                                hallsMap[Object.keys(hallsMap)[i]][seance].id + '&cinemaId=' + cinemaId + '">' + changeValue + '</a></div>';
                         }
                         currentHall += '</div>';
                     }
@@ -685,9 +706,9 @@ function generateTimeButton(hallsMap, otherDate, selectedHallId, parent) {
                     let minute = hallsMap[hall][seance].startSeance.slice(14, 16);
                     if ((otherDate !== null && otherDate < currentDate) || (currentDate.getTime() === otherDate.getTime() && parseInt(hour) < currentDate.getHours()) ||
                         (currentDate.getTime() === otherDate.getTime() && parseInt(hour) === currentDate.getHours() && parseInt(minute) < currentDate.getMinutes())) {
-                        button += '<div class="time disabled"';
+                        button += '<div class="time disabled" lang="' + hallsMap[hall][seance].seanceLang + '"';
                     } else {
-                        button += '<div class="time"';
+                        button += '<div class="time" lang="' + hallsMap[hall][seance].seanceLang + '"';
                     }
                     button += ' identifier="' + hallsMap[hall][seance].id + '">' + hallsMap[hall][seance].startSeance.slice(11, 16) + '</div>';
                     if (hallsMap[hall].indexOf(hallsMap[hall][seance]) < hallsMap[hall].length - 1) {
@@ -698,7 +719,7 @@ function generateTimeButton(hallsMap, otherDate, selectedHallId, parent) {
         }
     }
     button += '</div>';
-    if (window.location.pathname == "/movie") {
+    if (window.location.pathname.startsWith('/movie')) {
         button += '<div action="create" className="change-schedule">create</div>';
     }
     button += '</div>';
@@ -717,9 +738,9 @@ function generateTimeButton(hallsMap, otherDate, selectedHallId, parent) {
 
 function generateManyMovieSeances(movieId, posterFormat, posterImage, firstName, lastName, userRating, mpaaRating, imdbRating, duration,
                                   dates, hallsMap, otherDate) {
-    let seance = '<div class="movie-schedule" id="id' + movieId + '"><div class="top"><div id="poster">' +
-        '<img src="data:image/' + posterFormat + ';base64,' + posterImage + '" alt=""></div><div><div class="name"><a href="/movie?id=id' + movieId + '">' +
-        '<div class="firstname">' + firstName + '</div><div class="lastname">' + lastName + '</div></a></div>' +
+    let seance = '<div class="movie-schedule" id="' + movieId + '"><div class="top"><div id="poster">' +
+        '<img src="data:image/' + posterFormat + ';base64,' + posterImage + '" alt=""><div class="language-line"></div></div><div><div class="name">' +
+        '<a href="/movie/' + movieId + '?cinemaId=' + cinemaId + '"><div class="firstname">' + firstName + '</div><div class="lastname">' + lastName + '</div></a></div>' +
         '<div class="rate"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star">' +
         '</div><div class="star"></div><div class="rate-number">' + userRating + '</div></div><div class="info">' +
         '<div class="pg">' + mpaaRating + '</div><div class="vertical-line"></div><div class="imdb">' + imdbRating +
@@ -736,23 +757,23 @@ function generateManyMovieSeances(movieId, posterFormat, posterImage, firstName,
         '<div class="hour">12.00</div><div class="hour">15.00</div><div class="hour">18.00</div><div class="hour">21.00</div>' +
         '<div class="hour">24.00</div></div></div>' + generateSeances(hallsMap, movieId) + '<div class="buttons">' +
         generateHallButton(hallsMap) + generateTimeButton(hallsMap, otherDate) + '</div></div><div class="buy-button"><div class="button">' +
-        'Buy</div></div></div>';
+        buyValue + '</div></div></div>';
     return seance;
 }
 
-function generateOneMovieSeance(movieId, posterFormat, posterImage, mpaaRating, announceDate, country, lang, duration, director,
+function generateOneMovieSeance(movieId, posterFormat, posterImage, mpaaRating, announceDate, country, duration, director,
                                 dates, hallsMap, otherDate) {
-    return '<div class="movie-schedule" id="id' + movieId + '"><div class="top"><div id="poster"><img alt=""' +
-        'src="data:image/jpeg;base64,' + posterImage + '"></div><div><div class="details"><div class="title">Details</div>' +
-        '<div class="content"><div><div><div class="title">Age rating</div><div class="pg-rating">' + mpaaRating + '</div>' +
-        '</div><div><div class="title">Announce date</div><div class="announcement">' + announceDate + '</div>' +
-        '</div><div><div class="title">Country</div><div class="country">' + country + '</div></div></div><div>' +
-        '<div><div class="title">Language</div><div class="language">' + lang + '</div></div><div><div class="title">' +
-        'Duration</div><div class="duration">' + duration + ' m</div></div><div><div class="title">Director</div>' +
+    return '<div class="movie-schedule" id="' + movieId + '"><div class="top"><div id="poster"><img alt=""' +
+        'src="data:image/jpeg;base64,' + posterImage + '"><div class="language-line"></div></div><div><div class="details"><div class="title">' + detailsValue + '</div>' +
+        '<div class="content"><div><div><div class="title">' + ageRatingValue + '</div><div class="pg-rating">' + mpaaRating + '</div>' +
+        '</div><div><div class="title">' + releaseDateValue + '</div><div class="announcement">' + announceDate + '</div>' +
+        '</div><div><div class="title">' + countryValue + '</div><div class="country">' + country + '</div></div></div><div>' +
+        '<div><div class="title">' +
+        durationValue + '</div><div class="duration">' + duration + ' ' + minuteValue + '</div></div><div><div class="title">' + directorValue + '</div>' +
         '<div class="director">' + director + '</div></div></div></div></div><div class="week"><div class="visible">' +
         generateWeekDays(dates) + '</div><div class="underline"></div><div class="button date"><div class="title">' +
         '<div class="value"></div><div class="triangle"></div></div><div class="content"></div></div></div></div>' +
-        '<div id="add-schedule">create</div></div><div class="schedule"><div class="timeline"><div class="lines"></div>' +
+        '<div id="add-schedule">' + createValue + '</div></div><div class="schedule"><div class="timeline"><div class="lines"></div>' +
         '<div class="hours"><div class="hour">00.00</div><div class="hour">03.00</div><div class="hour">06.00</div>' +
         '<div class="hour">09.00</div><div class="hour">12.00</div><div class="hour">15.00</div><div class="hour">18.00</div>' +
         '<div class="hour">21.00</div><div class="hour">24.00</div></div></div>\n' + generateSeances(hallsMap, movieId) +
@@ -774,6 +795,9 @@ function generateSchedule(otherDate) {
             $($(".schedule-container")[movieIndex]).html(elem);
 
             rating = parseFloat($($($(".schedule-container")[movieIndex]).find(".rate-number")[0]).text());
+            if (rating === 0) {
+                $($(".schedule-container")[movieIndex]).find(".rate").css("opacity", "0");
+            }
             full = true;
             lines = "";
             for (let i = 0; i < 5; i++) {
@@ -810,9 +834,10 @@ function generateSchedule(otherDate) {
         }
     } else {
         $(".schedule-container").each(function () {
+            let releaseDate = mapa[0][0].releaseDate.slice(-2) + '.' + mapa[0][0].releaseDate.slice(5, 7) + '.' + mapa[0][0].releaseDate.slice(0, 4);
             $(this).html(generateOneMovieSeance(mapa[0][0].id, mapa[0][0].posterPicture.format, mapa[0][0].posterPicture.pictureString,
-                mapa[0][0].mpaaRating.replace("_", "-"), mapa[0][0].releaseDate, "ukrainian", "", mapa[0][0].durationInMinutes,
-                "director", Object.keys(mapa[0][1]), mapa[0][1][parseStringDate], otherDate));
+                mapa[0][0].mpaaRating.replace("_", "-"), releaseDate, mapa[0][0].movieCountry, mapa[0][0].durationInMinutes,
+                mapa[0][0].directedBy, Object.keys(mapa[0][1]), mapa[0][1][parseStringDate], otherDate));
 
             lines = "";
             for (let i = 0; i < 25; i++) {
@@ -833,5 +858,15 @@ function generateSchedule(otherDate) {
         new SimpleBar($(".schedule-container .scroll")[index], {
             autoHide: false
         });
+    })
+}
+
+function getSchedule() {
+    $.ajax({
+        url: window.location.origin + '/movie/' + $("#movie").attr("identifier") + '/seances?cinemaId=' + $("#current-cinema a").attr("identifier"),
+        method: 'GET'
+    }).done(function (data) {
+        mapa = data;
+        generateSchedule();
     })
 }

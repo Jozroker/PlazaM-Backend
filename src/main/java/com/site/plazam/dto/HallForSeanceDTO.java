@@ -22,6 +22,9 @@ public class HallForSeanceDTO extends HallSimpleDTO {
     @NotNull
     private int columns;
 
+    @NotNull
+    private String cinemaId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

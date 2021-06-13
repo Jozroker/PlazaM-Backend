@@ -28,7 +28,6 @@ $(document).ready(function () {
             $("#header-container").html(page);
             $.getScript("/resources/js/header.js");
             $.getScript("/resources/js/pages.js");
-            $.getScript("/resources/js/movie_schedule.js");
             $.getScript("/resources/js/calendar.js");
         })
 
@@ -53,6 +52,14 @@ $(document).ready(function () {
     $(document).on("click", "#movies-in-route .borders", function () {
         loop(false);
         slide(false, true);
+    })
+
+    $(document).on("click", ".movie-coming", function () {
+        window.location.href = '/movie/' + $(this).attr("identifier") + '?cinemaId=' + cinemaId;
+    })
+
+    $(document).on("click", "#movies-in-route .movie .name", function () {
+        window.location.href = '/movie/' + $(this).attr("identifier") + '?cinemaId=' + cinemaId;
     })
 
     function slide(circleSelected, userClick) {
@@ -120,11 +127,14 @@ $(document).ready(function () {
             for (let movie in movies) {
                 releaseDate = parseInt(movies[movie].releaseDate.substr(8, 2));
                 releaseMonth = parseInt(movies[movie].releaseDate.substr(5, 2));
-                comingSoonMovies += '<div><a href="/movie/' + movies[movie].id + '"><div class="movie-coming">' +
+                comingSoonMovies += '<div><div class="movie-coming" identifier="' + movies[movie].id + '">' +
                     '<div class="pg-rating">' + movies[movie].mpaaRating.replace("_", "-") + '</div><div class="user-rating"><div>' +
                     '<div>' + movies[movie].usersRating + '</div></div></div><div class="start-date">' + fromLabel + ' ' + releaseDate + ' ' + monthsList[releaseMonth - 1] +
-                    '</div><img alt="" src="data:image/' + movies[movie].posterPicture.format + ';base64,' + movies[movie].posterPicture.pictureString + '">' +
-                    '</div></a></div>';
+                    '</div>';
+                comingSoonMovies += '<div class="name"><div class="movie-first-name">' + movies[movie].name + '</div><div class="movie-second-name">' +
+                    movies[movie].surname + '</div></div>';
+                comingSoonMovies += '<img alt="" src="data:image/' + movies[movie].posterPicture.format + ';base64,' + movies[movie].posterPicture.pictureString + '">' +
+                    '</div></div>';
             }
             loop(true);
             $("#coming-soon").html(comingSoonMovies).slick({

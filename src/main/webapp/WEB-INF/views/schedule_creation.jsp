@@ -40,17 +40,17 @@
     <c:set var="price" value="${seance.ticketPrice}"/>
 </c:if>
 <div id="schedule-creation" identifier="${id}">
-    <div class="title"><spring:message code="movie.schedule.creation.title"/></div>
+    <c:if test="${seance == null}">
+        <div class="title"><spring:message code="movie.schedule.creation.title"/></div>
+    </c:if>
+    <c:if test="${seance != null}">
+        <div class="title"><spring:message code="movie.schedule.changing.title"/></div>
+    </c:if>
     <div class="underline"></div>
     <div class="form scroll">
         <div class="form-content">
             <div class="movie-name">
-                <c:if test="${seance == null}">
-                    <div class="title-2"><spring:message code="movie.schedule.creation.movie"/></div>
-                </c:if>
-                <c:if test="${seance == null}">
-                    <div class="title-2"><spring:message code="movie.schedule.changing.title"/></div>
-                </c:if>
+                <div class="title-2"><spring:message code="movie.schedule.creation.movie"/></div>
                 <div class="input">
                     <div id="search-movie">
                         <div>
@@ -102,6 +102,56 @@
                                 <%--                                <div class="hall">RM+</div>--%>
                             </div>
                         </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="language-select">
+                <div class="title-2"><spring:message code="language.title.default"/></div>
+                <div class="input">
+                    <ul class="list">
+                        <c:if test="${seance.id == null}">
+                        <li class="selected" identifier="NULL">
+                            <div><spring:message code="list.not.selected.default"/></div>
+                            </c:if>
+                            <c:if test="${seance.id != null}">
+                        <li class="selected" identifier="${seance.seanceLang.name()}">
+                            <div>
+                                <c:if test="${seance.seanceLang.name().equals('ENG')}">
+                                    <spring:message code="english.lang.title.default"/>
+                                </c:if>
+                                <c:if test="${seance.seanceLang.name().equals('UKR')}">
+                                    <spring:message code="ukrainian.lang.title.default"/>
+                                </c:if>
+                                <c:if test="${seance.seanceLang.name().equals('POL')}">
+                                    <spring:message code="polish.lang.title.default"/>
+                                </c:if>
+                            </div>
+                            </c:if>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="scroll">
+                            <div class="languages-container">
+                                <div class="lang" identifier="NULL"><spring:message code="list.not.selected.default"/></div>
+                                <div class="underline"></div>
+                                <div class="lang" identifier="ENG"><spring:message code="english.lang.title.default"/></div>
+                                <div class="underline"></div>
+                                <div class="lang" identifier="UKR"><spring:message code="ukrainian.lang.title.default"/></div>
+                                <div class="underline"></div>
+                                <div class="lang" identifier="POL"><spring:message code="polish.lang.title.default"/></div>
+                            </div>
+                        </li>
+                        <%--                        <li identifier="NULL">--%>
+                        <%--                            <div><spring:message code="list.not.selected.default"/></div>--%>
+                        <%--                        </li>--%>
+                        <%--                        <li identifier="ENG">--%>
+                        <%--                            <div><spring:message code="english.lang.title.default"/></div>--%>
+                        <%--                        </li>--%>
+                        <%--                        <li identifier="UKR">--%>
+                        <%--                            <div><spring:message code="ukrainian.lang.title.default"/></div>--%>
+                        <%--                        </li>--%>
+                        <%--                        <li identifier="POL">--%>
+                        <%--                            <div><spring:message code="polish.lang.title.default"/></div>--%>
+                        <%--                        </li>--%>
                     </ul>
                 </div>
             </div>
@@ -204,55 +254,67 @@
 </div>
 </body>
 <script>
-    let monthsCalendarList = [
-        '<spring:message code="month.january"/>',
-        '<spring:message code="month.february"/>',
-        '<spring:message code="month.march"/>',
-        '<spring:message code="month.april"/>',
-        '<spring:message code="month.may"/>',
-        '<spring:message code="month.june"/>',
-        '<spring:message code="month.july"/>',
-        '<spring:message code="month.august"/>',
-        '<spring:message code="month.september"/>',
-        '<spring:message code="month.october"/>',
-        '<spring:message code="month.november"/>',
-        '<spring:message code="month.december"/>'
-    ];
-    let daysCalendarList = [
-        '<spring:message code="day.friday.short"/>',
-        '<spring:message code="day.monday.short"/>',
-        '<spring:message code="day.tuesday.short"/>',
-        '<spring:message code="day.wednesday.short"/>',
-        '<spring:message code="day.thursday.short"/>',
-        "<spring:message code="day.friday.short"/>",
-        '<spring:message code="day.saturday.short"/>'
-    ];
-    let monthsList = [
-        '<spring:message code="month.january"/>',
-        '<spring:message code="month.february"/>',
-        '<spring:message code="month.march"/>',
-        '<spring:message code="month.april"/>',
-        '<spring:message code="month.may"/>',
-        '<spring:message code="month.june"/>',
-        '<spring:message code="month.july"/>',
-        '<spring:message code="month.august"/>',
-        '<spring:message code="month.september"/>',
-        '<spring:message code="month.october"/>',
-        '<spring:message code="month.november"/>',
-        '<spring:message code="month.december"/>'
-    ];
-    let daysList = [
-        '<spring:message code="day.monday.short"/>',
-        '<spring:message code="day.tuesday.short"/>',
-        '<spring:message code="day.wednesday.short"/>',
-        '<spring:message code="day.thursday.short"/>',
-        '<spring:message code="day.friday.short"/>',
-        '<spring:message code="day.saturday.short"/>',
-        '<spring:message code="day.sunday.short"/>'
-    ];
-    let createValue = '<spring:message code="button.create.title"/>';
+    <%--if (typeof monthsCalendarList === 'undefined') {--%>
+    <%--    let monthsCalendarList = [--%>
+    <%--        '<spring:message code="month.january"/>',--%>
+    <%--        '<spring:message code="month.february"/>',--%>
+    <%--        '<spring:message code="month.march"/>',--%>
+    <%--        '<spring:message code="month.april"/>',--%>
+    <%--        '<spring:message code="month.may"/>',--%>
+    <%--        '<spring:message code="month.june"/>',--%>
+    <%--        '<spring:message code="month.july"/>',--%>
+    <%--        '<spring:message code="month.august"/>',--%>
+    <%--        '<spring:message code="month.september"/>',--%>
+    <%--        '<spring:message code="month.october"/>',--%>
+    <%--        '<spring:message code="month.november"/>',--%>
+    <%--        '<spring:message code="month.december"/>'--%>
+    <%--    ];--%>
+    <%--}--%>
+    <%--if (typeof daysCalendarList === 'undefined') {--%>
+    <%--    let daysCalendarList = [--%>
+    <%--        '<spring:message code="day.friday.short"/>',--%>
+    <%--        '<spring:message code="day.monday.short"/>',--%>
+    <%--        '<spring:message code="day.tuesday.short"/>',--%>
+    <%--        '<spring:message code="day.wednesday.short"/>',--%>
+    <%--        '<spring:message code="day.thursday.short"/>',--%>
+    <%--        "<spring:message code="day.friday.short"/>",--%>
+    <%--        '<spring:message code="day.saturday.short"/>'--%>
+    <%--    ];--%>
+    <%--}--%>
+    <%--if (typeof monthsList === 'undefined') {--%>
+    <%--    let monthsList = [--%>
+    <%--        '<spring:message code="month.january"/>',--%>
+    <%--        '<spring:message code="month.february"/>',--%>
+    <%--        '<spring:message code="month.march"/>',--%>
+    <%--        '<spring:message code="month.april"/>',--%>
+    <%--        '<spring:message code="month.may"/>',--%>
+    <%--        '<spring:message code="month.june"/>',--%>
+    <%--        '<spring:message code="month.july"/>',--%>
+    <%--        '<spring:message code="month.august"/>',--%>
+    <%--        '<spring:message code="month.september"/>',--%>
+    <%--        '<spring:message code="month.october"/>',--%>
+    <%--        '<spring:message code="month.november"/>',--%>
+    <%--        '<spring:message code="month.december"/>'--%>
+    <%--    ];--%>
+    <%--}--%>
+    <%--if (typeof daysList === 'undefined') {--%>
+    <%--    let daysList = [--%>
+    <%--        '<spring:message code="day.monday.short"/>',--%>
+    <%--        '<spring:message code="day.tuesday.short"/>',--%>
+    <%--        '<spring:message code="day.wednesday.short"/>',--%>
+    <%--        '<spring:message code="day.thursday.short"/>',--%>
+    <%--        '<spring:message code="day.friday.short"/>',--%>
+    <%--        '<spring:message code="day.saturday.short"/>',--%>
+    <%--        '<spring:message code="day.sunday.short"/>'--%>
+    <%--    ];--%>
+    <%--}--%>
+    <%--if (typeof createValue === 'undefined') {--%>
+    <%--    let createValue = '<spring:message code="button.create.title"/>';--%>
+    <%--}--%>
+
     let notSelected = '<spring:message code="list.not.selected.default"/>';
     let scheduleCreationTitle = '<spring:message code="movie.schedule.creation.title"/>';
+    let notSelectedValue = '<spring:message code="list.not.selected.default"/>';
 
     <c:if test="${seance != null}">
     let selectedDays = [];

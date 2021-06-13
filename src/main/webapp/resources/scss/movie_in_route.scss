@@ -121,7 +121,7 @@
         .scroll {
           width: 100%;
           padding: 0 14px;
-          min-height: 190px;
+          height: 120px;
         }
 
         .comment-form {
@@ -190,7 +190,7 @@
             background-color: $black-light;
             width: 100%;
             //min-width: 130px;
-            height: 122px;
+            height: 120px;
             padding: 5px 13px;
             font-size: 18px;
             line-height: 18px;
@@ -209,8 +209,12 @@
           position: relative;
           overflow: hidden;
           padding: 0 14px;
-          max-height: 292px;
-          max-width: 590px;
+          //max-height: 292px;
+          //max-width: 590px;
+
+          //&:hover {
+          //  cursor: pointer;
+          //}
 
           .pictures {
             //position: relative;
@@ -356,7 +360,7 @@
   max-width: 192px;
 
   img {
-    width: 100%;
+    //width: 100%;
     object-fit: cover;
 
     @media screen and (max-width: 510px) {
@@ -456,6 +460,10 @@
           height: 14px;
           font-size: 14px;
           line-height: 14px;
+
+          &.empty {
+            display: none;
+          }
 
           &::before {
             font-family: "icomoon" !important;
@@ -841,6 +849,7 @@
           max-width: 270px;
           margin-right: 35px;
           margin-bottom: 11px;
+          vertical-align: top;
 
           @media screen and (min-width: 792px) {
             display: inline-block;

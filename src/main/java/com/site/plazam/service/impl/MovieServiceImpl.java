@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -97,7 +96,11 @@ public class MovieServiceImpl implements MovieService {
                 movieCreateDTO.setPosterPicture(ps.save(movieCreateDTO.getPosterPicture(),
                         MoviePicture.class));
             }
-            movieCreateDTO.getGalleryPictures().forEach(picture -> ps.save(picture, MoviePicture.class));
+            movieCreateDTO.getGalleryPictures().forEach(picture ->
+                    picture.setId(ps.save(picture, MoviePicture.class).getId()));
+//            for (PictureDTO galleryPicture : movieCreateDTO.getGalleryPictures()) {
+//                galleryPicture = ps.save(galleryPicture, MoviePicture.class);
+//            }
         }
         return mm.toMovieFullDTO(mr.save(mm.toEntity(movieCreateDTO)));
     }
@@ -256,36 +259,37 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateAfterAndGenresMatches(LocalDate date, List<Genre> genres, Pageable pageable) {
-        return mr.findByReleaseDateAfterAndGenresMatches(date, genres,
+        return mr.findByReleaseDateAfterAndGenresIn(date, genres,
                 pageable).map(mm::toMovieForMoviesListDTO);
     }
 
     @Override
     public Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateBeforeAndGenresMatches(LocalDate date, List<Genre> genres, Pageable pageable) {
-        return mr.findByReleaseDateBeforeAndGenresMatches(date, genres,
+        return mr.findByReleaseDateBeforeAndGenresIn(date, genres,
                 pageable).map(mm::toMovieForMoviesListDTO);
     }
 
     @Override
     public Page<MovieForMoviesListDTO> findMovieForMoviesListByReleaseDateBetweenAndGenresMatches(LocalDate from, LocalDate to, List<Genre> genres, Pageable pageable) {
-        return mr.findByReleaseDateBetweenAndGenresMatches(from, to,
+        return mr.findByReleaseDateBetweenAndGenresIn(from, to,
                 genres, pageable).map(mm::toMovieForMoviesListDTO);
     }
 
     @Override
     public Page<MovieForMoviesListDTO> findAllByGenresMatches(List<Genre> genres, Pageable pageable) {
-        return mr.findAllByGenresMatches(genres, pageable).map(mm::toMovieForMoviesListDTO);
+        return mr.findAllByGenresIn(genres, pageable).map(mm::toMovieForMoviesListDTO);
     }
 
     @Override
     public List<MovieForHomeSliderDTO> findMovieForHomeSliderByReleaseDateBeforeOrderByReleaseDate(LocalDate date) {
-        List<MovieForHomeSliderDTO> movies = mr.findByReleaseDateBeforeOrderByReleaseDate(date)
+        //        Collections.reverse(movies);
+        return mr.findByReleaseDateBeforeOrderByReleaseDateDesc(date)
                 .stream()
+                .filter(movie -> movie.getReleaseDate().isBefore(LocalDate.now()) ||
+                        movie.getReleaseDate().isEqual(LocalDate.now()))
                 .limit(5)
                 .map(mm::toMovieForHomeSliderDTO)
                 .collect(Collectors.toList());
-        Collections.reverse(movies);
-        return movies;
     }
 
     @Override

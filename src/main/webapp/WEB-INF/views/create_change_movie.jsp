@@ -121,7 +121,7 @@
                     <div class="top">
                         <div class="title">
                             <div><spring:message code="name.title.default"/></div>
-                            <div class="triangle"></div>
+<%--                            <div class="triangle"></div>--%>
                         </div>
                         <div class="language-slider">
                             <div class="triangle triangle-left"></div>
@@ -155,10 +155,53 @@
                         </div>
                     </div>
                 </div>
+                <%--                <div class="surname">--%>
+                <%--                    <div class="top">--%>
+                <%--                        <div class="title">--%>
+                <%--                            <div class="triangle"></div>--%>
+                <%--                            <div><spring:message code="surname.title.default"/></div>--%>
+                <%--                        </div>--%>
+                <%--                        <div class="language-slider">--%>
+                <%--                            <div class="triangle triangle-left"></div>--%>
+                <%--                            <div class="slider">--%>
+                <%--                                <div class="languages">--%>
+                <%--                                    <div class="language"><spring:message code="english.lang.default"/></div>--%>
+                <%--                                    <div class="language"><spring:message code="ukrainian.lang.default"/></div>--%>
+                <%--                                    <div class="language"><spring:message code="polish.lang.default"/></div>--%>
+                <%--                                </div>--%>
+                <%--                            </div>--%>
+                <%--                            <div class="triangle triangle-right"></div>--%>
+                <%--                        </div>--%>
+                <%--                    </div>--%>
+                <%--                    <div class="fields">--%>
+                <%--                        <div class="fields-container">--%>
+                <%--                            <div class="field en-field">--%>
+                <%--                                <div>--%>
+                <%--                                    <input placeholder="<spring:message code="create.movie.surname.placeholder"/>" spellcheck="false" type="text"--%>
+                <%--                                           value="${movieSurameEng}">--%>
+                <%--                                </div>--%>
+                <%--                            </div>--%>
+                <%--                            <div class="field ua-field">--%>
+                <%--                                <div>--%>
+                <%--                                    <input placeholder="<spring:message code="create.movie.surname.placeholder"/>" spellcheck="false" type="text"--%>
+                <%--                                           value="${movieSurameUkr}">--%>
+                <%--                                </div>--%>
+                <%--                            </div>--%>
+                <%--                            <div class="field pl-field">--%>
+                <%--                                <div>--%>
+                <%--                                    <input placeholder="<spring:message code="create.movie.surname.placeholder"/>" spellcheck="false" type="text"--%>
+                <%--                                           value="${movieSuramePol}">--%>
+                <%--                                </div>--%>
+                <%--                            </div>--%>
+                <%--                        </div>--%>
+                <%--                    </div>--%>
+                <%--                </div>--%>
+            </div>
+            <div>
                 <div class="surname">
                     <div class="top">
                         <div class="title">
-                            <div class="triangle"></div>
+                            <%--                            <div class="triangle"></div>--%>
                             <div><spring:message code="surname.title.default"/></div>
                         </div>
                         <div class="language-slider">
@@ -319,49 +362,49 @@
                     </div>
                 </div>
             </div>
-            <div>
-                <div class="movie-language">
-                    <div class="top">
-                        <div class="title"><spring:message code="create.movie.language.title"/></div>
-                    </div>
-                    <div class="field">
-                        <ul class="list">
-                            <c:if test="${movie.id == null}">
-                            <li class="selected" identifier="NULL">
-                                <div><spring:message code="list.not.selected.default"/></div>
-                                </c:if>
-                                <c:if test="${movie.id != null}">
-                            <li class="selected" identifier="${movie.movieLang.name()}">
-                                <div>
-                                    <c:if test="${movie.movieLang.name().equals('ENG')}">
-                                        <spring:message code="english.lang.title.default"/>
-                                    </c:if>
-                                    <c:if test="${movie.movieLang.name().equals('UKR')}">
-                                        <spring:message code="ukrainian.lang.title.default"/>
-                                    </c:if>
-                                    <c:if test="${movie.movieLang.name().equals('POL')}">
-                                        <spring:message code="polish.lang.title.default"/>
-                                    </c:if>
-                                </div>
-                                </c:if>
-                                <div class="triangle"></div>
-                            </li>
-                            <li identifier="NULL">
-                                <div><spring:message code="list.not.selected.default"/></div>
-                            </li>
-                            <li identifier="ENG">
-                                <div><spring:message code="english.lang.title.default"/></div>
-                            </li>
-                            <li identifier="UKR">
-                                <div><spring:message code="ukrainian.lang.title.default"/></div>
-                            </li>
-                            <li identifier="POL">
-                                <div><spring:message code="polish.lang.title.default"/></div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <%--            <div>--%>
+            <%--                <div class="movie-language">--%>
+            <%--                    <div class="top">--%>
+            <%--                        <div class="title"><spring:message code="create.movie.language.title"/></div>--%>
+            <%--                    </div>--%>
+            <%--                    <div class="field">--%>
+            <%--                        <ul class="list">--%>
+            <%--                            <c:if test="${movie.id == null}">--%>
+            <%--                            <li class="selected" identifier="NULL">--%>
+            <%--                                <div><spring:message code="list.not.selected.default"/></div>--%>
+            <%--                                </c:if>--%>
+            <%--                                <c:if test="${movie.id != null}">--%>
+            <%--                            <li class="selected" identifier="${movie.movieLang.name()}">--%>
+            <%--                                <div>--%>
+            <%--                                    <c:if test="${movie.movieLang.name().equals('ENG')}">--%>
+            <%--                                        <spring:message code="english.lang.title.default"/>--%>
+            <%--                                    </c:if>--%>
+            <%--                                    <c:if test="${movie.movieLang.name().equals('UKR')}">--%>
+            <%--                                        <spring:message code="ukrainian.lang.title.default"/>--%>
+            <%--                                    </c:if>--%>
+            <%--                                    <c:if test="${movie.movieLang.name().equals('POL')}">--%>
+            <%--                                        <spring:message code="polish.lang.title.default"/>--%>
+            <%--                                    </c:if>--%>
+            <%--                                </div>--%>
+            <%--                                </c:if>--%>
+            <%--                                <div class="triangle"></div>--%>
+            <%--                            </li>--%>
+            <%--                            <li identifier="NULL">--%>
+            <%--                                <div><spring:message code="list.not.selected.default"/></div>--%>
+            <%--                            </li>--%>
+            <%--                            <li identifier="ENG">--%>
+            <%--                                <div><spring:message code="english.lang.title.default"/></div>--%>
+            <%--                            </li>--%>
+            <%--                            <li identifier="UKR">--%>
+            <%--                                <div><spring:message code="ukrainian.lang.title.default"/></div>--%>
+            <%--                            </li>--%>
+            <%--                            <li identifier="POL">--%>
+            <%--                                <div><spring:message code="polish.lang.title.default"/></div>--%>
+            <%--                            </li>--%>
+            <%--                        </ul>--%>
+            <%--                    </div>--%>
+            <%--                </div>--%>
+            <%--            </div>--%>
             <div>
                 <div class="mpaa-rating">
                     <div class="top">

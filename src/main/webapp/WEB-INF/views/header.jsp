@@ -537,6 +537,14 @@
 <%--    </script>--%>
 <%--</sec:authorize>--%>
 <script>
+    let cinemaLanguage = '${currentCinema.country.language.name()}';
+    let ticketPriceValue = '<spring:message code="price.title.default"/>';
+    let ticketDateValue = '<spring:message code="date.title.default"/>';
+    let ticketTimeValue = '<spring:message code="time.title.default"/>';
+    let ticketSeatValue = '<spring:message code="ticket.seat"/>';
+    let ticketRowValue = '<spring:message code="ticket.row"/>';
+    let ticketHallValue = '<spring:message code="hall.title.default"/>';
+    <%--let cinemaId = '${currentCinema.id}';--%>
     <c:if test="${user != null}">
     let userId = '${user.id}';
     let userIsLogged = true;
@@ -563,6 +571,7 @@
     ticket.push(${ticket.placeRow});
     ticket.push(${ticket.placeSeat});
     ticket.push('${ticket.id}');
+    ticket.push('${ticket.seance.movie.widePicture.format}');
     ticket.push('${ticket.seance.movie.widePicture.pictureString}');
     ticket.push('${ticket.seance.movie.name}');
     ticket.push('${ticket.seance.movie.surname}');

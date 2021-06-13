@@ -554,7 +554,7 @@
             .value {
               width: 100%;
               position: relative;
-              font-size: 18px;
+              font-size: 17px;
               line-height: 32px;
               color: $gray-dark;
               text-align: center;
@@ -574,7 +574,13 @@
             &:hover {
               .change {
                 right: -74px;
-                transition: right 0.3s ease-in-out;
+                width: 90px;
+                transition: right 0.3s ease-in-out, width 0.3s ease-in-out;
+
+                a {
+                  opacity: 1;
+                  transition: opacity 0.1s ease-in-out;
+                }
               }
             }
 
@@ -587,7 +593,8 @@
             }
 
             .change {
-              width: 90px;
+              //width: 90px;
+              width: 50px;
               height: 32px;
               position: absolute;
               top: 0;
@@ -600,9 +607,14 @@
               background-color: rgba($gray-light, 0.2);
               box-shadow: inset 1px 1px 5px black;
               padding-right: 10px;
-              transition: color 0.1s linear, right 0.3s ease-in-out;
+              transition: color 0.1s linear, right 0.3s ease-in-out, width 0.3s ease-in-out;
               border-radius: 0 12px 12px 0;
               z-index: 0;
+
+              a {
+                opacity: 0;
+                transition: opacity 0.1s ease-in-out;
+              }
 
               &:hover {
                 cursor: pointer;
@@ -614,5 +626,24 @@
         }
       }
     }
+  }
+}
+
+#poster {
+  position: relative;
+
+  .language-line {
+    display: none;
+    width: 180px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 30px;
+    text-align: center;
+    font-size: 20px;
+    line-height: 30px;
+    color: $white-dark;
+    background-color: $maroon;
+    font-weight: 300;
   }
 }

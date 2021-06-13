@@ -26,7 +26,7 @@ let settingsMenuAnimate = false;
 let ticketsAnimate = false;
 let comingSoonAnimate = false;
 
-let scrollBar, cinemaId, language;
+let scrollBar, cinemaId, language, loadingCount = 0, loadingTimeout;
 let windowResize = false;
 // let currentScrollPosition;
 let settingsPosition = "-808px";
@@ -78,8 +78,8 @@ $(document).ready(function () {
         if (typeof tickets !== 'undefined' && Array.isArray(tickets)) {
             let ticketsList = '<div class="scroll">';
             for (let ticket in tickets) {
-                ticketsList += createTicket(tickets[ticket][0], tickets[ticket][1], tickets[ticket][2], tickets[ticket][3],
-                    tickets[ticket][4], tickets[ticket][5], tickets[ticket][6], tickets[ticket][7], tickets[ticket][8], tickets[ticket][9], tickets[ticket][10]);
+                ticketsList += createTicket(tickets[ticket][0], tickets[ticket][1], tickets[ticket][2], tickets[ticket][3], tickets[ticket][4], tickets[ticket][5],
+                    tickets[ticket][6], tickets[ticket][7], tickets[ticket][8], tickets[ticket][9], tickets[ticket][10], tickets[ticket][11]);
             }
             ticketsList += '</div>';
             $("#tickets .page").html(ticketsList);
@@ -258,6 +258,7 @@ $(document).ready(function () {
             let newPassword = $("#new-password").val().trim();
             let confirmPassword = $("#new-password-confirm").val().trim();
 
+            startLoading();
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -274,6 +275,7 @@ $(document).ready(function () {
                 $("#old-password").val('');
                 $("#new-password").val('');
                 $("#new-password-confirm").val('');
+                stopLoading();
             })
         }
     })
@@ -290,6 +292,7 @@ $(document).ready(function () {
             let url = window.location.origin + '/user/' + userId + '/update/email';
             let email = $("#new-email").val().trim();
 
+            startLoading();
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -300,6 +303,7 @@ $(document).ready(function () {
             }).done(function () {
                 $(".email .value").text($("#new-email").val());
                 $("#new-email").val("");
+                stopLoading();
             })
         }
     })
@@ -313,6 +317,7 @@ $(document).ready(function () {
             $(this).parents(".fields").first().prev().find("span:first-child").css("color", "#AF2341");
             $(this).parents(".fields").first().prev().find(".not-phone").css("display", "inline");
         } else {
+            startLoading();
             let url = window.location.origin + '/user/' + userId + '/update/phone';
             let phone = $(".phone-code .selected > div").first().text() + $("#new-phone").val().trim();
 
@@ -325,6 +330,7 @@ $(document).ready(function () {
                 })
             }).done(function () {
                 $("#new-phone").val("");
+                stopLoading();
             })
         }
     })
@@ -348,22 +354,24 @@ $(document).ready(function () {
     })
 
     $(document).on("click", "#tickets .ticket .cross.active", function () {
+        startLoading();
         let ticketElem = $(this);
-        $.ajax({
-            url: window.location.origin + '/ticket/' + $(ticketElem).parent().attr("identifier") + '/remove',
-            method: 'POST'
-        }).done(function (data) {
-            if (data === 'success') {
-                removedTickets.push($(ticketElem).parents(".ticket").first().attr("identifier"));
-                // removedTicketsSeances.push($(this).parents(".ticket").first().find(".barcode .identifier").text().trim());
-                $(ticketElem).removeClass("active");
-                $(ticketElem).parents(".ticket").first().animate({
-                    "height": "0"
-                }, 300, "easeInOutQuint", function () {
-                    $(this).remove();
-                })
-            }
+        // $.ajax({
+        //     url: window.location.origin + '/ticket/' + $(ticketElem).parent().attr("identifier") + '/remove',
+        //     method: 'POST'
+        // }).done(function (data) {
+        //     if (data === 'success') {
+        removedTickets.push($(ticketElem).parents(".ticket").first().attr("identifier"));
+        // removedTicketsSeances.push($(this).parents(".ticket").first().find(".barcode .identifier").text().trim());
+        $(ticketElem).removeClass("active");
+        $(ticketElem).parents(".ticket").first().animate({
+            "height": "0"
+        }, 300, "easeInOutQuint", function () {
+            $(this).remove();
         })
+        // }
+        stopLoading();
+        // })
     })
 
     $(".personal-btn, .site-btn, .security-btn").click(function () {
@@ -470,7 +478,7 @@ $(document).ready(function () {
             let hide18movies = Boolean($("#site-settings .movie-list .checked").length);
             let lightTheme = Boolean($("#site-settings .personalisation .checked").index() - 1);
 
-
+            startLoading();
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -497,6 +505,7 @@ $(document).ready(function () {
                 $("#settings .title").click();
                 $("#user img").attr("src", $(".avatar img").attr("src"));
                 $("#menu-btn > div").first().text(username);
+                stopLoading();
             })
         }
     })
@@ -704,7 +713,7 @@ $(document).ready(function () {
                         "opacity": "1"
                     }, 100, "linear").css("pointer-events", "auto");
                     $("#search-result").css("display", "block").animate({
-                        "height": $(".movie-result").length * 36 + "px"
+                        "height": ($(".movie-result").length * 36) + "px"
                     }, 300, "easeInOutQuint");
                 });
             } else {
@@ -844,6 +853,7 @@ $(document).ready(function () {
                 schedulesUrl += "&date=" + selectedDate;
             }
 
+            startLoading();
             $.ajax({
                 url: schedulesUrl,
                 method: 'GET'
@@ -869,6 +879,10 @@ $(document).ready(function () {
                 $("#home-schedules-containers .curtain").css("display", "none");
                 $("#schedules .curtain").css("display", "none");
             })
+        } else if (window.location.pathname.startsWith('/movie')) {
+            let url = new URL(window.location);
+            url.searchParams.set("cinemaId", cinemaId);
+            window.location.href = url;
         }
 
         let newHeight = $("#current-cinema").height() <= 18 ? 32 : 54;
@@ -981,34 +995,8 @@ $(document).ready(function () {
         }, 200, "linear");
     })
 
-    // $(".city").each(function () {
-    //     $(this).click(function () {
-    //         $(".city").animate({
-    //             "width": "0"
-    //         }, 200, "linear");
-    //
-    //         $(".city-line").animate({
-    //             "width": "0",
-    //             "margin": "0"
-    //         }, 200, "linear");
-    //
-    //         $(this).next(".cinema-list").delay(250).animate({
-    //             "left": "0"
-    //         }, 200, "linear");
-    //     })
-    // })
-
-    // window.addEventListener("locationchange", function () {
-    //     listsSaving();
-    //     console.log(1)
-    // })
-
-    // window.addEventListener("popstate", function () {
-    //     listsSaving();
-    // })
-
     $(document).on("click", ".cinema-back", function () {
-        $(this).click(function () {
+        // $(this).click(function () {
             $(".cinema-list").animate({
                 "left": "100%"
             }, 200, "linear");
@@ -1022,7 +1010,7 @@ $(document).ready(function () {
             }, 200, "linear", function () {
                 $(".city-line").css("margin", "auto");
             });
-        })
+        // })
     })
 
     $(".messages-btn").click(function () {
@@ -1181,29 +1169,29 @@ $(document).ready(function () {
 
     $(document).on("click", "#messages .cross", function () {
         let messageElem = $(this);
-        $.ajax({
-            url: window.location.origin + '/message/' + $(messageElem).parent().attr("identifier") + '/remove',
-            method: 'POST'
-        }).done(function (data) {
-            if (data === 'success') {
-                if (!messagesAnimate) {
-                    messagesAnimate = true;
-                    let elem = $(messageElem).parent();
-                    if (elem.prev(".line-between").length) {
-                        elem.prev(".line-between").remove();
-                    } else if (elem.next(".line-between").length) {
-                        elem.next(".line-between").remove();
-                    }
-                    removedMessages.push($(messageElem).parents(".message").first().attr("identifier"));
-                    elem.remove();
-                    messagesAnimate = false;
-                    nextClickedElement.click();
-                    nextClickedElement = $();
-                } else {
-                    nextClickedElement = $(messageElem);
-                }
+        // $.ajax({
+        //     url: window.location.origin + '/message/' + $(messageElem).parent().attr("identifier") + '/remove',
+        //     method: 'POST'
+        // }).done(function (data) {
+        //     if (data === 'success') {
+        if (!messagesAnimate) {
+            messagesAnimate = true;
+            let elem = $(messageElem).parent();
+            if (elem.prev(".line-between").length) {
+                elem.prev(".line-between").remove();
+            } else if (elem.next(".line-between").length) {
+                elem.next(".line-between").remove();
             }
-        })
+            removedMessages.push($(messageElem).parents(".message").first().attr("identifier"));
+            elem.remove();
+            messagesAnimate = false;
+            nextClickedElement.click();
+            nextClickedElement = $();
+        } else {
+            nextClickedElement = $(messageElem);
+        }
+        //     }
+        // })
     })
 
     $(".settings-btn").click(function () {
@@ -1684,7 +1672,7 @@ $(document).ready(function () {
                 }
                 for (let movie in movies) {
                     resultList += '<div class="movie-result"><a href="' + window.location.origin + '/movie/' +
-                        movies[movie].id + '">' + movies[movie].fullName + '</a></div>';
+                        movies[movie].id + '?cinemaId=' + cinemaId + '">' + movies[movie].fullName + '</a></div>';
                 }
                 $("#search-result .simplebar-content").html(resultList);
                 $("#search-result").animate({
@@ -1699,7 +1687,7 @@ $(document).ready(function () {
     }
 })
 
-function createTicket(ticketId, seanceDate, seanceTime, seanceHall, price, row, column, id, moviePicture, movieName, movieSurname) {
+function createTicket(ticketId, seanceDate, seanceTime, seanceHall, price, row, column, id, format, moviePicture, movieName, movieSurname) {
     let date = new Date(seanceDate.slice(-4) + "-" + seanceDate.slice(3, 5) + "-" + seanceDate.slice(0, 2));
     let current = new Date();
     current.setDate(current.getDate() + 1);
@@ -1713,17 +1701,17 @@ function createTicket(ticketId, seanceDate, seanceTime, seanceHall, price, row, 
     let ticket = '<div class="ticket" identifier="' + ticketId + '"><div class="ticket-info"><div class="movie-name"><span class="first-name">' +
         movieName + '</span><span class="space">_</span><span class="last-name">' + movieSurname + '</span></div>' +
         '<div class="info-items"><div class="info-item price-info">' +
-        '<span class="title">Price:</span><span class="space">_</span><span class="value">' + price + '</span>' +
+        '<span class="title">' + ticketPriceValue + ':</span><span class="space">_</span><span class="value">' + price + '</span>' +
         '<span class="space"></span><span class="value">$</span></div><div class="info-item date-info">' +
-        '<span class="title">Date:</span><span class="space">_</span><span class="value">' + seanceDate +
-        '</span></div><div class="info-item row-info"><span class="title">Row:</span><span class="space">_</span>' +
-        '<span class="value">' + row + '</span></div><div class="info-item hall-info"><span class="title">Hall:</span>' +
+        '<span class="title">' + ticketDateValue + ':</span><span class="space">_</span><span class="value">' + seanceDate +
+        '</span></div><div class="info-item row-info"><span class="title">' + ticketRowValue + ':</span><span class="space">_</span>' +
+        '<span class="value">' + row + '</span></div><div class="info-item hall-info"><span class="title">' + ticketHallValue + ':</span>' +
         '<span class="space">_</span><span class="value">' + seanceHall + '</span></div><div class="info-item time-info">' +
-        '<span class="title">Time:</span><span class="space">_</span><span class="value">' + seanceTime + '</span>' +
-        '</div><div class="info-item seat-info"><span class="title">Seat:</span><span class="space">_</span>' +
+        '<span class="title">' + ticketTimeValue + ':</span><span class="space">_</span><span class="value">' + seanceTime + '</span>' +
+        '</div><div class="info-item seat-info"><span class="title">' + ticketSeatValue + ':</span><span class="space">_</span>' +
         '<span class="value">' + column + '</span></div></div><div class="barcode"><div class="barcode-container">' +
         '<svg class="barcode-value"></svg></div><div class="identifier">' + id + '</div></div><div class="copyright">' +
-        'PlazaM</div></div><div class="picture"><img class="background-picture" src="' + moviePicture +
+        'PlazaM</div></div><div class="picture"><img class="background-picture" src="data:image/' + format + ';base64,' + moviePicture +
         '" alt=""><div class="movie-name"><div class="first-name">' + movieName + '</div><div class="last-name">' + movieSurname +
         '</div></div><div class="blur"></div></div>';
     if (current <= date) {
@@ -1791,6 +1779,7 @@ function ticketsFunction() {
 }
 
 function generateCinemas() {
+    startLoading();
     $.ajax({
         url: window.location.origin + "/cinemas/header",
         method: 'GET'
@@ -1828,6 +1817,7 @@ function generateCinemas() {
                 autoHide: false
             });
         });
+        stopLoading();
     });
 }
 
@@ -1850,6 +1840,30 @@ function listsSaving() {
                 // removedTicketsSeances: removedTicketsSeances
             })
         });
+    }
+}
+
+function startLoading() {
+    clearTimeout(loadingTimeout);
+    loadingTimeout = setTimeout(function () {
+        if (loadingCount > 0) {
+            stopLoading();
+        }
+    }, 5000);
+    if (loadingCount++ === 0) {
+        $("#loader .bar").css({
+            "display": "block",
+            "animation-iteration-count": "infinite"
+        })
+    }
+}
+
+function stopLoading() {
+    if (--loadingCount === 0) {
+        $("#loader .bar").css({
+            "display": "none",
+            "animation-iteration-count": "0"
+        })
     }
 }
 

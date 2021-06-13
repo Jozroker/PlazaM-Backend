@@ -1,4 +1,4 @@
-let ticketsMap, availableDates;
+let ticketsMap, availableDates, hallWidth;
 
 $(document).ready(function () {
     let columnIndex, rowIndex, columnEmpty = 0;
@@ -12,7 +12,7 @@ $(document).ready(function () {
     let nextClickedElement = $();
     let currentScrollPosition, dateString;
     let selectedDate, selectedMonth, selectedYear, seanceDate, seanceTime, seanceHall, price, row, column, id,
-        attribute;
+        attribute, hallWidthInPercentage = false;
 
     {
         $(".tickets-price .scroll").css("height", calculateTicketsScrollHeight(false) + "px");
@@ -62,6 +62,9 @@ $(document).ready(function () {
                 url: window.location.origin + '/movie/' + movieId + '/seances?cinemaId=' + $("#current-cinema a").attr("identifier"),
                 method: 'GET'
             }).done(function (data) {
+                if (typeof startLoading !== 'undefined') {
+                    startLoading();
+                }
                 mapa = data;
                 availableDates = Object.keys(mapa[0][1]);
                 let currentDate = new Date();
@@ -77,6 +80,18 @@ $(document).ready(function () {
         $.getScript("/resources/js/calendar.js");
 
     }
+
+    $(window).on("resize", function () {
+        if ($(".screen-image").width() - 80 < hallWidth) {
+            if (!hallWidthInPercentage) {
+                hallWidthInPercentage = true;
+                $(".table").css("width", "90%");
+            }
+        } else if (hallWidthInPercentage) {
+            hallWidthInPercentage = false;
+            $(".table").css("width", hallWidth + "px");
+        }
+    })
 
     $(".buy-ticket .scroll").each(function (index) {
         new SimpleBar($(".buy-ticket .scroll")[index], {
@@ -574,6 +589,9 @@ $(document).ready(function () {
 
     $("#next-tile").click(function () {
         if ($(".ticket-form .nav-item.selected").index() === 2) {
+            if (typeof startLoading !== 'undefined') {
+                startLoading();
+            }
             let tickets = [], ticket;
             $(".tickets-confirm .ticket").each(function () {
                 ticket = {};
@@ -591,12 +609,14 @@ $(document).ready(function () {
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     tickets: tickets,
-                    movieId: movieId
+                    movieId: movieId,
+                    cinemaId: cinemaId
                 })
-            }).done(function () {
-                let url = new URL(document.location);
-                window.location.href = window.location.origin + '/movie/' + movieId + (url.searchParams.get("language") == null ?
-                    '' : '?language=' + url.searchParams.get('language'));
+            }).done(function (url) {
+                // let url = new URL(document.location);
+                // window.location.href = window.location.origin + '/movie/' + movieId + (url.searchParams.get("language") == null ?
+                //     '' : '?language=' + url.searchParams.get('language'));
+                window.location.href = url;
             });
         }
         if (!$(this).hasClass("disabled")) {
@@ -682,6 +702,9 @@ $(document).ready(function () {
     }
 
     function hallLoad(rowsCount, columnsCount) {
+        if (typeof startLoading !== 'undefined') {
+            startLoading();
+        }
         let table = '<div class="rows">';
         let date = $("#date-select .selected-date").attr("year") + '-' + (monthsShortList.indexOf($("#date-select .selected-date .month").text()) + 1 < 10 ? '0' : '') +
             (monthsShortList.indexOf($("#date-select .selected-date .month").text()) + 1) + '-' + (parseInt($("#date-select .selected-date .date").text()) < 10 ? '0' : '') +
@@ -722,7 +745,8 @@ $(document).ready(function () {
                     autoHide: false
                 });
             })
-            $(".places-grid .table").css("width", columnsCount * 25 + (columnsCount - 1) * 4 + 'px');
+            hallWidth = columnsCount * 25 + (columnsCount - 1) * 4;
+            $(".places-grid .table").css("width", hallWidth + 'px');
             let width = parseFloat($(".table").css("width").slice(0, -2));
             let cellMargin = parseFloat($($(".table .seat")[1]).css("margin-left").slice(0, -2)) * columnsCount;
             let seatWidthInPercent = (100 * ((width - cellMargin) / columnsCount)) / width;
@@ -738,6 +762,9 @@ $(document).ready(function () {
                 .css("margin-top", "20px");
             $($(".table .row-number")[$(".table .row").length - 2])
                 .css("margin-top", "20px");
+            if (typeof stopLoading !== 'undefined') {
+                stopLoading();
+            }
         })
     }
 
@@ -919,5 +946,8 @@ $(document).ready(function () {
                 autoHide: false
             });
         });
+        if (typeof stopLoading !== 'undefined') {
+            stopLoading();
+        }
     }
 })

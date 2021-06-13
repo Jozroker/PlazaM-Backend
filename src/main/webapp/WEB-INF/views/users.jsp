@@ -284,7 +284,7 @@
     let yearValue = '<spring:message code="users.ban.year.title"/>';
     let foreverValue = '<spring:message code="users.ban.forever.title"/>';
     let usernameValue = '<spring:message code="username.title.default"/>';
-    let firstNameValue = '<spring:message code="first.name.title.default"/>';
+    let firstNameValue = "<spring:message code='first.name.title.default'/>";
     let lastNameValue = '<spring:message code="last.name.title.default"/>';
     let emailValue = '<spring:message code="email.title.default"/>';
     let phoneValue = '<spring:message code="phone.title.default"/>';

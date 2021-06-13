@@ -37,7 +37,7 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
     Page<Movie> findAll(@NotNull Pageable pageable);
 
     @Query("{'genres': {$in: ?0}}")
-    Page<Movie> findAllByGenresMatches(List<Genre> genres, Pageable pageable);
+    Page<Movie> findAllByGenresIn(List<Genre> genres, Pageable pageable);
 
     List<Movie> findByGenresIsContaining(List<Genre> genres);
 
@@ -47,7 +47,7 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
 
     List<Movie> findByReleaseDateAfterOrderByReleaseDate(LocalDate date);
 
-    List<Movie> findByReleaseDateBeforeOrderByReleaseDate(LocalDate date);
+    List<Movie> findByReleaseDateBeforeOrderByReleaseDateDesc(LocalDate date);
 
     List<Movie> findByReleaseDateBefore(LocalDate date);
 
@@ -58,24 +58,26 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
 
     Page<Movie> findByReleaseDateAfter(LocalDate date, Pageable pageable);
 
-    Page<Movie> findByReleaseDateAfterAndGenresMatches(LocalDate date,
-                                                       List<Genre> genres,
-                                                       Pageable pageable);
+    @Query("{'releaseDate' : { $gte: ?0 }, 'genres': {$in: ?1} }")
+    Page<Movie> findByReleaseDateAfterAndGenresIn(LocalDate date,
+                                                  List<Genre> genres,
+                                                  Pageable pageable);
 
     Page<Movie> findByReleaseDateBefore(LocalDate date, Pageable pageable);
 
-    Page<Movie> findByReleaseDateBeforeAndGenresMatches(LocalDate date,
-                                                        List<Genre> genres,
-                                                        Pageable pageable);
+    @Query("{'releaseDate' : { $lte: ?0 }, 'genres': {$in: ?1} }")
+    Page<Movie> findByReleaseDateBeforeAndGenresIn(LocalDate date,
+                                                   List<Genre> genres,
+                                                   Pageable pageable);
 
     @Query("{'releaseDate' : { $gte: ?0, $lte: ?1 } }")
     Page<Movie> findByReleaseDateBetween(LocalDate from, LocalDate to, Pageable pageable);
 
     @Query("{'releaseDate' : { $gte: ?0, $lte: ?1 }, 'genres': {$in: ?2} }")
-    Page<Movie> findByReleaseDateBetweenAndGenresMatches(LocalDate from,
-                                                         LocalDate to,
-                                                         List<Genre> genres,
-                                                         Pageable pageable);
+    Page<Movie> findByReleaseDateBetweenAndGenresIn(LocalDate from,
+                                                    LocalDate to,
+                                                    List<Genre> genres,
+                                                    Pageable pageable);
 
     List<Movie> findByActorIdsContains(String id);
 

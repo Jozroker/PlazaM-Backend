@@ -4,6 +4,7 @@ import com.site.plazam.domain.Lang;
 import com.site.plazam.dto.HallForSeanceDTO;
 import com.site.plazam.dto.MovieForHomeSliderDTO;
 import com.site.plazam.dto.UserForSelfInfoDTO;
+import com.site.plazam.dto.comparator.CinemaByCityComparator;
 import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.service.*;
 import org.json.JSONObject;
@@ -19,6 +20,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -83,8 +85,7 @@ public class HomeController {
 
     @GetMapping("/header")
     @Transactional
-    public String header(@RequestParam(name = "path", required = false) String path,
-                         ModelMap model,
+    public String header(ModelMap model,
                          Principal principal) {
         Lang currentLang = Lang.ENG;
         CinemaDTO currentCinema = cinemaService.findAll().get(0);
@@ -179,7 +180,9 @@ public class HomeController {
 
     @GetMapping("/schedule")
     @Transactional
-    public String schedule(ModelMap model, Principal principal) {
+    public String schedule(ModelMap model, Principal principal,
+                           @RequestParam(required = false) String page) {
+        int currentPage = page == null ? 0 : Integer.parseInt(page) - 1;
         CinemaDTO cinema = cinemaService.getCinemaByLocation();
         if (principal != null) {
             UserForSelfInfoDTO user =
@@ -190,7 +193,10 @@ public class HomeController {
         }
         Page<Map.Entry> seances = seanceService.findSeancesList(LocalDate.now(),
                 cinemaService.findById(cinema.getId()), null, null,
-                true, null, PageRequest.of(0, 8));
+                true, null, PageRequest.of(currentPage, 8));
+        if (currentPage > 0 && seances.getContent().isEmpty()) {
+            return "redirect:/error";
+        }
         model.addAttribute("pagesCount", seances.getTotalPages());
         model.addAttribute("currentDate", LocalDate.now());
         return "schedule";
@@ -206,6 +212,26 @@ public class HomeController {
                 (CinemaDTO) model.getAttribute(
                         "currentCinema") : cinemaService.findById(cinemaId);
         return hallService.findHallForSeanceByCinema(currentCinema);
+    }
+
+    @GetMapping("/movie/{id}/seances")
+    @ResponseBody
+    @Transactional
+    public List<List<Object>> movieSeances(@PathVariable String id,
+                                           @RequestParam String cinemaId) {
+        List<List<Object>> list = new ArrayList<>();
+        seanceService.findSeancesList(LocalDate.now(),
+                cinemaService.findById(cinemaId), null, null, false,
+                movieService.findMovieForSeanceById(id),
+                PageRequest.of(0, 1)).forEach(entry -> list.add(Arrays.asList(entry.getKey(), entry.getValue())));
+        return list;
+    }
+
+    @GetMapping("/cinemas/schedule-creation")
+    @ResponseBody
+    @Transactional
+    public List<CinemaDTO> getCinemasScheduleCreation() {
+        return cinemaService.findAll().stream().sorted(new CinemaByCityComparator()).collect(Collectors.toList());
     }
 
     @GetMapping({"/home/page/{page}", "/page/{page}", "/schedule/page/{page}"})

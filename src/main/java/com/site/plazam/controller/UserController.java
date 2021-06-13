@@ -6,14 +6,17 @@ import com.site.plazam.domain.Country;
 import com.site.plazam.domain.Lang;
 import com.site.plazam.domain.Role;
 import com.site.plazam.domain.Sex;
-import com.site.plazam.dto.*;
+import com.site.plazam.dto.CommentForCommentsListDTO;
+import com.site.plazam.dto.UserForLoginDTO;
+import com.site.plazam.dto.UserForRegistrationDTO;
+import com.site.plazam.dto.UserForSelfInfoDTO;
 import com.site.plazam.dto.comparator.CommentsByDateComparator;
 import com.site.plazam.dto.comparator.CommentsByMovieNameComparator;
-import com.site.plazam.dto.comparator.UsersByRealNameComparator;
-import com.site.plazam.dto.comparator.UsersByUsernameComparator;
 import com.site.plazam.dto.parents.PictureDTO;
+import com.site.plazam.dto.parents.TicketSimpleDTO;
 import com.site.plazam.service.*;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -37,28 +40,28 @@ public class UserController {
 
     private final SeanceService seanceService;
 
-    private final HallService hallService;
-
     private final CommentService commentService;
 
     private final MessageService messageService;
 
     private final TicketService ticketService;
 
+    private final MovieService movieService;
+
     public UserController(CinemaService cinemaService,
                           UserService userService,
                           SeanceService seanceService,
-                          HallService hallService,
                           CommentService commentService,
                           MessageService messageService,
+                          MovieService movieService,
                           TicketService ticketService) {
         this.cinemaService = cinemaService;
         this.userService = userService;
         this.seanceService = seanceService;
-        this.hallService = hallService;
         this.commentService = commentService;
         this.messageService = messageService;
         this.ticketService = ticketService;
+        this.movieService = movieService;
     }
 
     @GetMapping("/authorize")
@@ -75,6 +78,7 @@ public class UserController {
     }
 
     @PostMapping("/ticket/{id}/remove")
+    @ResponseBody
     @Transactional
     public String removeTicket(@PathVariable String id) {
         try {
@@ -83,6 +87,37 @@ public class UserController {
             return "failed";
         }
         return "success";
+    }
+
+    @PostMapping(value = "/ticket/buy", consumes =
+            {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    @Transactional
+    public String buyTicket(@RequestBody String data, Principal principal) {
+        UserForSelfInfoDTO user =
+                userService.findByUsernameOrEmail(principal.getName(), principal.getName());
+        JSONObject object = new JSONObject(data);
+        JSONArray array = object.getJSONArray("tickets");
+        TicketSimpleDTO ticket;
+        for (int i = 0; i < array.length(); i++) {
+            ticket = new TicketSimpleDTO();
+            ticket.setDate(LocalDate.parse(array.getJSONObject(i).getString(
+                    "date")));
+            if (user.getRole() == Role.WORKER) {
+                ticket.setPaymentStatus(true);
+            } else {
+                ticket.setPaymentStatus(array.getJSONObject(i).getBoolean(
+                        "paymentStatus"));
+            }
+            ticket.setPlaceRow(array.getJSONObject(i).getInt("row"));
+            ticket.setPlaceSeat(array.getJSONObject(i).getInt("seat"));
+            ticket.setSeance(seanceService.findSeanceForTicketById(array
+                    .getJSONObject(i).getString("seanceId")));
+            user.getTickets().add(ticketService.save(ticket));
+        }
+        userService.updateLists(user);
+        return "/movie/" + object.getString("movieId") + "?cinemaId=" +
+                object.getString("cinemaId");
     }
 
     @PostMapping("/message/{id}/remove")
@@ -316,7 +351,7 @@ public class UserController {
                     user.getTickets().removeAll(Arrays.stream(((LinkedHashMap) obj).get(
                             "removedTickets").toString().substring(1,
                             length - 1).split(",")).map(ticketService::findById).filter(ticket ->
-                            LocalDate.now().plusDays(3).isBefore(ticket.getDate())).collect(Collectors.toList()));
+                            LocalDate.now().plusDays(1).isBefore(ticket.getDate())).collect(Collectors.toList()));
                 }
             }
             userService.updateLists(user);
@@ -327,7 +362,9 @@ public class UserController {
 
     @GetMapping("/user/comments")
     @Transactional
-    public String comments(ModelMap model, Principal principal) {
+    public String comments(ModelMap model, Principal principal,
+                           @RequestParam(required = false) String page) {
+        int currentPage = page == null ? 0 : Integer.parseInt(page) - 1;
         UserForSelfInfoDTO user =
                 userService.findByUsernameOrEmail(principal.getName(),
                         principal.getName());
@@ -335,7 +372,10 @@ public class UserController {
                 commentService.findByUser(user);
         Page<CommentForCommentsListDTO> comments =
                 new PageImpl<>(commentsList.stream().sorted(new CommentsByDateComparator()).collect(Collectors.toList()),
-                        PageRequest.of(0, 10), commentsList.size());
+                        PageRequest.of(currentPage, 10), commentsList.size());
+        if (currentPage > 0 && comments.getContent().isEmpty()) {
+            return "redirect:/error";
+        }
         model.addAttribute("pagesCount", comments.getTotalPages());
         model.addAttribute("comments", comments.getContent());
         return "comments";
@@ -386,240 +426,6 @@ public class UserController {
             return "failed";
         }
         return "success";
-    }
-
-    @GetMapping("/admin/users")
-    @Transactional
-    public String users(ModelMap model) {
-        List<UserForUsersListDTO> allUsers =
-                userService.findUserForUsersListAll();
-        List<CommentForReportedListDTO> reportedUsers =
-                commentService.findByReportedTrue();
-        List<UserForBannedListDTO> bannedUsers =
-                userService.findByBannedTrue();
-        allUsers.sort(new UsersByUsernameComparator());
-        reportedUsers.sort(new UsersByUsernameComparator());
-        bannedUsers.sort(new UsersByUsernameComparator());
-        Page<UserForUsersListDTO> allUsersPage = new PageImpl<>(allUsers,
-                PageRequest.of(0, 14), allUsers.size());
-        Page<CommentForReportedListDTO> reportedUsersPage =
-                new PageImpl<>(reportedUsers,
-                        PageRequest.of(0, 21), reportedUsers.size());
-        Page<UserForBannedListDTO> bannedUsersPage =
-                new PageImpl<>(bannedUsers,
-                        PageRequest.of(0, 14), bannedUsers.size());
-        model.addAttribute("allUsers", allUsersPage.getContent());
-        model.addAttribute("allUsersPages", allUsersPage.getTotalPages());
-        model.addAttribute("reportedUsers", reportedUsersPage.getContent());
-        model.addAttribute("reportedUsersPages",
-                reportedUsersPage.getTotalPages());
-        model.addAttribute("bannedUsers", bannedUsersPage.getContent());
-        model.addAttribute("bannedUsersPages", bannedUsersPage.getTotalPages());
-        return "users";
-    }
-
-    @GetMapping("/admin/users/{page}")
-    @ResponseBody
-    @Transactional
-    public String users(@PathVariable int page,
-                        @RequestParam(required = false) String sort,
-                        @RequestParam(required = false) String roles,
-                        @RequestParam(required = false) String countries,
-                        @RequestParam(required = false) String banStatuses,
-                        @RequestParam(required = false) String name) {
-        List<UserForUsersListDTO> allUsers = userService.findUserForUsersListAll();
-        List<CommentForReportedListDTO> reportedUsers = commentService.findByReportedTrue();
-        List<UserForBannedListDTO> bannedUsers = userService.findByBannedTrue();
-        List<Role> availableRoles = (roles == null) ? null :
-                Arrays.stream(roles.split(",")).map(Role::valueOf).collect(Collectors.toList());
-        List<Country> availableCountries = (countries == null) ? null :
-                Arrays.stream(countries.split(",")).map(Country::valueOf).collect(Collectors.toList());
-        List<Boolean> availableBannedStatuses = (banStatuses == null) ? null :
-                Arrays.stream(banStatuses.split(",")).map(Boolean::valueOf).collect(Collectors.toList());
-        List<String> nameResult = (name == null) ? null :
-                userService.findUserForUsersListByFirstNameOrLastNameOrUsername(name, name, name).stream()
-                        .map(UserForUsersListDTO::getId).collect(Collectors.toList());
-        if (roles != null && countries != null && banStatuses != null) {
-            allUsers = allUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getRole()) &&
-                        availableCountries.contains(user.getCountry()) &&
-                        availableBannedStatuses.contains(user.isBanned()));
-            }).collect(Collectors.toList());
-            reportedUsers = reportedUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getUser().getRole()) &&
-                        availableCountries.contains(user.getUser().getCountry()) &&
-                        availableBannedStatuses.contains(user.getUser().isBanned()));
-            }).collect(Collectors.toList());
-            bannedUsers = bannedUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getRole()) &&
-                        availableCountries.contains(user.getCountry()) &&
-                        availableBannedStatuses.contains(user.isBanned()));
-            }).collect(Collectors.toList());
-        } else if (roles != null && countries != null) {
-            allUsers = allUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getRole()) &&
-                        availableCountries.contains(user.getCountry()));
-            }).collect(Collectors.toList());
-            reportedUsers = reportedUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getUser().getRole()) &&
-                        availableCountries.contains(user.getUser().getCountry()));
-            }).collect(Collectors.toList());
-            bannedUsers = bannedUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getRole()) &&
-                        availableCountries.contains(user.getCountry()));
-            }).collect(Collectors.toList());
-        } else if (roles != null && banStatuses != null) {
-            allUsers = allUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getRole()) &&
-                        availableBannedStatuses.contains(user.isBanned()));
-            }).collect(Collectors.toList());
-            reportedUsers = reportedUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getUser().getRole()) &&
-                        availableBannedStatuses.contains(user.getUser().isBanned()));
-            }).collect(Collectors.toList());
-            bannedUsers = bannedUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getRole()) &&
-                        availableBannedStatuses.contains(user.isBanned()));
-            }).collect(Collectors.toList());
-        } else if (countries != null && banStatuses != null) {
-            allUsers = allUsers.stream().filter(user -> {
-                return (availableCountries.contains(user.getCountry()) &&
-                        availableBannedStatuses.contains(user.isBanned()));
-            }).collect(Collectors.toList());
-            reportedUsers = reportedUsers.stream().filter(user -> {
-                return (availableCountries.contains(user.getUser().getCountry()) &&
-                        availableBannedStatuses.contains(user.getUser().isBanned()));
-            }).collect(Collectors.toList());
-            bannedUsers = bannedUsers.stream().filter(user -> {
-                return (availableCountries.contains(user.getCountry()) &&
-                        availableBannedStatuses.contains(user.isBanned()));
-            }).collect(Collectors.toList());
-        } else if (roles != null) {
-            allUsers = allUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getRole()));
-            }).collect(Collectors.toList());
-            reportedUsers = reportedUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getUser().getRole()));
-            }).collect(Collectors.toList());
-            bannedUsers = bannedUsers.stream().filter(user -> {
-                return (availableRoles.contains(user.getRole()));
-            }).collect(Collectors.toList());
-        } else if (countries != null) {
-            allUsers = allUsers.stream().filter(user -> {
-                return (availableCountries.contains(user.getCountry()));
-            }).collect(Collectors.toList());
-            reportedUsers = reportedUsers.stream().filter(user -> {
-                return (availableCountries.contains(user.getUser().getCountry()));
-            }).collect(Collectors.toList());
-            bannedUsers = bannedUsers.stream().filter(user -> {
-                return (availableCountries.contains(user.getCountry()));
-            }).collect(Collectors.toList());
-        } else if (banStatuses != null) {
-            allUsers = allUsers.stream().filter(user -> {
-                return (availableBannedStatuses.contains(user.isBanned()));
-            }).collect(Collectors.toList());
-            reportedUsers = reportedUsers.stream().filter(user -> {
-                return (availableBannedStatuses.contains(user.getUser().isBanned()));
-            }).collect(Collectors.toList());
-            bannedUsers = bannedUsers.stream().filter(user -> {
-                return (availableBannedStatuses.contains(user.isBanned()));
-            }).collect(Collectors.toList());
-        }
-        if (name != null) {
-            allUsers =
-                    allUsers.stream().filter(user -> nameResult.contains(user.getId())).collect(Collectors.toList());
-            reportedUsers =
-                    reportedUsers.stream().filter(user -> nameResult.contains(user.getUser().getId()))
-                            .collect(Collectors.toList());
-            bannedUsers =
-                    bannedUsers.stream().filter(user -> nameResult.contains(user.getId())).collect(Collectors.toList());
-        }
-        if (sort != null) {
-            if (sort.equals("username")) {
-                allUsers =
-                        allUsers.stream().sorted(new UsersByUsernameComparator()).collect(Collectors.toList());
-                reportedUsers =
-                        reportedUsers.stream().sorted(new UsersByUsernameComparator()).collect(Collectors.toList());
-                bannedUsers =
-                        bannedUsers.stream().sorted(new UsersByUsernameComparator()).collect(Collectors.toList());
-            } else if (sort.equals("realname")) {
-                allUsers =
-                        allUsers.stream().sorted(new UsersByRealNameComparator()).collect(Collectors.toList());
-            }
-        }
-        Page<UserForUsersListDTO> allUsersPage = new PageImpl<>(allUsers,
-                PageRequest.of(page - 1, 14), allUsers.size());
-        Page<CommentForReportedListDTO> reportedUsersPage =
-                new PageImpl<>(reportedUsers, PageRequest.of(page - 1, 21),
-                        reportedUsers.size());
-        Page<UserForBannedListDTO> bannedUsersPage = new PageImpl<>(bannedUsers,
-                PageRequest.of(page - 1, 14), bannedUsers.size());
-        return new JSONArray(Arrays.asList(allUsersPage.getTotalPages(),
-                allUsersPage.getContent(), reportedUsersPage.getTotalPages(),
-                reportedUsersPage.getContent(), bannedUsersPage.getTotalPages(),
-                bannedUsersPage.getContent())).toString();
-    }
-
-    @PostMapping("/admin/user/{id}/{role}")
-    @ResponseBody
-    @Transactional
-    public String changeRole(@PathVariable String id,
-                             @PathVariable String role) {
-        try {
-            UserForUsersListDTO user = userService.findUserForUsersListById(id);
-            user.setRole(Role.valueOf(role));
-            userService.updateRole(user);
-            return "success";
-        } catch (Exception ignore) {
-        }
-        return "failed";
-    }
-
-    @PostMapping("/admin/user/{id}/ban")
-    @ResponseBody
-    @Transactional
-    public String ban(@PathVariable String id,
-                      @RequestParam(required = false) Integer dateTo) {
-        try {
-            UserForUsersListDTO user = userService.findUserForUsersListById(id);
-            user.setBanned(true);
-            LocalDate bannedTo = null;
-            if (dateTo != null) {
-                bannedTo = LocalDate.now().plusDays(dateTo);
-            }
-            userService.updateBannedStatus(user, bannedTo);
-            return "success";
-        } catch (Exception ignore) {
-        }
-        return "failed";
-    }
-
-    @PostMapping("/admin/user/{id}/unban")
-    @ResponseBody
-    @Transactional
-    public String unban(@PathVariable String id) {
-        try {
-            UserForUsersListDTO user = userService.findUserForUsersListById(id);
-            user.setBanned(false);
-            userService.updateBannedStatus(user, null);
-            return "success";
-        } catch (Exception ignore) {
-        }
-        return "failed";
-    }
-
-    @PostMapping("/admin/comment/{id}/skip")
-    @ResponseBody
-    @Transactional
-    public String skipReportedComment(@PathVariable String id) {
-        try {
-            CommentForReportedListDTO comment =
-                    commentService.findCommentForReportedListById(id);
-            commentService.updateReportedStatus(comment, false);
-            return "success";
-        } catch (Exception ignore) {
-        }
-        return "failed";
     }
 
     @PostMapping("/comment/{id}/remove")

@@ -111,7 +111,7 @@
         }
       }
 
-      .hall-select {
+      .hall-select, .language-select {
         .scroll {
           height: 170px;
           //height: 115px;
@@ -142,6 +142,7 @@
         .movie-result {
           color: $gray-light;
           transition: color 0.2s ease-in-out;
+          white-space: nowrap;
 
           &:hover {
             cursor: pointer;
@@ -197,7 +198,7 @@
           }
 
           input {
-            width: 76px;
+            width: 60px;
             height: 20px;
             font-size: 18px;
             line-height: 20px;
@@ -293,7 +294,7 @@
         }
       }
 
-      .hall-select, .date-from, .date-to {
+      .hall-select, .date-from, .date-to, .language-select {
         width: 12%;
         //max-width: 190px;
         min-width: 125px;
@@ -386,7 +387,7 @@
         }
       }
 
-      .hall-select, .cinema-select {
+      .hall-select, .cinema-select, .language-select {
         .selected > div:first-child {
           font-size: 16px;
         }
@@ -458,7 +459,7 @@
           margin-left: 5px;
         }
 
-        .hall, .cinema {
+        .hall, .cinema, .lang {
           text-align: center;
           white-space: normal;
           font-size: 16px;
@@ -571,6 +572,7 @@
 
 #date-from, #date-to {
   width: 100%;
+  //max-width: 172px;
   position: absolute;
   overflow: hidden;
   height: 25px;

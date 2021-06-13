@@ -114,7 +114,7 @@
         .scroll {
           width: 100%;
           padding: 0 14px;
-          min-height: 190px;
+          height: 120px;
         }
 
         .comment-form {
@@ -195,8 +195,9 @@
           textarea {
             background-color: $black-light;
             width: 100%;
-            min-height: 121px;
-            height: 18px;
+            //min-height: 121px;
+            height: 120px;
+            //height: 18px;
             font-size: 18px;
             line-height: 18px;
             font-weight: 300;
@@ -214,8 +215,12 @@
           position: relative;
           overflow: hidden;
           padding: 0 14px;
-          max-height: 292px;
-          max-width: 590px;
+          //max-height: 292px;
+          //max-width: 590px;
+
+          //&:hover {
+          //  cursor: pointer;
+          //}
 
           .pictures {
             //position: relative;
@@ -462,6 +467,10 @@
           height: 14px;
           font-size: 14px;
           line-height: 14px;
+
+          &.empty {
+            display: none;
+          }
 
           &::before {
             font-family: "icomoon" !important;
