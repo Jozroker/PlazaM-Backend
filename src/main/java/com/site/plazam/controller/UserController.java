@@ -17,9 +17,7 @@ import com.site.plazam.dto.parents.TicketSimpleDTO;
 import com.site.plazam.service.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +26,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -370,14 +371,15 @@ public class UserController {
                         principal.getName());
         List<CommentForCommentsListDTO> commentsList =
                 commentService.findByUser(user);
-        Page<CommentForCommentsListDTO> comments =
-                new PageImpl<>(commentsList.stream().sorted(new CommentsByDateComparator()).collect(Collectors.toList()),
-                        PageRequest.of(currentPage, 10), commentsList.size());
-        if (currentPage > 0 && comments.getContent().isEmpty()) {
+        PagedListHolder comments =
+                new PagedListHolder(commentsList.stream().sorted(new CommentsByDateComparator()).collect(Collectors.toList()));
+        comments.setPage(currentPage);
+        comments.setPageSize(10);
+        if (currentPage > comments.getPageCount() - 1) {
             return "redirect:/error";
         }
-        model.addAttribute("pagesCount", comments.getTotalPages());
-        model.addAttribute("comments", comments.getContent());
+        model.addAttribute("pagesCount", comments.getPageCount());
+        model.addAttribute("comments", comments.getPageList());
         return "comments";
     }
 
@@ -392,28 +394,28 @@ public class UserController {
                         principal.getName());
         List<CommentForCommentsListDTO> commentsList =
                 commentService.findByUser(user);
-        Page<CommentForCommentsListDTO> comments =
-                new PageImpl<>(new ArrayList<>());
+        PagedListHolder comments = new PagedListHolder();
         if (sort == null) {
-            comments = new PageImpl<>(commentsList.stream().sorted(new CommentsByDateComparator()).collect(Collectors.toList()),
-                    PageRequest.of(page - 1, 10), commentsList.size());
+            comments =
+                    new PagedListHolder(commentsList.stream().sorted(new CommentsByDateComparator()).collect(Collectors.toList()));
         } else {
             switch (sort) {
                 case "date":
-                    comments = new PageImpl<>(commentsList.stream().sorted(new CommentsByDateComparator()).collect(Collectors.toList()),
-                            PageRequest.of(page - 1, 10), commentsList.size());
+                    comments =
+                            new PagedListHolder(commentsList.stream().sorted(new CommentsByDateComparator()).collect(Collectors.toList()));
                     break;
                 case "movie":
                     comments =
-                            new PageImpl<>(commentsList.stream().sorted(new CommentsByMovieNameComparator()).collect(Collectors.toList()),
-                                    PageRequest.of(page - 1, 10), commentsList.size());
+                            new PagedListHolder(commentsList.stream().sorted(new CommentsByMovieNameComparator()).collect(Collectors.toList()));
                     break;
                 default:
                     break;
             }
         }
-        return new JSONArray(Arrays.asList(comments.getTotalPages(),
-                comments.getContent())).toString();
+        comments.setPageSize(10);
+        comments.setPage(page - 1);
+        return new JSONArray(Arrays.asList(comments.getPageCount(),
+                comments.getPageList())).toString();
     }
 
     @PostMapping("/comment/{id}/complain")

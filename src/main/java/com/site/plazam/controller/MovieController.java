@@ -11,6 +11,7 @@ import com.site.plazam.dto.parents.RatingSimpleDTO;
 import com.site.plazam.dto.parents.TicketSimpleDTO;
 import com.site.plazam.service.*;
 import org.json.JSONObject;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -164,7 +165,9 @@ public class MovieController {
         List<SeanceForSeancesListDTO> seances =
                 seanceService.findByMovie(movieService.findMovieForSeanceById(id))
                         .stream()
-                        .filter(seance -> seance.getHall().getCinemaId().equals(cinemaId))
+                        .filter(seance -> seance.getHall().getCinemaId().equals(cinemaId) &&
+                                (seance.getDateFrom().isBefore(LocalDate.now()) ||
+                                        seance.getDateFrom().isEqual(LocalDate.now())))
                         .collect(Collectors.toList());
         if (seances.isEmpty()) {
             return "movie";
@@ -187,40 +190,34 @@ public class MovieController {
                 pageCount = 24;
             }
         }
-        Page<MovieForMoviesListDTO> movies =
-                new PageImpl<>(new ArrayList<>());
         List<MovieForMoviesListDTO> moviesList =
                 movieService.findMovieForMoviesListAll();
         if (userId == null) {
-            movies =
-                    new PageImpl<>(moviesList.stream().sorted(new MoviesByNewestComparator()).collect(Collectors.toList()),
-                            PageRequest.of(currentPage, pageCount),
-                            moviesList.size());
+            moviesList =
+                    moviesList.stream().sorted(new MoviesByNewestComparator()).collect(Collectors.toList());
         } else {
             switch (type) {
                 case "favourites":
                     moviesList = moviesList.stream().filter(movie -> userService.findUserForSelfInfoById(userId).getFavouriteMovieIds()
                             .contains(movie.getId())).sorted(new MoviesByNewestComparator()).collect(Collectors.toList());
-                    movies = new PageImpl<>(moviesList,
-                            PageRequest.of(currentPage, pageCount), moviesList.size());
                     break;
                 case "waited":
                     moviesList = moviesList.stream().filter(movie -> userService.findUserForSelfInfoById(userId).getWaitMovieIds()
                             .contains(movie.getId())).sorted(new MoviesByNewestComparator()).collect(Collectors.toList());
-                    movies = new PageImpl<>(moviesList,
-                            PageRequest.of(currentPage, pageCount), moviesList.size());
                     break;
                 case "viewed":
                     moviesList = moviesList.stream().filter(movie -> userService.findUserForSelfInfoById(userId).getViewedMovieIds()
                             .contains(movie.getId())).sorted(new MoviesByNewestComparator()).collect(Collectors.toList());
-                    movies = new PageImpl<>(moviesList,
-                            PageRequest.of(currentPage, pageCount), moviesList.size());
                     break;
                 default:
                     break;
             }
         }
-        if (currentPage > 0 && movies.getContent().isEmpty()) {
+        PagedListHolder moviesPage =
+                new PagedListHolder(moviesList);
+        moviesPage.setPage(currentPage);
+        moviesPage.setPageSize(pageCount);
+        if (currentPage > moviesPage.getPageCount() - 1) {
             return "redirect:/error";
         }
         if (principal != null) {
@@ -228,8 +225,8 @@ public class MovieController {
                     userService.findByUsernameOrEmail(principal.getName(),
                             principal.getName()).getFavouriteMovieIds());
         }
-        model.addAttribute("pagesCount", movies.getTotalPages());
-        model.addAttribute("movies", movies.getContent());
+        model.addAttribute("pagesCount", moviesPage.getPageCount());
+        model.addAttribute("movies", moviesPage.getPageList());
         //todo change json library to jackson
         return "movies";
     }
@@ -373,11 +370,12 @@ public class MovieController {
                     break;
             }
         }
-        movies = new PageImpl<>(movies.getContent(), PageRequest.of(page - 1, pageCount),
-                movies.getTotalElements());
+        PagedListHolder moviesPage = new PagedListHolder(movies.getContent());
+        moviesPage.setPageSize(pageCount);
+        moviesPage.setPage(page - 1);
         List<Object> list = new ArrayList<>();
-        list.add(movies.getTotalPages());
-        list.addAll(movies.getContent());
+        list.add(moviesPage.getPageCount());
+        list.addAll(moviesPage.getPageList());
         return list;
     }
 }

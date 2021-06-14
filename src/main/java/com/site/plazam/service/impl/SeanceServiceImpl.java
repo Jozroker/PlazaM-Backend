@@ -12,6 +12,7 @@ import com.site.plazam.error.TimeAlreadyScheduledException;
 import com.site.plazam.repository.SeanceRepository;
 import com.site.plazam.service.*;
 import com.site.plazam.service.mapper.SeanceMapper;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -73,7 +74,7 @@ public class SeanceServiceImpl implements SeanceService {
 
     @Override
     @Transactional
-    public Page<Map.Entry> findSeancesList(LocalDate currentDate,
+    public PagedListHolder findSeancesList(LocalDate currentDate,
                                            CinemaDTO cinema,
                                            List<String> technologies,
                                            List<String> genres,
@@ -187,9 +188,12 @@ public class SeanceServiceImpl implements SeanceService {
 //            }
 //            //todo simplify from stream|iterator???
 //        });
+        PagedListHolder seancesPage =
+                new PagedListHolder(new ArrayList<>(mapOfSchedule.entrySet()));
+        seancesPage.setPage(pageable.getPageNumber());
+        seancesPage.setPageSize(pageable.getPageSize());
 
-        return new PageImpl<>(new ArrayList<>(mapOfSchedule.entrySet()),
-                pageable, mapOfSchedule.entrySet().size());
+        return seancesPage;
     }
 
     @Override

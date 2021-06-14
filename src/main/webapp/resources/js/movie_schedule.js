@@ -575,6 +575,7 @@ function generateSeances(hallsMap, movieId, otherDate, parent) {
                 halls += '<div class="line-between disabled"></div>';
             }
         }
+        counter = 0;
     } else {
         for (let i = 0; i < 10; i++) {
             currentHall = '';
@@ -648,6 +649,7 @@ function generateSeances(hallsMap, movieId, otherDate, parent) {
                 }
             }
         }
+        counter = 0;
     }
     halls += '</div>';
     // if (otherDate == null) {

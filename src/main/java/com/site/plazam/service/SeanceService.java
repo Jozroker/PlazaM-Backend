@@ -4,6 +4,7 @@ import com.site.plazam.domain.Day;
 import com.site.plazam.dto.*;
 import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.dto.parents.SeanceSimpleDTO;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -59,10 +60,10 @@ public interface SeanceService {
                                                                              List<HallForSeanceDTO> halls,
                                                                              Pageable pageable);
 
-    Page<Map.Entry> findSeancesList(LocalDate currentDate, CinemaDTO cinema, List<String> technologies,
-                                    List<String> genres, boolean singleDate,
-                                    MovieForSeanceDTO currentMovie,
-                                    Pageable pageable);
+    PagedListHolder<Map.Entry> findSeancesList(LocalDate currentDate, CinemaDTO cinema, List<String> technologies,
+                                               List<String> genres, boolean singleDate,
+                                               MovieForSeanceDTO currentMovie,
+                                               Pageable pageable);
 
     List<SeanceForSeancesListDTO> findByStartSeanceBetweenOrEndSeanceBetween(LocalDateTime start,
                                                                              LocalDateTime end);

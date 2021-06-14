@@ -8,8 +8,8 @@ import com.site.plazam.dto.comparator.CinemaByCityComparator;
 import com.site.plazam.dto.parents.CinemaDTO;
 import com.site.plazam.service.*;
 import org.json.JSONObject;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -191,13 +191,14 @@ public class HomeController {
                 cinema = user.getSelectedCinema();
             }
         }
-        Page<Map.Entry> seances = seanceService.findSeancesList(LocalDate.now(),
-                cinemaService.findById(cinema.getId()), null, null,
-                true, null, PageRequest.of(currentPage, 8));
-        if (currentPage > 0 && seances.getContent().isEmpty()) {
+        PagedListHolder<Map.Entry> seances =
+                seanceService.findSeancesList(LocalDate.now(),
+                        cinemaService.findById(cinema.getId()), null, null,
+                        true, null, PageRequest.of(currentPage, 8));
+        if (currentPage > seances.getPageCount() - 1) {
             return "redirect:/error";
         }
-        model.addAttribute("pagesCount", seances.getTotalPages());
+        model.addAttribute("pagesCount", seances.getPageCount());
         model.addAttribute("currentDate", LocalDate.now());
         return "schedule";
     }
@@ -223,7 +224,8 @@ public class HomeController {
         seanceService.findSeancesList(LocalDate.now(),
                 cinemaService.findById(cinemaId), null, null, false,
                 movieService.findMovieForSeanceById(id),
-                PageRequest.of(0, 1)).forEach(entry -> list.add(Arrays.asList(entry.getKey(), entry.getValue())));
+                PageRequest.of(0, 1)).getPageList()
+                .forEach(entry -> list.add(Arrays.asList(entry.getKey(), entry.getValue())));
         return list;
     }
 
@@ -242,7 +244,7 @@ public class HomeController {
                                              @RequestParam(required = false) String genres,
                                              @RequestParam(required = false) String technologies,
                                              @RequestParam(required = false) String date) {
-        Page<Map.Entry> seances;
+        PagedListHolder<Map.Entry> seances;
         boolean singleDate = false;
         LocalDate selectedDate = LocalDate.now();
         if (cinemaId == null) {
@@ -275,8 +277,8 @@ public class HomeController {
 
         List<List<Object>> list = new ArrayList<>();
         if (seances != null) {
-            list.add(Collections.singletonList(seances.getTotalPages()));
-            seances.getContent().forEach(entry -> list.add(Arrays.asList(entry.getKey(),
+            list.add(Collections.singletonList(seances.getPageCount()));
+            seances.getPageList().forEach(entry -> list.add(Arrays.asList(entry.getKey(),
                     entry.getValue())));
         }
         return list;
